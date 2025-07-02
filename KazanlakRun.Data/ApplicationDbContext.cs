@@ -1,78 +1,108 @@
-namespace KazanlakRun.Data
+﻿using KazanlakRun.Data.Models;
+using Microsoft.EntityFrameworkCore;
+
+public class ApplicationDbContext : DbContext
 {
-    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore;
-    public class ApplicationDbContext : IdentityDbContext
+    public DbSet<Volunteer> Volunteers { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
+    public DbSet<VolunteerRole> VolunteerRoles { get; set; } = null!;
+    public DbSet<AidStation> AidStations { get; set; } = null!;
+    public DbSet<Distance> Distances { get; set; } = null!;
+    public DbSet<AidStationDistance> AidStationDistances { get; set; } = null!;
+    public DbSet<Good> Goods { get; set; } = null!;
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
+    }
 
-            //var defaultUser = new IdentityUser
-            //{
-            //    Id = "7699db7d-964f-4782-8209-d76562e0fece",
-            //    UserName = "admin@KazanlakRun.com",
-            //    NormalizedUserName = "ADMIN@KazanlakRun.COM",
-            //    Email = "admin@KazanlakRun.com",
-            //    NormalizedEmail = "ADMIN@KazanlakRun.COM",
-            //    EmailConfirmed = true,
-            //    PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(
-            //        new IdentityUser { UserName = "admin@KazanlakRun.com" },
-            //        "Admin123!")
-            //};
-            //builder.Entity<IdentityUser>().HasData(defaultUser);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
 
-    //        builder.Entity<Terrain>()
-    //            .HasData(
-    //                new Terrain { Id = 1, Name = "Mountain" },
-    //                new Terrain { Id = 2, Name = "Beach" },
-    //                new Terrain { Id = 3, Name = "Forest" },
-    //                new Terrain { Id = 4, Name = "Plain" },
-    //                new Terrain { Id = 5, Name = "Urban" },
-    //                new Terrain { Id = 6, Name = "Village" },
-    //                new Terrain { Id = 7, Name = "Cave" },
-    //                new Terrain { Id = 8, Name = "Canyon" }
-    //            );
+        // ─── Composite keys for join tables ─────────────────────
+        modelBuilder.Entity<VolunteerRole>()
+            .HasKey(vr => new { vr.VolunteerId, vr.RoleId });
 
-    //        builder.Entity<Destination>().HasData(
-    //    new Destination
-    //    {
-    //        Id = 1,
-    //        Name = "Rila Monastery",
-    //        Description = "A stunning historical landmark nestled in the Rila Mountains.",
-    //        ImageUrl = "https://img.etimg.com/thumb/msid-112831459,width-640,height-480,imgsize-2180890,resizemode-4/rila-monastery-bulgaria.jpg",
-    //        PublisherId = "7699db7d-964f-4782-8209-d76562e0fece",
-    //        PublishedOn = DateTime.Now,
-    //        TerrainId = 1,
-    //        IsDeleted = false
-    //    },
-    //    new Destination
-    //    {
-    //        Id = 2,
-    //        Name = "Durankulak Beach",
-    //        Description = "The sand at Durankulak Beach showcases a pristine golden color, creating a beautiful contrast against the azure waters of the Black Sea.",
-    //        ImageUrl = "https://travelplanner.ro/blog/wp-content/uploads/2023/01/durankulak-beach-1-850x550.jpg.webp",
-    //        PublisherId = "7699db7d-964f-4782-8209-d76562e0fece",
-    //        PublishedOn = DateTime.Now,
-    //        TerrainId = 2,
-    //        IsDeleted = false
-    //    },
-    //    new Destination
-    //    {
-    //        Id = 3,
-    //        Name = "Devil's Throat Cave",
-    //        Description = "A mysterious cave located in the Rhodope Mountains.",
-    //        ImageUrl = "https://detskotobnr.binar.bg/wp-content/uploads/2017/11/Diavolsko_garlo_17.jpg",
-    //        PublisherId = "7699db7d-964f-4782-8209-d76562e0fece",
-    //        PublishedOn = DateTime.Now,
-    //        TerrainId = 7,
-    //        IsDeleted = false
-    //    }
-    //);
-        }
+        modelBuilder.Entity<AidStationDistance>()
+            .HasKey(ad => new { ad.AidStationId, ad.DistanceId });
+
+        // ─── Relationships ───────────────────────────────────────
+        modelBuilder.Entity<Volunteer>()
+            .HasOne(v => v.AidStation)
+            .WithMany(a => a.Volunteers)
+            .HasForeignKey(v => v.AidStationId);
+
+        modelBuilder.Entity<VolunteerRole>()
+            .HasOne(vr => vr.Volunteer)
+            .WithMany(v => v.VolunteerRoles)
+            .HasForeignKey(vr => vr.VolunteerId);
+
+        modelBuilder.Entity<VolunteerRole>()
+            .HasOne(vr => vr.Role)
+            .WithMany(r => r.VolunteerRoles)
+            .HasForeignKey(vr => vr.RoleId);
+
+        modelBuilder.Entity<AidStationDistance>()
+            .HasOne(ad => ad.AidStation)
+            .WithMany(a => a.AidStationDistances)
+            .HasForeignKey(ad => ad.AidStationId);
+
+        modelBuilder.Entity<AidStationDistance>()
+            .HasOne(ad => ad.Distance)
+            .WithMany(d => d.AidStationDistances)
+            .HasForeignKey(ad => ad.DistanceId);
+
+        modelBuilder.Entity<Good>()
+            .HasOne(g => g.AidStation)
+            .WithMany(a => a.Goods)
+            .HasForeignKey(g => g.AidStationId);
+
+        // ─── Seed data ───────────────────────────────────────────
+
+        modelBuilder.Entity<Role>().HasData(
+            new Role { Id = 1, Name = "doctor" },
+            new Role { Id = 2, Name = "security" },
+            new Role { Id = 3, Name = "radio" },
+            new Role { Id = 4, Name = "food preparation" },
+            new Role { Id = 5, Name = "time recorder" }
+        );
+
+        modelBuilder.Entity<AidStation>().HasData(
+            new AidStation { Id = 1, ShortName = "A1", Name = "Aid stationn 1" },
+            new AidStation { Id = 2, ShortName = "A2", Name = "Aid stationn 2" },
+            new AidStation { Id = 3, ShortName = "A3", Name = "Aid stationn 3" },
+            new AidStation { Id = 4, ShortName = "A4", Name = "Aid stationn 4" },
+            new AidStation { Id = 5, ShortName = "A5", Name = "Aid stationn 5" }
+        );
+
+        modelBuilder.Entity<Volunteer>().HasData(
+            new Volunteer { Id = 1, Names = "Nikola Nikolov", Email = "nnnnnn@nnn.bg", Phone = "0888998899", AidStationId = 1 },
+            new Volunteer { Id = 2, Names = "Ivan Ivanov", Email = "iiiiii@.iii.bg", Phone = "0888999999", AidStationId = 2 },
+            new Volunteer { Id = 3, Names = "Georg Georgiev", Email = "gggggg@ggg.bg", Phone = "0888777777", AidStationId = 3 },
+            new Volunteer { Id = 4, Names = "Petar Petrov", Email = "petarp@p.bg", Phone = "0888111111", AidStationId = 1 },
+            new Volunteer { Id = 5, Names = "Maria Ivanova", Email = "maria@i.bg", Phone = "0888222222", AidStationId = 2 },
+            new Volunteer { Id = 6, Names = "Stoyan Dimitrov", Email = "stoyand@d.bg", Phone = "0888333333", AidStationId = 3 },
+            new Volunteer { Id = 7, Names = "Elena Petrova", Email = "elena@p.bg", Phone = "0888444444", AidStationId = 4 },
+            new Volunteer { Id = 8, Names = "Vladimir Stoyanov", Email = "vlad@st.bg", Phone = "0888555555", AidStationId = 5 },
+            new Volunteer { Id = 9, Names = "Tsveta Koleva", Email = "tsveta@k.bg", Phone = "0888666666", AidStationId = 1 },
+            new Volunteer { Id = 10, Names = "Nikolay Marinov", Email = "nikolay@m.bg", Phone = "0888778778", AidStationId = 2 }
+        );
+
+        modelBuilder.Entity<Good>().HasData(
+            new Good { Id = 1, Name = "Table", Measure = "pcs", Quantity = 10, AidStationId = 1 },
+            new Good { Id = 2, Name = "Chair", Measure = "pcs", Quantity = 20, AidStationId = 1 },
+            new Good { Id = 3, Name = "Tent", Measure = "pcs", Quantity = 7, AidStationId = 1 },
+            new Good { Id = 4, Name = "Plates", Measure = "pcs", Quantity = 40, AidStationId = 2 },
+            new Good { Id = 5, Name = "Cups", Measure = "pcs", Quantity = 200, AidStationId = 2 },
+            new Good { Id = 6, Name = "Salt", Measure = "kg", Quantity = 1, AidStationId = 2 },
+            new Good { Id = 7, Name = "Drinking water", Measure = "l", Quantity = 100, AidStationId = 3 },
+            new Good { Id = 8, Name = "Isotonic", Measure = "l", Quantity = 50, AidStationId = 3 },
+            new Good { Id = 9, Name = "Lemons", Measure = "pcs", Quantity = 100, AidStationId = 3 },
+            new Good { Id = 10, Name = "Apples", Measure = "kg", Quantity = 100, AidStationId = 4 },
+            new Good { Id = 11, Name = "Bananas", Measure = "pcs", Quantity = 100, AidStationId = 4 },
+            new Good { Id = 12, Name = "Chocolate", Measure = "pcs", Quantity = 50, AidStationId = 4 },
+            new Good { Id = 13, Name = "Soap", Measure = "bottles", Quantity = 10, AidStationId = 5 }
+        );
     }
 }
