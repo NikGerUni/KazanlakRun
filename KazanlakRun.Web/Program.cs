@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using KazanlakRun.Web.Areas.Identity;
 namespace KazanlakRun.Web
 {
     using KazanlakRun.Data;
@@ -18,9 +21,19 @@ namespace KazanlakRun.Web
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 6;
+
             })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+ 
+
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -42,12 +55,16 @@ namespace KazanlakRun.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapRazorPages();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages();
+
+           
 
             app.Run();
         }

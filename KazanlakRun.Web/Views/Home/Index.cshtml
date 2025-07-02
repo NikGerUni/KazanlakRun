@@ -7,7 +7,11 @@
     <div class="hero-overlay">
         <h1 class="hero-title">KAZANLAK RUN - SUPPORT CENTER</h1>
         <p class="hero-subtitle">10, 20, 40 km | Start/Finish - Central Park | May 31, 2026, 10:00 AM</p>
-        <a asp-controller="Runners" asp-action="Register" class="btn btn-primary register-btn">Volunteer Registration</a>
+        <a class="btn btn-primary register-btn"
+           asp-area="Identity"
+           asp-page="/Account/Register">
+            Volunteer Registration
+        </a>
     </div>
 </div>
 
