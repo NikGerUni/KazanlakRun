@@ -1,7 +1,9 @@
 ﻿using KazanlakRun.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 {
     public DbSet<Volunteer> Volunteers { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
@@ -19,6 +21,52 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // ─── 1. Seed на Identity роли ────────────────────────
+        var adminRoleId = "a1b2c3d4-e5f6-4782-8209-d76562e0feaa";
+        var userRoleId = "f1e2d3c4-b5a6-4948-9309-c56782b0faab";
+
+        modelBuilder.Entity<IdentityRole>().HasData(
+            new IdentityRole
+            {
+                Id = adminRoleId,
+                Name = "Admin",
+                NormalizedName = "ADMIN"
+            },
+            new IdentityRole
+            {
+                Id = userRoleId,
+                Name = "User",
+                NormalizedName = "USER"
+            }
+        );
+
+        // ─── 2. Seed на default user (ако вече го имаш, не е нужно да повтаряш) ───
+        var defaultUserId = "7699db7d-964f-4782-8209-d76562e0fece";
+        modelBuilder.Entity<IdentityUser>().HasData(
+            new IdentityUser
+            {
+                Id = defaultUserId,
+                UserName = "admin@KazanlakRun.com",
+                NormalizedUserName = "ADMIN@KAZANLAKRUN.COM",
+                Email = "admin@KazanlakRun.com",
+                NormalizedEmail = "ADMIN@KAZANLAKRUN.COM",
+                EmailConfirmed = true,
+                PasswordHash = new PasswordHasher<IdentityUser>()
+                                          .HashPassword(null, "Admin123!"),
+                SecurityStamp = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            }
+        );
+
+        // ─── 3. Асоцииране на default user с ролята "Admin" ───
+        modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+            new IdentityUserRole<string>
+            {
+                RoleId = adminRoleId,
+                UserId = defaultUserId
+            }
+        );
 
         // ─── Composite keys for join tables ─────────────────────
         modelBuilder.Entity<VolunteerRole>()
