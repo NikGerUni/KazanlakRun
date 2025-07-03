@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using KazanlakRun.Web.Areas.Identity;
 namespace KazanlakRun.Web
 {
+    using KazanlakRun.Areas.User.Services;
     using KazanlakRun.Data;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,9 @@ namespace KazanlakRun.Web
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+            builder.Services.AddScoped<IVolunteerService, VolunteerService>();
+
+
             builder.Services.AddDefaultIdentity<IdentityUser>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -31,7 +35,7 @@ namespace KazanlakRun.Web
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            // днаюбере яюлн рнбю Б Program.cs:
+         
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";

@@ -3,7 +3,7 @@
     public class Volunteer
     {
         public int Id { get; set; }
-
+        public string? UserId { get; set; }
         /// <summary>Две имена</summary>
         public string Names { get; set; } = null!;
 
