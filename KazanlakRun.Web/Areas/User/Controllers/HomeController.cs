@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using KazanlakRun.Areas.User.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace KazanlakRun.Web.Areas.User.Controllers
 {
@@ -7,9 +10,23 @@ namespace KazanlakRun.Web.Areas.User.Controllers
     [Authorize(Roles = "User")]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IVolunteerService _volunteerService;
+
+        public HomeController(IVolunteerService volunteerService)
         {
-            return View();
+            _volunteerService = volunteerService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            bool volunteerExists = false;
+            
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                volunteerExists = await _volunteerService.ExistsAsync(userId);
+            
+
+            return View(volunteerExists);
         }
     }
 }
+

@@ -1,7 +1,7 @@
 ﻿@model KazanlakRun.Areas.User.Models.VolunteerInputModel
 
 @{
-    ViewData["Title"] = "Стани доброволец";
+    ViewData["Title"] = "Become a volunteer";
 }
 
 <h2>Стани доброволец</h2>
@@ -24,8 +24,8 @@
         <input asp-for="Phone" class="form-control" />
         <span asp-validation-for="Phone" class="text-danger"></span>
     </div>
-
-    <button type="submit" class="btn btn-primary">Изпрати</button>
+    <br />
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 @section Scripts {

@@ -8,12 +8,33 @@
         <h1 class="hero-title">KAZANLAK RUN - SUPPORT CENTER</h1>
         <p class="hero-subtitle">10, 20, 40 km | Start/Finish - Central Park | May 31, 2026, 10:00 AM</p>
         <p class="hero-subtitle">We are happy to have you as our volunteer supporter</p>
-        <a class="btn btn-primary login-btn"
-           asp-area="User"
-           asp-controller="Volunteer"
-           asp-action="Create">
-            Register as a volunteer
-        </a>
+        @model bool
+        @{
+            //var isRegistered = ViewBag.HasVolunteerRegistration as bool? ?? false;
+            var isRegistered = Model;
+        }
+
+        @if (User.IsInRole("User"))
+        {
+            @if (isRegistered)
+            {
+                <a class="btn btn-primary"
+                   asp-area="User"
+                   asp-controller="Volunteer"
+                   asp-action="Edit">
+                    Edit your volunteer registration
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-success"
+                   asp-area="User"
+                   asp-controller="Volunteer"
+                   asp-action="Create">
+                    Register as a volunteer
+                </a>
+            }
+        }
     </div>
 </div>
 
