@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/participants.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/KazanlakRun.styles.css" asp-append-version="true" />
+    @RenderSection("Scripts", required: false)
 </head>
 <body>
     <header>
@@ -62,9 +63,9 @@
                                             <li>
                                                 <a class="dropdown-item"
                                                    asp-area="Admin"
-                                                   asp-controller="Good"
+                                                   asp-controller="Goods"
                                                    asp-action="Index">
-                                                    Goods
+                                                    Manage Goods
                                                 </a>
                                             </li>
                                             <li>
@@ -167,6 +168,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    
 </body>
 </html>
