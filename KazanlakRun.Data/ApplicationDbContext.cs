@@ -68,6 +68,31 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             }
         );
 
+        var normalUserId = "11111111-2222-3333-4444-555555555555";
+        modelBuilder.Entity<IdentityUser>().HasData(
+            new IdentityUser
+            {
+                Id = normalUserId,
+                UserName = "user@abv.bg",
+                NormalizedUserName = "USER@ABV.BG",
+                Email = "user@abv.bg",
+                NormalizedEmail = "USER@ABV.BG",
+                EmailConfirmed = true,
+                PasswordHash = new PasswordHasher<IdentityUser>()
+                                       .HashPassword(null, "User123!"),
+                SecurityStamp = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            }
+        );
+        modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+            new IdentityUserRole<string>
+            {
+                UserId = normalUserId,
+                RoleId = userRoleId
+            }
+        );
+
+
         // ─── Composite keys for join tables ─────────────────────
         modelBuilder.Entity<VolunteerRole>()
             .HasKey(vr => new { vr.VolunteerId, vr.RoleId });
@@ -123,6 +148,12 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             new AidStation { Id = 4, ShortName = "A4", Name = "Aid stationn 4" },
             new AidStation { Id = 5, ShortName = "A5", Name = "Aid stationn 5" }
         );
+
+         modelBuilder.Entity<Distance>().HasData(
+          new Distance { Id = 1, Distans = "10 km", RegRunners = 100 },
+          new Distance { Id = 2, Distans = "20 km", RegRunners = 80 },
+          new Distance { Id = 3, Distans = "40 km", RegRunners = 60 }
+);
 
         modelBuilder.Entity<Volunteer>().HasData(
             new Volunteer { Id = 1, Names = "Nikola Nikolov", Email = "nnnnnn@nnn.bg", Phone = "0888998899", AidStationId = 1 },
