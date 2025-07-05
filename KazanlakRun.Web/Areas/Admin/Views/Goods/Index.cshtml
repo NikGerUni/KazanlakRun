@@ -1,0 +1,215 @@
+﻿@{
+    ViewData["Title"] = "Goods Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Ag-Grid CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/31.0.1/styles/ag-grid.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/31.0.1/styles/ag-theme-alpine.min.css" />
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .toolbar {
+        margin-bottom: 10px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+    .status {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        display: none;
+    }
+
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+    .invalid-cell {
+        background-color: #ffebee !important;
+        border: 1px solid #f44336 !important;
+    }
+
+    .btn-sm {
+        padding: 2px 6px;
+        font-size: 12px;
+        border-radius: 3px;
+    }
+
+        .btn-sm.btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+            .btn-sm.btn-danger:hover {
+                background-color: #c82333;
+            }
+
+    #myGrid {
+        height: 500px;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="container">
+    <h1>📊 Goods Management</h1>
+    <div class="toolbar">
+        <button class="btn btn-success" onclick="addRow()">➕ Add Good</button>
+        <button class="btn btn-primary" onclick="saveChanges()">💾 Save All</button>
+        <button class="btn btn-danger" onclick="deleteSelected()">🗑️ Delete Selected</button>
+        <span style="margin-left: auto; color: #666;">Double-click cells to edit • Select rows and press Delete</span>
+    </div>
+    <div id="status" class="status"></div>
+    <div id="myGrid" class="ag-theme-alpine"></div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/31.0.1/ag-grid-community.min.js"></script>
+    <script>
+        let rowData = [];
+        let nextId = 1;
+
+        const columnDefs = [
+            { headerName: 'Select', checkboxSelection: true, headerCheckboxSelection: true, width: 60, pinned: 'left', suppressMenu: true, suppressSorting: true },
+            { headerName: 'ID', field: 'id', width: 80, editable: false, cellClass: 'text-center', type: 'numericColumn' },
+            { headerName: 'Name', field: 'name', editable: true, flex: 2, cellEditor: 'agTextCellEditor', cellEditorParams: { maxLength: 100 }, cellClassRules: { 'invalid-cell': params => !params.value || params.value.trim() === '' } },
+            { headerName: 'Measure', field: 'measure', editable: true, flex: 1, cellEditor: 'agTextCellEditor', cellEditorParams: { maxLength: 20 }, cellClassRules: { 'invalid-cell': params => !params.value || params.value.trim() === '' } },
+            { headerName: 'Quantity', field: 'quantity', editable: true, width: 120, type: 'numericColumn', cellEditor: 'agTextCellEditor', cellClassRules: { 'invalid-cell': params => isNaN(params.value) }, valueParser: params => Number(params.newValue) },
+            { headerName: 'Actions', width: 100, cellRenderer: params => params.data?.id ? `<button class="btn-sm btn-danger" onclick="deleteRow(${params.data.id})" title="Delete">🗑️</button>` : '', suppressMenu: true, suppressSorting: true }
+        ];
+
+        const gridOptions = {
+            columnDefs,
+            rowData,
+            defaultColDef: { sortable: true, filter: true, resizable: true },
+            rowSelection: 'multiple', suppressRowClickSelection: true, enableCellChangeFlash: true, undoRedoCellEditing: true,
+            enableRangeSelection: true, enableFillHandle: true, enableRangeHandle: true, enableClipboard: true,
+            onCellValueChanged: onCellValueChanged, onRowDataChanged: onRowDataChanged,
+            getContextMenuItems: getContextMenuItems
+        };
+
+        let gridApi;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridDiv = document.querySelector('#myGrid');
+            gridApi = agGrid.createGrid(gridDiv, gridOptions);
+            document.addEventListener('keydown', handleKeyDown);
+
+            fetch('/api/GoodsApi')
+                .then(res => res.json())
+                .then(data => {
+                    rowData = data;
+                    gridApi.setRowData(rowData);
+                    nextId = data.length ? Math.max(...data.map(g => g.id)) + 1 : 1;
+                })
+                .catch(err => showStatus('❌ Error loading data: ' + err.message, 'error'));
+        });
+
+        function onCellValueChanged(event) { showStatus('Cell updated. Don\'t forget to save!', 'success'); }
+        function onRowDataChanged() { }
+        function getContextMenuItems(params) { return ['copy', 'paste', 'separator', { name: 'Add Row', action: addRow }, { name: 'Delete Row', action: () => deleteRow(params.node.data.id) }]; }
+        function handleKeyDown(event) {
+            if (event.key === 'Delete' && !event.target.classList.contains('ag-cell-edit-input')) deleteSelected();
+            if (event.ctrlKey && event.key === 's') { event.preventDefault(); saveChanges(); }
+        }
+        function addRow() {
+            const newRow = { id: nextId++, name: '', measure: '', quantity: 0 };
+            gridApi.applyTransaction({ add: [newRow], addIndex: 0 });
+            showStatus('New good added. Edit and save.', 'success');
+        }
+        function deleteRow(id) {
+            const node = gridApi.getRowNode(id.toString());
+            if (node) { gridApi.applyTransaction({ remove: [node.data] }); showStatus(`Deleted ID ${id}. Save to confirm.`, 'success'); }
+        }
+        function deleteSelected() {
+            const selected = gridApi.getSelectedRows();
+            if (!selected.length) { showStatus('Select rows to delete.', 'error'); return; }
+            if (confirm(`Delete ${selected.length} row(s)?`)) { gridApi.applyTransaction({ remove: selected }); showStatus(`${selected.length} deleted. Save to confirm.`, 'success'); }
+        }
+        async function saveChanges() {
+            const all = [];
+            gridApi.forEachNode(n => n.data && all.push(n.data));
+            const invalid = all.filter(i => !i.name.trim() || !i.measure.trim() || isNaN(i.quantity));
+            if (invalid.length) { showStatus('Fill all fields correctly before saving.', 'error'); return; }
+            try {
+                showStatus('Saving...', 'success');
+                const res = await fetch('/api/GoodsApi/batch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(all) });
+                if (!res.ok) throw new Error(res.statusText);
+                const data = await res.json();
+                gridApi.setRowData(data);
+                nextId = data.length ? Math.max(...data.map(g => g.id)) + 1 : 1;
+                showStatus('✅ All changes saved!', 'success');
+            } catch (e) {
+                showStatus('❌ Error: ' + e.message, 'error');
+            }
+        }
+        function showStatus(msg, type) {
+            const s = document.getElementById('status');
+            s.textContent = msg;
+            s.className = `status ${type}`;
+            s.style.display = 'block';
+            setTimeout(() => s.style.display = 'none', 5000);
+        }
+    </script>
+}
