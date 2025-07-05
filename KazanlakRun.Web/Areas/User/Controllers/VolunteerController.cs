@@ -1,5 +1,5 @@
 ﻿using KazanlakRun.Areas.User.Models;
-using KazanlakRun.Areas.User.Services;
+using KazanlakRun.Web.Areas.User.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

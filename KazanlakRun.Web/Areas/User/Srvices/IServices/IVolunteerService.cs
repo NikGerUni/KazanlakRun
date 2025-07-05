@@ -1,7 +1,7 @@
 ﻿using KazanlakRun.Areas.User.Models;
 using KazanlakRun.Data.Models;
 
-namespace KazanlakRun.Areas.User.Services
+namespace KazanlakRun.Web.Areas.User.Services
 {
     public interface IVolunteerService
     {

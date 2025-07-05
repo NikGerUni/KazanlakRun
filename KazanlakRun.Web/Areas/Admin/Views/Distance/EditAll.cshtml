@@ -1,0 +1,53 @@
+﻿@model List<KazanlakRun.Data.Models.Distance>
+@{
+    ViewData["Title"] = "Edit All Distances";
+}
+
+<h2>Distances</h2>
+
+<form asp-area="Admin"
+      asp-controller="Distance"
+      asp-action="EditAll"
+      method="post">
+    @Html.AntiForgeryToken()
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Distance</th>
+                <th>Number of runners</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => m[i].Id)
+                        @Html.HiddenFor(m => m[i].Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => m[i].Distans)
+                        @Html.HiddenFor(m => m[i].Distans)
+                    </td>
+                    <td>
+                        @Html.EditorFor(
+                                 m => m[i].RegRunners,
+                                 new { htmlAttributes = new { @class = "form-control", type = "number" } }
+                                 )
+                        @Html.ValidationMessageFor(m => m[i].RegRunners, "", new { @class = "text-danger" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Update All</button>
+    <a asp-area="Admin"
+       asp-controller="Home"
+       asp-action="Index"
+       class="btn btn-secondary ms-2">
+        Cancel
+    </a>
+</form>

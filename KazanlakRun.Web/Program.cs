@@ -1,11 +1,14 @@
-using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
-using KazanlakRun.Web.Areas.Identity;
+
 namespace KazanlakRun.Web
 {
-    using KazanlakRun.Areas.User.Services;
-    using KazanlakRun.Data;
-    using Microsoft.AspNetCore.Authentication;
+    
+    using KazanlakRun.Web.Areas.Admin.Services;
+    using KazanlakRun.Web.Areas.Admin.Services.IServices;
+    using KazanlakRun.Web.Areas.User.Services;
+    
+    
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     public class Program
@@ -21,6 +24,8 @@ namespace KazanlakRun.Web
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddScoped<IVolunteerService, VolunteerService>();
+            builder.Services.AddScoped<IDistanceService, DistanceService>();
+
 
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options =>

@@ -1,4 +1,4 @@
-﻿using KazanlakRun.Areas.User.Services;
+﻿using KazanlakRun.Web.Areas.User.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

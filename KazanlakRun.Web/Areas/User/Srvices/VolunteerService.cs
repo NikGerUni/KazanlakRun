@@ -1,9 +1,8 @@
 ﻿using KazanlakRun.Areas.User.Models;
-using KazanlakRun.Data;
 using KazanlakRun.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace KazanlakRun.Areas.User.Services
+namespace KazanlakRun.Web.Areas.User.Services
 {
     public class VolunteerService : IVolunteerService
     {
