@@ -25,6 +25,8 @@ namespace KazanlakRun.Web
 
             builder.Services.AddScoped<IVolunteerService, VolunteerService>();
             builder.Services.AddScoped<IDistanceService, DistanceService>();
+          
+            builder.Services.AddScoped<IVolunteerServiceAdmin, VolunteerServiceAdmin>();
 
 
 

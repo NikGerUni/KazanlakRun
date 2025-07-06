@@ -1,0 +1,42 @@
+﻿@model KazanlakRun.Web.Areas.Admin.Models.VolunteerViewModel
+
+@{
+    ViewData["Title"] = "Create Volunteer";
+}
+
+<h1>Create Volunteer</h1>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="Names" class="form-label"></label>
+        <input asp-for="Names" class="form-control" />
+        <span asp-validation-for="Names" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SelectedRoleIds" class="form-label">Roles</label>
+        <select asp-for="SelectedRoleIds"
+                asp-items="Model.AllRoles"
+                class="form-select"
+                multiple="multiple">
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+

@@ -1,7 +1,5 @@
-﻿// VolunteerRole.cs
-namespace KazanlakRun.Data.Models
+﻿namespace KazanlakRun.Data.Models
 {
-    /// <summary>Join entity за many-to-many Volunteer ↔ Role</summary>
     public class VolunteerRole
     {
         public int VolunteerId { get; set; }

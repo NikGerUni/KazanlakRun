@@ -11,7 +11,7 @@
         public string Phone { get; set; } = null!;
 
         // Foreign key to AidStation
-        public int AidStationId { get; set; }
+        public int? AidStationId { get; set; }
         public AidStation AidStation { get; set; } = null!;
 
         // Many-to-many to Role via join entity
