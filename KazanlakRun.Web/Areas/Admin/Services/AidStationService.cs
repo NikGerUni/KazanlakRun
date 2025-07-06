@@ -17,24 +17,31 @@ namespace KazanlakRun.Web.Areas.Admin.Services
 
         public AidStationService(ApplicationDbContext db) => _db = db;
 
+        // KazanlakRun.Services.Core/Services/AidStationService.cs (метод GetAllAsync)
         public async Task<List<AidStationListItem>> GetAllAsync() =>
             await _db.AidStations
-                .Include(a => a.AidStationDistances)
-                    .ThenInclude(ad => ad.Distance)
-                .Include(a => a.Volunteers)
+                .Include(a => a.AidStationDistances).ThenInclude(ad => ad.Distance)
+                .Include(a => a.Volunteers).ThenInclude(v => v.VolunteerRoles).ThenInclude(vr => vr.Role)
                 .Select(a => new AidStationListItem
                 {
                     Id = a.Id,
                     Name = a.Name,
                     DistanceNames = a.AidStationDistances
-                        .Select(ad => ad.Distance.Distans)
-                        .ToList(),
-                    VolunteerNames = a.Volunteers
-                        .Select(v => v.Names)
-                        .ToList()
+                                     .Select(ad => ad.Distance.Distans)
+                                     .ToList(),
+                    VolunteerDescriptions = a.Volunteers
+                                     .Select(v => v.Names
+                                         + (v.VolunteerRoles.Any()
+                                             ? " – " + string.Join(", ",
+                                                   v.VolunteerRoles
+                                                    .Select(vr => vr.Role.Name))
+                                             : ""))
+                                     .ToList()
                 })
                 .ToListAsync();
 
+
+        
         public async Task<AidStationViewModel> GetForCreateAsync()
         {
             var distances = await _db.Distances
@@ -45,13 +52,26 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 })
                 .ToListAsync();
 
-            var volunteers = await _db.Volunteers
+            var volunteersRaw = await _db.Volunteers
+                .Include(v => v.VolunteerRoles)
+                    .ThenInclude(vr => vr.Role)
+                .Select(v => new {
+                    v.Id,
+                    v.Names,
+                    RoleNames = v.VolunteerRoles.Select(vr => vr.Role.Name)
+                })
+                .ToListAsync();
+
+            var volunteers = volunteersRaw
                 .Select(v => new SelectListItem
                 {
                     Value = v.Id.ToString(),
                     Text = v.Names
+                         + (v.RoleNames.Any()
+                             ? " – " + string.Join(", ", v.RoleNames)
+                             : "")
                 })
-                .ToListAsync();
+                .ToList();
 
             return new AidStationViewModel
             {
@@ -59,6 +79,60 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 AllVolunteers = volunteers
             };
         }
+
+        public async Task<AidStationViewModel> GetForEditAsync(int id)
+        {
+            var station = await _db.AidStations
+                .Include(a => a.AidStationDistances)
+                .Include(a => a.Volunteers)
+                .FirstOrDefaultAsync(a => a.Id == id)
+                ?? throw new KeyNotFoundException();
+
+            var selectedDistanceIds = station.AidStationDistances.Select(ad => ad.DistanceId).ToHashSet();
+            var selectedVolunteerIds = station.Volunteers.Select(v => v.Id).ToHashSet();
+
+            var distances = await _db.Distances
+                .Select(d => new SelectListItem
+                {
+                    Value = d.Id.ToString(),
+                    Text = d.Distans,
+                    Selected = selectedDistanceIds.Contains(d.Id)
+                })
+                .ToListAsync();
+
+            var volunteersRaw = await _db.Volunteers
+                .Include(v => v.VolunteerRoles)
+                    .ThenInclude(vr => vr.Role)
+                .Select(v => new {
+                    v.Id,
+                    v.Names,
+                    RoleNames = v.VolunteerRoles.Select(vr => vr.Role.Name)
+                })
+                .ToListAsync();
+
+            var volunteers = volunteersRaw
+                .Select(v => new SelectListItem
+                {
+                    Value = v.Id.ToString(),
+                    Text = v.Names
+                             + (v.RoleNames.Any()
+                                 ? " – " + string.Join(", ", v.RoleNames)
+                                 : ""),
+                    Selected = selectedVolunteerIds.Contains(v.Id)
+                })
+                .ToList();
+
+            return new AidStationViewModel
+            {
+                Id = station.Id,
+                Name = station.Name,
+                AllDistances = distances,
+                SelectedDistanceIds = selectedDistanceIds.ToArray(),
+                AllVolunteers = volunteers,
+                SelectedVolunteerIds = selectedVolunteerIds.ToArray()
+            };
+        }
+
 
         public async Task CreateAsync(AidStationViewModel model)
         {
@@ -84,60 +158,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
             }
         }
 
-        public async Task<AidStationViewModel> GetForEditAsync(int id)
-        {
-            var station = await _db.AidStations
-                .Include(a => a.AidStationDistances)
-                .Include(a => a.Volunteers)
-                .FirstOrDefaultAsync(a => a.Id == id)
-                ?? throw new KeyNotFoundException();
 
-            // Извличаме избраните Id-та в паметта
-            var selectedDistanceIds = station.AidStationDistances
-                .Select(ad => ad.DistanceId)
-                .ToHashSet();
-            var selectedVolunteerIds = station.Volunteers
-                .Select(v => v.Id)
-                .ToHashSet();
-
-            // Взимаме всички разстояния и след това мапваме Selected локално
-            var distances = await _db.Distances
-                .Select(d => new { d.Id, d.Distans })
-                .ToListAsync();
-
-            var allDistances = distances
-                .Select(d => new SelectListItem
-                {
-                    Value = d.Id.ToString(),
-                    Text = d.Distans,
-                    Selected = selectedDistanceIds.Contains(d.Id)
-                })
-                .ToList();
-
-            // Същото и за доброволците
-            var volunteersRaw = await _db.Volunteers
-                .Select(v => new { v.Id, v.Names })
-                .ToListAsync();
-
-            var allVolunteers = volunteersRaw
-                .Select(v => new SelectListItem
-                {
-                    Value = v.Id.ToString(),
-                    Text = v.Names,
-                    Selected = selectedVolunteerIds.Contains(v.Id)
-                })
-                .ToList();
-
-            return new AidStationViewModel
-            {
-                Id = station.Id,
-                Name = station.Name,
-                AllDistances = allDistances,
-                SelectedDistanceIds = selectedDistanceIds.ToArray(),
-                AllVolunteers = allVolunteers,
-                SelectedVolunteerIds = selectedVolunteerIds.ToArray()
-            };
-        }
 
 
         public async Task UpdateAsync(AidStationViewModel model)

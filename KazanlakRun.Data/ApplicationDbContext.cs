@@ -126,10 +126,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .WithMany(d => d.AidStationDistances)
             .HasForeignKey(ad => ad.DistanceId);
 
-        modelBuilder.Entity<Good>()
-            .HasOne(g => g.AidStation)
-            .WithMany(a => a.Goods)
-            .HasForeignKey(g => g.AidStationId);
+       
 
         // ─── Seed data ───────────────────────────────────────────
 
@@ -169,19 +166,19 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         );
 
         modelBuilder.Entity<Good>().HasData(
-            new Good { Id = 1, Name = "Table", Measure = "pcs", Quantity = 10, AidStationId = 1 },
-            new Good { Id = 2, Name = "Chair", Measure = "pcs", Quantity = 20, AidStationId = 1 },
-            new Good { Id = 3, Name = "Tent", Measure = "pcs", Quantity = 7, AidStationId = 1 },
-            new Good { Id = 4, Name = "Plates", Measure = "pcs", Quantity = 40, AidStationId = 2 },
-            new Good { Id = 5, Name = "Cups", Measure = "pcs", Quantity = 200, AidStationId = 2 },
-            new Good { Id = 6, Name = "Salt", Measure = "kg", Quantity = 1, AidStationId = 2 },
-            new Good { Id = 7, Name = "Drinking water", Measure = "l", Quantity = 100, AidStationId = 3 },
-            new Good { Id = 8, Name = "Isotonic", Measure = "l", Quantity = 50, AidStationId = 3 },
-            new Good { Id = 9, Name = "Lemons", Measure = "pcs", Quantity = 100, AidStationId = 3 },
-            new Good { Id = 10, Name = "Apples", Measure = "kg", Quantity = 100, AidStationId = 4 },
-            new Good { Id = 11, Name = "Bananas", Measure = "pcs", Quantity = 100, AidStationId = 4 },
-            new Good { Id = 12, Name = "Chocolate", Measure = "pcs", Quantity = 50, AidStationId = 4 },
-            new Good { Id = 13, Name = "Soap", Measure = "bottles", Quantity = 10, AidStationId = 5 }
+            new Good { Id = 1, Name = "Table", Measure = "pcs", Quantity = 10, QuantityOneRunner = 0 },
+            new Good { Id = 2, Name = "Chair", Measure = "pcs", Quantity = 20, QuantityOneRunner = 0 },
+            new Good { Id = 3, Name = "Tent", Measure = "pcs", Quantity = 7, QuantityOneRunner = 0 },
+            new Good { Id = 4, Name = "Plates", Measure = "pcs", Quantity = 40, QuantityOneRunner = 0 },
+            new Good { Id = 5, Name = "Cups", Measure = "pcs", Quantity = 200, QuantityOneRunner = 1 },
+            new Good { Id = 6, Name = "Salt", Measure = "kg", Quantity = 1, QuantityOneRunner = 0.003 },
+            new Good { Id = 7, Name = "Drinking water", Measure = "l", Quantity = 100, QuantityOneRunner = 0.5 },
+            new Good { Id = 8, Name = "Isotonic", Measure = "l", Quantity = 50, QuantityOneRunner = 0.2 },
+            new Good { Id = 9, Name = "Lemons", Measure = "pcs", Quantity = 100, QuantityOneRunner = 0.5 },
+            new Good { Id = 10, Name = "Apples", Measure = "kg", Quantity = 100, QuantityOneRunner = 0.5 },
+            new Good { Id = 11, Name = "Bananas", Measure = "pcs", Quantity = 100, QuantityOneRunner = 0.5 },
+            new Good { Id = 12, Name = "Chocolate", Measure = "pcs", Quantity = 50, QuantityOneRunner = 0.01 },
+            new Good { Id = 13, Name = "Soap", Measure = "bottles", Quantity = 10, QuantityOneRunner = 0 }
         );
     }
 }
