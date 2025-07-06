@@ -1,0 +1,17 @@
+﻿@*
+  Views/Error/404.cshtml
+*@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Страница не е намерена";
+}
+
+<div class="text-center mt-5">
+    <h1>404</h1>
+    <h2>Страницата не е намерена</h2>
+    <p>Изглежда URL-то, което търсиш, не съществува.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+        ← Към началната страница
+    </a>
+</div>
+

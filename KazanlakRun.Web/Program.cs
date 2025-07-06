@@ -74,6 +74,8 @@ namespace KazanlakRun.Web
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseExceptionHandler("/Error/500");
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
             // 1. API (attribute routes)
             app.MapControllers();
