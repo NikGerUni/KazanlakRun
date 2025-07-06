@@ -1,0 +1,46 @@
+﻿@model IEnumerable<KazanlakRun.Web.Areas.Admin.Models.AidStationListItem>
+
+@{
+    ViewData["Title"] = "Aid Stations";
+}
+
+<h1>Aid Stations</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Aid Station</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Distances</th>
+            <th>Volunteers</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    @foreach (var d in item.DistanceNames)
+                    {
+                        <span class="badge bg-secondary">@d</span>
+                    }
+                </td>
+                <td>
+                    @foreach (var v in item.VolunteerNames)
+                    {
+                        <span class="badge bg-secondary">@v</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,38 @@
+﻿@model KazanlakRun.Web.Areas.Admin.Models.AidStationViewModel
+
+@{
+    ViewData["Title"] = "Create Aid Station";
+}
+
+<h1>Create Aid Station</h1>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SelectedDistanceIds" class="form-label">Distances</label>
+        <select asp-for="SelectedDistanceIds"
+                asp-items="Model.AllDistances"
+                class="form-select"
+                multiple="multiple">
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SelectedVolunteerIds" class="form-label">Volunteers</label>
+        <select asp-for="SelectedVolunteerIds"
+                asp-items="Model.AllVolunteers"
+                class="form-select"
+                multiple="multiple">
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,7 +1,6 @@
-﻿// AidStationDistance.cs
+﻿
 namespace KazanlakRun.Data.Models
 {
-    /// <summary>Join entity за many-to-many AidStation ↔ Distance</summary>
     public class AidStationDistance
     {
         public int AidStationId { get; set; }

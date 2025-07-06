@@ -25,12 +25,10 @@ namespace KazanlakRun.Web
 
             builder.Services.AddScoped<IVolunteerService, VolunteerService>();
             builder.Services.AddScoped<IDistanceService, DistanceService>();
-          
+            builder.Services.AddScoped<IAidStationService, AidStationService>();
             builder.Services.AddScoped<IVolunteerServiceAdmin, VolunteerServiceAdmin>();
 
-
-
-            builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+             builder.Services.AddDefaultIdentity<IdentityUser>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
