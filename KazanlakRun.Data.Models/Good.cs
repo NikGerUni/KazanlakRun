@@ -7,11 +7,13 @@ namespace KazanlakRun.Data.Models
 
         public string Name { get; set; } = null!;
 
-        public string Measure { get; set; } = null!;
+        public string? Measure { get; set; }
 
-        public double Quantity { get; set; }
+        public double? Quantity { get; set; } = 0;
 
-        public double QuantityOneRunner { get; set; }
+        public int? AidStationId { get; set; }
+
+        public double  QuantityOneRunner { get; set; } = 0;
     }
 }
 

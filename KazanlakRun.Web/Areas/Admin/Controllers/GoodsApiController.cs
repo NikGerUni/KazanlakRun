@@ -88,16 +88,76 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
         [HttpPost("batch")]
         public async Task<ActionResult<IEnumerable<Good>>> SaveBatch([FromBody] List<Good> goods)
         {
-            // Remove all existing records
-            _context.Goods.RemoveRange(_context.Goods);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Валидация на входните данни
+                if (goods == null || !goods.Any())
+                {
+                    return BadRequest("No goods provided");
+                }
 
-            // Add the new batch
-            await _context.Goods.AddRangeAsync(goods);
-            await _context.SaveChangesAsync();
+                // Валидация на всеки запис
+                foreach (var good in goods)
+                {
+                    if (string.IsNullOrWhiteSpace(good.Name))
+                    {
+                        return BadRequest($"Good name is required for ID: {good.Id}");
+                    }
+                    if (string.IsNullOrWhiteSpace(good.Measure))
+                    {
+                        return BadRequest($"Good measure is required for ID: {good.Id}");
+                    }
+                }
 
-            return Ok(goods);
+                // Вземи съществуващите записи
+                var existingGoods = await _context.Goods.ToListAsync();
+                var existingIds = existingGoods.Select(g => g.Id).ToHashSet();
+                var incomingIds = goods.Select(g => g.Id).ToHashSet();
+
+                // Записи за добавяне (ID = 0 или не съществуват)
+                var goodsToAdd = goods.Where(g => g.Id <= 0 || !existingIds.Contains(g.Id)).ToList();
+
+                // Записи за обновяване (съществуват и в двете колекции)
+                var goodsToUpdate = goods.Where(g => g.Id > 0 && existingIds.Contains(g.Id)).ToList();
+
+                // Записи за изтриване (съществуват в БД, но не в входящите данни)
+                var goodsToDelete = existingGoods.Where(g => !incomingIds.Contains(g.Id)).ToList();
+
+                // Изтрий записите, които не са в новите данни
+                if (goodsToDelete.Any())
+                {
+                    _context.Goods.RemoveRange(goodsToDelete);
+                }
+
+                // Обнови съществуващите записи
+                foreach (var good in goodsToUpdate)
+                {
+                    var existingGood = existingGoods.First(g => g.Id == good.Id);
+                    existingGood.Name = good.Name;
+                    existingGood.Measure = good.Measure;
+                    existingGood.Quantity = good.Quantity;
+                    existingGood.QuantityOneRunner = good.QuantityOneRunner;
+                    existingGood.AidStationId = good.AidStationId;
+                }
+
+                // Добави новите записи (нулирай ID за автоматично генериране)
+                foreach (var good in goodsToAdd)
+                {
+                    good.Id = 0; // За автоматично генериране на ID
+                }
+                await _context.Goods.AddRangeAsync(goodsToAdd);
+
+                // Запази всички промени
+                await _context.SaveChangesAsync();
+
+                // Върни актуализираните данни
+                var result = await _context.Goods.AsNoTracking().ToListAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }
-

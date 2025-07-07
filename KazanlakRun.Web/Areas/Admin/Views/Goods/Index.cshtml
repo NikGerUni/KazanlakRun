@@ -153,9 +153,8 @@
                'invalid-cell': params => isNaN(params.value)
                },
                valueParser: params => Number(params.newValue)
-               },
-              { headerName: 'Actions', width: 100, cellRenderer: params => params.data?.id ? `<button class="btn-sm btn-danger" onclick="deleteRow(${params.data.id})" title="Delete">🗑️</button>` : '', suppressMenu: true, suppressSorting: true }
-         ];
+               }
+                ];
 
         const gridOptions = {
             headerHeight: 60,
@@ -194,11 +193,7 @@
             if (event.key === 'Delete' && !event.target.classList.contains('ag-cell-edit-input')) deleteSelected();
             if (event.ctrlKey && event.key === 's') { event.preventDefault(); saveChanges(); }
         }
-        function addRow() {
-            const newRow = { id: nextId++, name: '', measure: '', quantity: 0, quantityOneRunner: 0 };
-            gridApi.applyTransaction({ add: [newRow], addIndex: 0 });
-            showStatus('New good added. Edit and save.', 'success');
-        }
+
         function deleteRow(id) {
             const node = gridApi.getRowNode(id.toString());
             if (node) { gridApi.applyTransaction({ remove: [node.data] }); showStatus(`Deleted ID ${id}. Save to confirm.`, 'success'); }
@@ -208,29 +203,86 @@
             if (!selected.length) { showStatus('Select rows to delete.', 'error'); return; }
             if (confirm(`Delete ${selected.length} row(s)?`)) { gridApi.applyTransaction({ remove: selected }); showStatus(`${selected.length} deleted. Save to confirm.`, 'success'); }
         }
-        async function saveChanges() {
-            const all = [];
-            gridApi.forEachNode(n => n.data && all.push(n.data));
-            const invalid = all.filter(i => !i.name.trim() || !i.measure.trim() || isNaN(i.quantity));
-            if (invalid.length) { showStatus('Fill all fields correctly before saving.', 'error'); return; }
-            try {
-                showStatus('Saving...', 'success');
-                const res = await fetch('/api/GoodsApi/batch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(all) });
-                if (!res.ok) throw new Error(res.statusText);
-                const data = await res.json();
-                gridApi.setRowData(data);
-                nextId = data.length ? Math.max(...data.map(g => g.id)) + 1 : 1;
-                showStatus('✅ All changes saved!', 'success');
-            } catch (e) {
-                showStatus('❌ Error: ' + e.message, 'error');
-            }
-        }
+
         function showStatus(msg, type) {
             const s = document.getElementById('status');
             s.textContent = msg;
             s.className = `status ${type}`;
             s.style.display = 'block';
             setTimeout(() => s.style.display = 'none', 5000);
+        }
+
+        // Заменете функцията saveChanges с тази подобрена версия
+        async function saveChanges() {
+            const all = [];
+            gridApi.forEachNode(n => n.data && all.push(n.data));
+
+            // Подобрена валидация
+            const invalid = all.filter(item => {
+                return !item.name || !item.name.trim() ||
+                    !item.measure || !item.measure.trim() ||
+                    item.quantity === null || item.quantity === undefined || isNaN(item.quantity) ||
+                    item.quantityOneRunner === null || item.quantityOneRunner === undefined || isNaN(item.quantityOneRunner);
+            });
+
+            if (invalid.length) {
+                showStatus(`❌ ${invalid.length} record(s) have invalid data. Please check all fields.`, 'error');
+                console.log('Invalid records:', invalid);
+                return;
+            }
+
+            // Проверка за дублирани имена
+            const names = all.map(item => item.name.trim().toLowerCase());
+            const duplicateNames = names.filter((name, index) => names.indexOf(name) !== index);
+            if (duplicateNames.length > 0) {
+                showStatus('❌ Duplicate names found: ' + [...new Set(duplicateNames)].join(', '), 'error');
+                return;
+            }
+
+            try {
+                showStatus('💾 Saving changes...', 'success');
+
+                const res = await fetch('/api/GoodsApi/batch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(all)
+                });
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`HTTP ${res.status}: ${errorText}`);
+                }
+
+                const data = await res.json();
+
+                // Обнови grid-а с новите данни
+                gridApi.setRowData(data);
+                nextId = data.length ? Math.max(...data.map(g => g.id)) + 1 : 1;
+
+                showStatus('✅ All changes saved successfully!', 'success');
+
+            } catch (e) {
+                console.error('Save error:', e);
+                showStatus('❌ Error saving: ' + e.message, 'error');
+            }
+        }
+
+        // Също така подобрете функцията addRow
+        function addRow() {
+            const newRow = {
+                id: 0, // Използвайте 0 за нови записи
+                name: '',
+                measure: '',
+                quantity: 0,
+                quantityOneRunner: 0,
+                aidStationId: null
+            };
+
+            gridApi.applyTransaction({ add: [newRow], addIndex: 0 });
+            showStatus('➕ New good added. Fill in the details and save.', 'success');
         }
     </script>
 }
