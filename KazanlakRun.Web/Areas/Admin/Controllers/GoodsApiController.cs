@@ -137,7 +137,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
                     existingGood.Measure = good.Measure;
                     existingGood.Quantity = good.Quantity;
                     existingGood.QuantityOneRunner = good.QuantityOneRunner;
-                    existingGood.AidStationId = good.AidStationId;
+                   
                 }
 
                 // Добави новите записи (нулирай ID за автоматично генериране)

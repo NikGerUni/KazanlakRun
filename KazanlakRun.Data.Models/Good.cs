@@ -11,9 +11,7 @@ namespace KazanlakRun.Data.Models
 
         public double? Quantity { get; set; } = 0;
 
-        public int? AidStationId { get; set; }
-
-        public double  QuantityOneRunner { get; set; } = 0;
+       public double  QuantityOneRunner { get; set; } = 0;
     }
 }
 
