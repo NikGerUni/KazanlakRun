@@ -135,7 +135,8 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             new Role { Id = 2, Name = "security" },
             new Role { Id = 3, Name = "radio" },
             new Role { Id = 4, Name = "food preparation" },
-            new Role { Id = 5, Name = "time recorder" }
+            new Role { Id = 5, Name = "time recorder" },
+            new Role { Id = 6, Name = "general" }
         );
 
         modelBuilder.Entity<AidStation>().HasData(
@@ -154,22 +155,19 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
         modelBuilder.Entity<Volunteer>().HasData(
             new Volunteer { Id = 1, Names = "Nikola Nikolov", Email = "nnnnnn@nnn.bg", Phone = "0888998899", AidStationId = 1 },
-            new Volunteer { Id = 2, Names = "Ivan Ivanov", Email = "iiiiii@.iii.bg", Phone = "0888999999", AidStationId = 2 },
-            new Volunteer { Id = 3, Names = "Georg Georgiev", Email = "gggggg@ggg.bg", Phone = "0888777777", AidStationId = 3 },
-            new Volunteer { Id = 4, Names = "Petar Petrov", Email = "petarp@p.bg", Phone = "0888111111", AidStationId = 1 },
-            new Volunteer { Id = 5, Names = "Maria Ivanova", Email = "maria@i.bg", Phone = "0888222222", AidStationId = 2 },
+            new Volunteer { Id = 2, Names = "Ivan Ivanov", Email = "iiiiii@.iii.bg", Phone = "0888999999", AidStationId = 1 },
+            new Volunteer { Id = 3, Names = "Georg Georgiev", Email = "gggggg@ggg.bg", Phone = "0888777777", AidStationId = 2 },
+            new Volunteer { Id = 4, Names = "Petar Petrov", Email = "petarp@p.bg", Phone = "0888111111", AidStationId = 2 },
+            new Volunteer { Id = 5, Names = "Maria Ivanova", Email = "maria@i.bg", Phone = "0888222222", AidStationId = 3 },
             new Volunteer { Id = 6, Names = "Stoyan Dimitrov", Email = "stoyand@d.bg", Phone = "0888333333", AidStationId = 3 },
             new Volunteer { Id = 7, Names = "Elena Petrova", Email = "elena@p.bg", Phone = "0888444444", AidStationId = 4 },
-            new Volunteer { Id = 8, Names = "Vladimir Stoyanov", Email = "vlad@st.bg", Phone = "0888555555", AidStationId = 5 },
-            new Volunteer { Id = 9, Names = "Tsveta Koleva", Email = "tsveta@k.bg", Phone = "0888666666", AidStationId = 1 },
-            new Volunteer { Id = 10, Names = "Nikolay Marinov", Email = "nikolay@m.bg", Phone = "0888778778", AidStationId = 2 }
+            new Volunteer { Id = 8, Names = "Vladimir Stoyanov", Email = "vlad@st.bg", Phone = "0888555555", AidStationId = 4 },
+            new Volunteer { Id = 9, Names = "Tsveta Koleva", Email = "tsveta@k.bg", Phone = "0888666666", AidStationId = 5 },
+            new Volunteer { Id = 10, Names = "Nikolay Marinov", Email = "nikolay@m.bg", Phone = "0888778778", AidStationId = 5 }
         );
 
         modelBuilder.Entity<Good>().HasData(
-            new Good { Id = 1, Name = "Table", Measure = "pcs", Quantity = 10, QuantityOneRunner = 0 },
-            new Good { Id = 2, Name = "Chair", Measure = "pcs", Quantity = 20, QuantityOneRunner = 0 },
-            new Good { Id = 3, Name = "Tent", Measure = "pcs", Quantity = 7, QuantityOneRunner = 0 },
-            new Good { Id = 4, Name = "Plates", Measure = "pcs", Quantity = 40, QuantityOneRunner = 0 },
+            
             new Good { Id = 5, Name = "Cups", Measure = "pcs", Quantity = 200, QuantityOneRunner = 1 },
             new Good { Id = 6, Name = "Salt", Measure = "kg", Quantity = 1, QuantityOneRunner = 0.003 },
             new Good { Id = 7, Name = "Drinking water", Measure = "l", Quantity = 100, QuantityOneRunner = 0.5 },
@@ -177,8 +175,49 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             new Good { Id = 9, Name = "Lemons", Measure = "pcs", Quantity = 100, QuantityOneRunner = 0.5 },
             new Good { Id = 10, Name = "Apples", Measure = "kg", Quantity = 100, QuantityOneRunner = 0.5 },
             new Good { Id = 11, Name = "Bananas", Measure = "pcs", Quantity = 100, QuantityOneRunner = 0.5 },
-            new Good { Id = 12, Name = "Chocolate", Measure = "pcs", Quantity = 50, QuantityOneRunner = 0.01 },
-            new Good { Id = 13, Name = "Soap", Measure = "bottles", Quantity = 10, QuantityOneRunner = 0 }
+            new Good { Id = 12, Name = "Chocolate", Measure = "pcs", Quantity = 50, QuantityOneRunner = 0.01 }
+            
         );
+
+        modelBuilder.Entity<AidStationDistance>().HasData(
+    
+    new AidStationDistance { AidStationId = 1, DistanceId = 1 },
+    new AidStationDistance { AidStationId = 1, DistanceId = 2 },
+    new AidStationDistance { AidStationId = 1, DistanceId = 3 },
+     new AidStationDistance { AidStationId = 2, DistanceId = 1 },
+    new AidStationDistance { AidStationId = 2, DistanceId = 2 },
+    new AidStationDistance { AidStationId = 3, DistanceId = 1 },
+    new AidStationDistance { AidStationId = 3, DistanceId = 3 },
+    new AidStationDistance { AidStationId = 4, DistanceId = 1 },
+     new AidStationDistance { AidStationId = 5, DistanceId = 1 },
+    new AidStationDistance { AidStationId = 5, DistanceId = 2 },
+    new AidStationDistance { AidStationId = 5, DistanceId = 3 }
+);
+
+        modelBuilder.Entity<VolunteerRole>().HasData(
+    new VolunteerRole { VolunteerId = 1, RoleId = 1 },
+    new VolunteerRole { VolunteerId = 1, RoleId = 2 },
+    new VolunteerRole { VolunteerId = 2, RoleId = 2 },
+    new VolunteerRole { VolunteerId = 2, RoleId = 3 },
+    new VolunteerRole { VolunteerId = 3, RoleId = 3 },
+    new VolunteerRole { VolunteerId = 3, RoleId = 4 },
+    new VolunteerRole { VolunteerId = 4, RoleId = 4 },
+    new VolunteerRole { VolunteerId = 4, RoleId = 5 },
+    new VolunteerRole { VolunteerId = 5, RoleId = 5 },
+    new VolunteerRole { VolunteerId = 5, RoleId = 6 },
+    new VolunteerRole { VolunteerId = 6, RoleId = 6 },
+    new VolunteerRole { VolunteerId = 6, RoleId = 1 },
+    new VolunteerRole { VolunteerId = 7, RoleId = 1 },
+    new VolunteerRole { VolunteerId = 7, RoleId = 3 },
+    new VolunteerRole { VolunteerId = 8, RoleId = 2 },
+    new VolunteerRole { VolunteerId = 8, RoleId = 4 },
+    new VolunteerRole { VolunteerId = 9, RoleId = 3 },
+    new VolunteerRole { VolunteerId = 9, RoleId = 5 },
+    new VolunteerRole { VolunteerId = 10, RoleId = 4 },
+    new VolunteerRole { VolunteerId = 10, RoleId = 6 }
+);
+
+
+
     }
 }
