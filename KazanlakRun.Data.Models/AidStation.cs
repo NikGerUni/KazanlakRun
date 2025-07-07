@@ -8,7 +8,7 @@ namespace KazanlakRun.Data.Models
         public string Name { get; set; } = null!;
         public ICollection<Volunteer> Volunteers { get; set; }  = new List<Volunteer>();
         public ICollection<AidStationDistance> AidStationDistances { get; set; }  = new List<AidStationDistance>();
-        public ICollection<Good> Goods { get; set; }  = new List<Good>();
+       
     }
 }
 
