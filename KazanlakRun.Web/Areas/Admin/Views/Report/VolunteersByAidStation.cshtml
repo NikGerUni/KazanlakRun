@@ -1,0 +1,47 @@
+﻿@model List<KazanlakRun.Web.Areas.Admin.Models.AidStationVolunteersReportViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Volunteers by Aid Station Report";
+}
+
+<style>
+  @@media print {
+    .no-print { display: none !important; }
+    table { page-break-after: auto; }
+    tr    { page-break-inside: avoid; page-break-after: auto; }
+    td    { page-break-inside: avoid; page-break-after: auto; }
+  }
+</style>
+
+<h1>📋 Volunteers per Aid Station</h1>
+
+<button class="btn btn-secondary no-print mb-3" onclick="window.print()">
+  🖨️ Print
+</button>
+
+@foreach (var station in Model)
+{
+    <h2 class="mt-4">@station.AidStationName</h2>
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Names</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Roles</th>
+        </tr>
+      </thead>
+      <tbody>
+      @foreach (var v in station.Volunteers)
+      {
+        <tr>
+          <td>@v.Names</td>
+          <td>@v.Email</td>
+          <td>@v.Phone</td>
+          <td>@string.Join(", ", v.Roles)</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+}

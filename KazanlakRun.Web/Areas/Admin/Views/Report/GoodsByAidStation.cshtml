@@ -1,0 +1,50 @@
+﻿@model List<KazanlakRun.Web.Areas.Admin.Models.AidStationGoodsReportViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Goods Consumption by Aid Station";
+}
+
+<style>
+  @@media print {
+    .no-print { display: none !important; }
+    table { page-break-after: auto; }
+    tr    { page-break-inside: avoid; page-break-after: auto; }
+    td    { page-break-inside: avoid; page-break-after: auto; }
+  }
+</style>
+
+<h1>📊 Goods Consumption per Aid Station</h1>
+
+<button class="btn btn-secondary no-print mb-3" onclick="window.print()">
+  🖨️ Print Report
+</button>
+
+@foreach (var station in Model)
+{
+    <h2 class="mt-4">
+      @station.AidStationName
+      <small class="text-muted">(Total runners: @station.TotalRegisteredRunners)</small>
+    </h2>
+
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Measure</th>
+          <th class="text-end">Qty per Station</th>
+        </tr>
+      </thead>
+      <tbody>
+      @foreach (var g in station.Goods)
+      {
+        <tr>
+          <td>@g.Name</td>
+          <td>@g.Measure</td>
+          <td class="text-end">@g.QuantityPerAidStation</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+}
+

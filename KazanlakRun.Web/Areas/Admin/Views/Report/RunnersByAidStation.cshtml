@@ -1,0 +1,52 @@
+﻿@model List<KazanlakRun.Web.Areas.Admin.Models.AidStationRunnersReportViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Runners by Aid Station Report";
+}
+
+<style>
+  @@media print {
+    .no-print { display: none !important; }
+    table { page-break-after: auto; }
+    tr    { page-break-inside: avoid; page-break-after: auto; }
+    td    { page-break-inside: avoid; page-break-after: auto; }
+  }
+</style>
+
+<h1>📋 Registered Runners per Aid Station</h1>
+
+<button class="btn btn-secondary no-print mb-3" onclick="window.print()">
+  🖨️ Print Report
+</button>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>Aid Station</th>
+      <th>Distance</th>
+      <th class="text-end">Registered Runners</th>
+    </tr>
+  </thead>
+  <tbody>
+  @foreach (var station in Model)
+  {
+      <tr class="table-primary">
+        <td rowspan="@(station.Distances.Count + 1)">
+          @station.AidStationName
+        </td>
+      </tr>
+      @foreach (var d in station.Distances)
+      {
+        <tr>
+          <td>@d.DistanceName</td>
+          <td class="text-end">@d.RegRunners</td>
+        </tr>
+      }
+      <tr class="table-secondary fw-bold">
+        <td>Total</td>
+        <td class="text-end">@station.TotalRunners</td>
+      </tr>
+  }
+  </tbody>
+</table>
