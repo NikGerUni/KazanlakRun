@@ -29,6 +29,12 @@ namespace KazanlakRun.Web.Controllers
             // Ако не е логнат, покажете default Index
             return View();
         }
+        [HttpGet]
+        public IActionResult Privacy()
+        {
+            // Връща Views/Home/Privacy.cshtml
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -40,25 +46,3 @@ namespace KazanlakRun.Web.Controllers
 
 
 
-
-//namespace KazanlakRun.Web.Controllers
-//{
-//    using System.Diagnostics;
-
-//    using ViewModels;
-
-//    using Microsoft.AspNetCore.Mvc;
-//    public class HomeController : Controller
-//    {
-//        public IActionResult Index()
-//        {
-//            return View();
-//        }
-
-//        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-//        public IActionResult Error()
-//        {
-//            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-//        }
-//    }
-//}

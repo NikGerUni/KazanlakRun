@@ -17,7 +17,8 @@
     <link rel="stylesheet" href="~/KazanlakRun.styles.css" asp-append-version="true" />
     @RenderSection("Scripts", required: false)
 </head>
-<body>
+
+    <body class="d-flex flex-column min-vh-100">
     <header>
         <div class="container">
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -35,13 +36,21 @@
                         <ul class="navbar-nav ml-auto">
                             @if (User.Identity.IsAuthenticated)
                             {
-                                @* Ако е администратор – показваме Support и Reports меню *@
+                                @* Ако е администратор – показваме Support и Reports меню *@ 
                                 @if (User.IsInRole("Admin"))
                                 {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark"
+                                           asp-area="Admin"
+                                           asp-controller="Home"
+                                           asp-action="Index">
+                                            <i class="bi bi-house"></i> Home
+                                        </a>
+                                    </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" id="supportDropdown" role="button"
                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            Support
+                                            Manage Lists
                                         </a>
                                         <ul class="dropdown-menu" aria-labelledby="supportDropdown">
                                             <li>
@@ -161,13 +170,20 @@
         </div>
     </header>
 
-    <div class="container">
+    @* <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    </div>
+    </div> *@
 
-    <footer class="border-top footer text-muted">
+    <main role="main" class="flex-fill">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+
+    <footer class="border-top footer text-muted mt-auto">
         <div class="container">
             &copy; @DateTime.Now.Year - KazanlakRun - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
