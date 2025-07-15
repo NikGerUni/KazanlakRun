@@ -1,12 +1,23 @@
 ﻿@model List<KazanlakRun.Web.Areas.Admin.Models.AidStationVolunteersReportViewModel>
-
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Volunteers by Aid Station Report";
+
+    // Pagination setup
+    var query = Context.Request.Query["page"].ToString();
+    int pageNumber = 1;
+    if (!string.IsNullOrEmpty(query) && int.TryParse(query, out var q))
+    {
+        pageNumber = q;
+    }
+    const int pageSize = 2;
+    int totalItems = Model.Count;
+    int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+    var pagedStations = Model.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 }
 
 <style>
-  @@media print {
+  media print {
     .no-print { display: none !important; }
     table { page-break-after: auto; }
     tr    { page-break-inside: avoid; page-break-after: auto; }
@@ -20,28 +31,47 @@
   🖨️ Print
 </button>
 
-@foreach (var station in Model)
+<nav aria-label="Page navigation" class="no-print mb-3">
+  <ul class="pagination">
+    @for (int p = 1; p <= totalPages; p++)
+    {
+        <li class="page-item @(p == pageNumber ? "active" : "")">
+            <a class="page-link"
+               asp-area="Admin"
+               asp-controller="Report"
+               asp-action="VolunteersByAidStation"
+               asp-route-page="@p">@p</a>
+        </li>
+    }
+  </ul>
+</nav>
+
+<div id="stations-container">
+@foreach (var station in pagedStations)
 {
-    <h2 class="mt-4">@station.AidStationName</h2>
-    <table class="table table-bordered table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th>Names</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Roles</th>
-        </tr>
-      </thead>
-      <tbody>
-      @foreach (var v in station.Volunteers)
-      {
-        <tr>
-          <td>@v.Names</td>
-          <td>@v.Email</td>
-          <td>@v.Phone</td>
-          <td>@string.Join(", ", v.Roles)</td>
-        </tr>
-      }
-      </tbody>
-    </table>
+    <div class="station-block">
+        <h2 class="mt-4">@station.AidStationName</h2>
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>Names</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Roles</th>
+            </tr>
+          </thead>
+          <tbody>
+          @foreach (var v in station.Volunteers)
+          {
+            <tr>
+              <td>@v.Names</td>
+              <td>@v.Email</td>
+              <td>@v.Phone</td>
+              <td>@string.Join(", ", v.Roles)</td>
+            </tr>
+          }
+          </tbody>
+        </table>
+    </div>
 }
+</div>

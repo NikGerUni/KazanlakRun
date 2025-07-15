@@ -18,170 +18,18 @@
     @RenderSection("Scripts", required: false)
 </head>
 
-    <body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100">
     <header>
         <div class="container">
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                <div class="container-fluid">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="~/images/Logo.jpg" alt="Kazanlak Run Logo" height="50" />
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                            data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
-                        <ul class="navbar-nav ml-auto">
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                @* Ако е администратор – показваме Support и Reports меню *@ 
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark"
-                                           asp-area="Admin"
-                                           asp-controller="Home"
-                                           asp-action="Index">
-                                            <i class="bi bi-house"></i> Home
-                                        </a>
-                                    </li>
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" id="supportDropdown" role="button"
-                                           data-bs-toggle="dropdown" aria-expanded="false">
-                                            Manage Lists
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="supportDropdown">
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   asp-area="Admin"
-                                                   asp-controller="Distance"
-                                                   asp-action="EditAll">
-                                                    Running Distances
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   asp-area="Admin"
-                                                   asp-controller="Role"
-                                                   asp-action="Index">
-                                                    Roles of Volunteers
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   asp-area="Admin"
-                                                   asp-controller="Goods"
-                                                   asp-action="Index">
-                                                    Manage Goods
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   asp-area="Admin"
-                                                   asp-controller="Volunteer"
-                                                   asp-action="Index">
-                                                    Volunteers
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   asp-area="Admin"
-                                                   asp-controller="AidStation"
-                                                   asp-action="Index">
-                                                    AidStations
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button"
-                                           data-bs-toggle="dropdown" aria-expanded="false">
-                                            Reports
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   asp-area="Admin"
-                                                   asp-controller="Report"
-                                                   asp-action="RunnersByAidStation">
-                                                    Runners at an AidStation
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   asp-area="Admin"
-                                                   asp-controller="Report"
-                                                   asp-action="VolunteersByAidStation">
-                                                    Volunteers at an AidStation
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   asp-area="Admin"
-                                                   asp-controller="Report"
-                                                   asp-action="GoodsByAidStation">
-                                                    Goods at an AidStation
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark"
-                                           asp-area="Identity"
-                                           asp-page="/Account/Logout">
-                                            <i class="bi bi-box-arrow-right"></i> Logout
-                                        </a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    @* Обикновен потребител – само Logout *@
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark"
-                                           asp-area="Identity"
-                                           asp-page="/Account/Logout">
-                                            <i class="bi bi-box-arrow-right"></i> Logout
-                                        </a>
-                                    </li>
-                                }
-                            }
-                            else
-                            {
-                                @* Нелогнат потребител – Login и Register *@
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">
-                                        <i class="bi bi-box-arrow-in-right"></i> Login
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">
-                                        <i class="bi bi-person-plus-fill"></i> Register
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            <partial name="_NavigationPartial" />
         </div>
     </header>
-
-    @* <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div> *@
 
     <main role="main" class="flex-fill">
         <div class="container">
             @RenderBody()
         </div>
     </main>
-
 
     <footer class="border-top footer text-muted mt-auto">
         <div class="container">
@@ -192,6 +40,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    
+
 </body>
 </html>
