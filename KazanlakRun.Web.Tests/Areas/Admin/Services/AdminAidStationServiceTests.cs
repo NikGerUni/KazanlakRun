@@ -85,14 +85,14 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetForCreateAsync_ReturnsViewModelWithSelectLists()
         {
-            // Arrange distances and volunteers
+            // Arrange
             var d1 = new Distance { Id = 2, Distans = "10K" };
             var vol = new Volunteer
             {
                 Id = 1,
                 Names = "Bob",
-                Email = "bob@example.com",    // ← required
-                Phone = "555-0000",           // ← required
+                Email = "bob@example.com",
+                Phone = "555-0000",
                 VolunteerRoles = new List<VolunteerRole>()
             };
             _db.Distances.Add(d1);
@@ -103,17 +103,21 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             // Act
             var vm = await _svc.GetForCreateAsync();
 
+            // Convert to lists for indexing
+            var distances = vm.AllDistances.ToList();
+            var volunteers = vm.AllVolunteers.ToList();
+
             // Assert distances list
-            Assert.That(vm.AllDistances, Has.Count.EqualTo(1));
-            Assert.AreEqual("10K", vm.AllDistances[0].Text);
-            Assert.AreEqual("2", vm.AllDistances[0].Value);
-            Assert.IsFalse(vm.AllDistances[0].Selected);
+            Assert.That(distances, Has.Count.EqualTo(1));
+            Assert.AreEqual("10K", distances[0].Text);
+            Assert.AreEqual("2", distances[0].Value);
+            Assert.IsFalse(distances[0].Selected);
 
             // Assert volunteers list
-            Assert.That(vm.AllVolunteers, Has.Count.EqualTo(1));
-            StringAssert.StartsWith("Bob", vm.AllVolunteers[0].Text);
-            Assert.AreEqual("1", vm.AllVolunteers[0].Value);
-            Assert.IsFalse(vm.AllVolunteers[0].Selected);
+            Assert.That(volunteers, Has.Count.EqualTo(1));
+            StringAssert.StartsWith("Bob", volunteers[0].Text);
+            Assert.AreEqual("1", volunteers[0].Value);
+            Assert.IsFalse(volunteers[0].Selected);
         }
 
         [Test]

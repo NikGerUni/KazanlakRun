@@ -1,4 +1,4 @@
-﻿@model List<KazanlakRun.Data.Models.Role>
+﻿@model List<KazanlakRun.Web.Areas.Admin.Models.RoleViewModel>
 
 @{
     ViewData["Title"] = "Roles of Volunteers";
@@ -32,8 +32,9 @@
                         <input type="hidden" name="roles[@i].Name" value="@Model[i].Name" />
                     </td>
                     <td>
+                        <input type="hidden" name="roles[@i].IsDeleted" value="false" />
                         <button type="button" class="btn btn-danger"
-                                onclick="removeRow(this)">
+                                onclick="markDeleted(this)">
                             Delete
                         </button>
                     </td>
@@ -52,7 +53,6 @@
 
 @section Scripts {
     <script>
-        // Инлайн редакция при двойно кликване
         function makeEditable() {
             document.querySelectorAll('.editable').forEach(cell => {
                 const span = cell.querySelector('span');
@@ -73,34 +73,38 @@
             });
         }
 
-        // Добавяне на нов ред
         function addRow() {
             const tbody = document.getElementById('tableBody');
             const index = tbody.children.length;
             const tr = document.createElement('tr');
+
             tr.innerHTML = `
-                    <td>0
-                        <input type="hidden" name="roles[${index}].Id" value="0" />
-                    </td>
-                    <td class="editable">
-                        <span>New Role</span>
-                        <input type="hidden" name="roles[${index}].Name" value="New Role" />
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger"
-                                onclick="removeRow(this)">Delete</button>
-                    </td>`;
+                        <td>0
+                            <input type="hidden" name="roles[${index}].Id" value="0" />
+                        </td>
+                        <td class="editable">
+                            <span>New Role</span>
+                            <input type="hidden" name="roles[${index}].Name" value="New Role" />
+                        </td>
+                        <td>
+                            <input type="hidden" name="roles[${index}].IsDeleted" value="false" />
+                            <button type="button" class="btn btn-danger"
+                                    onclick="markDeleted(this)">
+                                Delete
+                            </button>
+                        </td>`;
+
             tbody.appendChild(tr);
             makeEditable();
         }
 
-        // Изтриване на ред
-        function removeRow(btn) {
+        function markDeleted(btn) {
             const row = btn.closest('tr');
-            row.parentNode.removeChild(row);
+            const deletedInput = row.querySelector('input[name$=".IsDeleted"]');
+            deletedInput.value = 'true';
+            row.style.display = 'none';
         }
 
-        // Инициализация
         document.addEventListener('DOMContentLoaded', makeEditable);
     </script>
 }

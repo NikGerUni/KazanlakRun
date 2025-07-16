@@ -104,7 +104,8 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         modelBuilder.Entity<Volunteer>()
             .HasOne(v => v.AidStation)
             .WithMany(a => a.Volunteers)
-            .HasForeignKey(v => v.AidStationId);
+            .HasForeignKey(v => v.AidStationId)
+            .OnDelete(DeleteBehavior.SetNull); ;
 
         modelBuilder.Entity<VolunteerRole>()
             .HasOne(vr => vr.Volunteer)
@@ -119,14 +120,18 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         modelBuilder.Entity<AidStationDistance>()
             .HasOne(ad => ad.AidStation)
             .WithMany(a => a.AidStationDistances)
-            .HasForeignKey(ad => ad.AidStationId);
+            .HasForeignKey(ad => ad.AidStationId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<AidStationDistance>()
             .HasOne(ad => ad.Distance)
             .WithMany(d => d.AidStationDistances)
-            .HasForeignKey(ad => ad.DistanceId);
+            .HasForeignKey(ad => ad.DistanceId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-       
+
+
+
 
         // ─── Seed data ───────────────────────────────────────────
 
@@ -138,6 +143,9 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             new Role { Id = 5, Name = "time recorder" },
             new Role { Id = 6, Name = "general" }
         );
+        modelBuilder.Entity<Role>()
+       .Property(r => r.Id)
+       .UseIdentityColumn(1, 1); 
 
         modelBuilder.Entity<AidStation>().HasData(
             new AidStation { Id = 1, ShortName = "A1", Name = "Aid stationn 1" },

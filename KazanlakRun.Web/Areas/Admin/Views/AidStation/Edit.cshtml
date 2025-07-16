@@ -17,6 +17,12 @@
     </div>
 
     <div class="mb-3">
+        <label asp-for="ShortName" class="form-label"></label>
+        <input asp-for="ShortName" class="form-control" />
+        <span asp-validation-for="ShortName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
         <label asp-for="SelectedDistanceIds" class="form-label">Distances</label>
         <select asp-for="SelectedDistanceIds"
                 asp-items="Model.AllDistances"

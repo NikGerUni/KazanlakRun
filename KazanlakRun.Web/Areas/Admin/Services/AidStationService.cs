@@ -80,7 +80,8 @@ namespace KazanlakRun.Web.Areas.Admin.Services
             };
         }
 
-        public async Task<AidStationViewModel> GetForEditAsync(int id)
+
+public async Task<AidStationViewModel> GetForEditAsync(int id)
         {
             var station = await _db.AidStations
                 .Include(a => a.AidStationDistances)
@@ -88,8 +89,12 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 .FirstOrDefaultAsync(a => a.Id == id)
                 ?? throw new KeyNotFoundException();
 
-            var selectedDistanceIds = station.AidStationDistances.Select(ad => ad.DistanceId).ToHashSet();
-            var selectedVolunteerIds = station.Volunteers.Select(v => v.Id).ToHashSet();
+            var selectedDistanceIds = station.AidStationDistances
+                .Select(ad => ad.DistanceId)
+                .ToHashSet();
+            var selectedVolunteerIds = station.Volunteers
+                .Select(v => v.Id)
+                .ToHashSet();
 
             var distances = await _db.Distances
                 .Select(d => new SelectListItem
@@ -103,7 +108,8 @@ namespace KazanlakRun.Web.Areas.Admin.Services
             var volunteersRaw = await _db.Volunteers
                 .Include(v => v.VolunteerRoles)
                     .ThenInclude(vr => vr.Role)
-                .Select(v => new {
+                .Select(v => new
+                {
                     v.Id,
                     v.Names,
                     RoleNames = v.VolunteerRoles.Select(vr => vr.Role.Name)
@@ -115,9 +121,9 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 {
                     Value = v.Id.ToString(),
                     Text = v.Names
-                             + (v.RoleNames.Any()
-                                 ? " – " + string.Join(", ", v.RoleNames)
-                                 : ""),
+                         + (v.RoleNames.Any()
+                             ? " – " + string.Join(", ", v.RoleNames)
+                             : ""),
                     Selected = selectedVolunteerIds.Contains(v.Id)
                 })
                 .ToList();
@@ -125,6 +131,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
             return new AidStationViewModel
             {
                 Id = station.Id,
+                ShortName = station.ShortName,
                 Name = station.Name,
                 AllDistances = distances,
                 SelectedDistanceIds = selectedDistanceIds.ToArray(),
@@ -134,30 +141,52 @@ namespace KazanlakRun.Web.Areas.Admin.Services
         }
 
 
+        //public async Task CreateAsync(AidStationViewModel model)
+        //{
+        //    var entity = new AidStation
+        //    {
+        //        Name = model.Name
+        //    };
+
+        //    foreach (var did in model.SelectedDistanceIds)
+        //        entity.AidStationDistances
+        //            .Add(new AidStationDistance { DistanceId = did });
+
+        //    _db.AidStations.Add(entity);
+        //    await _db.SaveChangesAsync();
+
+        //    if (model.SelectedVolunteerIds.Any())
+        //    {
+        //        var vols = await _db.Volunteers
+        //            .Where(v => model.SelectedVolunteerIds.Contains(v.Id))
+        //            .ToListAsync();
+        //        vols.ForEach(v => v.AidStationId = entity.Id);
+        //        await _db.SaveChangesAsync();
+        //    }
+        //}
+
         public async Task CreateAsync(AidStationViewModel model)
         {
-            var entity = new AidStation
-            {
-                Name = model.Name
-            };
+            var entity = new AidStation { ShortName = model.ShortName, Name = model.Name };
 
-            foreach (var did in model.SelectedDistanceIds)
-                entity.AidStationDistances
-                    .Add(new AidStationDistance { DistanceId = did });
+            var distanceIds = model.SelectedDistanceIds ?? Array.Empty<int>();
+            foreach (var did in distanceIds)
+                entity.AidStationDistances.Add(new AidStationDistance { DistanceId = did });
 
             _db.AidStations.Add(entity);
             await _db.SaveChangesAsync();
 
-            if (model.SelectedVolunteerIds.Any())
+            var volunteerIds = model.SelectedVolunteerIds ?? Array.Empty<int>();
+            if (volunteerIds.Length > 0)
             {
                 var vols = await _db.Volunteers
-                    .Where(v => model.SelectedVolunteerIds.Contains(v.Id))
+                    .Where(v => volunteerIds.Contains(v.Id))
                     .ToListAsync();
+
                 vols.ForEach(v => v.AidStationId = entity.Id);
                 await _db.SaveChangesAsync();
             }
         }
-
 
 
 

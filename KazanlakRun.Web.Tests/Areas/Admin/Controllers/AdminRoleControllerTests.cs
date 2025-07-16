@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Controllers;
+using KazanlakRun.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -67,44 +68,32 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         [Test]
         public async Task SaveAll_Post_NewAndExistingRoles_AddsAndUpdatesAndRedirects()
         {
-            // Arrange:
-            // 1) добавяме една вече съществуваща роля
+            // Arrange
             var existing = new Role { Id = 1, Name = "OldName" };
             _context.Roles.Add(existing);
             await _context.SaveChangesAsync();
-            // След SaveChangesAsync():
             _context.ChangeTracker.Clear();
 
-
-            // 2) подготвяме списък за SaveAll:
-            //    - обновяваме съществуващата
-            //    - добавяме нова (Id = 0)
-            var toSave = new List<Role>
-            {
-                new Role { Id = 1, Name = "NewName" },
-                new Role { Id = 0, Name = "Guest" }
-            };
+            var toSave = new List<RoleViewModel>
+        {
+            new RoleViewModel { Id = 1, Name = "NewName", IsDeleted = false },
+            new RoleViewModel { Id = 0, Name = "Guest",   IsDeleted = false }
+        };
 
             // Act
             var actionResult = await _controller.SaveAll(toSave) as RedirectToActionResult;
 
-            // Assert (редирект)
-            Assert.IsNotNull(actionResult, "SaveAll трябва да редиректне");
-            Assert.AreEqual(nameof(_controller.Index),
-                            actionResult!.ActionName,
-                            "ActionName трябва да е Index");
+            // Assert redirect
+            Assert.IsNotNull(actionResult);
+            Assert.AreEqual(nameof(_controller.Index), actionResult!.ActionName);
 
-            // Assert (база)
+            // Assert база данни
             var allRoles = _context.Roles.AsNoTracking().ToList();
-            Assert.AreEqual(2, allRoles.Count, "В базата трябва да има 2 роли");
-
-            // – проверяваме, че съществуващата е обновена
+            Assert.AreEqual(2, allRoles.Count);
             var updated = allRoles.Single(r => r.Id == 1);
-            Assert.AreEqual("NewName", updated.Name, "Съществуващата роля трябва да е с новото име");
-
-            // – проверяваме, че новата е добавена
+            Assert.AreEqual("NewName", updated.Name);
             var added = allRoles.Single(r => r.Name == "Guest");
-            Assert.AreNotEqual(0, added.Id, "Добавената роля трябва да има генерирано Id");
+            Assert.AreNotEqual(0, added.Id);
         }
     }
-}
+    }

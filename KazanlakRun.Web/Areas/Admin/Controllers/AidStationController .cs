@@ -64,9 +64,12 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            await _service.DeleteAsync(id);
+            if (id == null)
+                return BadRequest();
+
+            await _service.DeleteAsync(id.Value);
             return RedirectToAction(nameof(Index));
         }
     }

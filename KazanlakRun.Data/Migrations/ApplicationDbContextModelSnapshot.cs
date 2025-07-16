@@ -694,15 +694,15 @@ namespace KazanlakRun.Data.Migrations
                         {
                             Id = "7699db7d-964f-4782-8209-d76562e0fece",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4c26e237-ea02-42eb-be4a-7361b58bc2d8",
+                            ConcurrencyStamp = "3dff8a57-c210-4d3d-bab1-a4c45ff3fba1",
                             Email = "admin@KazanlakRun.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@KAZANLAKRUN.COM",
                             NormalizedUserName = "ADMIN@KAZANLAKRUN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGQX7X9AArYqE7iBWxKN56fpYCg6QC5zHastSYIIG2e4tBcWiRCrgLWd+xMJ4r/8aw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPZy5h0injNYjfFxLYBTq+BYLAgAvUAUIH9nq7+D23fy7Ru5D3QldvLOuwjlzt/Ztw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bfb8d03e-646c-45d8-9ce6-2bb4177db2d0",
+                            SecurityStamp = "936757f2-adbf-4e4c-acd7-89f35d083072",
                             TwoFactorEnabled = false,
                             UserName = "admin@KazanlakRun.com"
                         },
@@ -710,15 +710,15 @@ namespace KazanlakRun.Data.Migrations
                         {
                             Id = "11111111-2222-3333-4444-555555555555",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a9c8a916-f546-448c-8fd2-cf13622a6621",
+                            ConcurrencyStamp = "6de8e3f4-839a-4545-bf4a-1295e61b62d5",
                             Email = "user@abv.bg",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@ABV.BG",
                             NormalizedUserName = "USER@ABV.BG",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMR9VNzYzwoMyP4TbkzJlQa5JWaLxjmw40LJH9/0ke7bdxMXWpRGoYHOYYqqYVp3sg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEO88RlkCc2dHiOc3pvNAphj85SoTzIkrjNK2Z5JzwzejvU6iKqENlnml/X2wX2SVzw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "af055446-0d50-4188-a431-87d4c5e4965d",
+                            SecurityStamp = "15d8f8d0-4b0b-4a8d-8ad0-7a0bbebcc558",
                             TwoFactorEnabled = false,
                             UserName = "user@abv.bg"
                         });
@@ -844,7 +844,8 @@ namespace KazanlakRun.Data.Migrations
                 {
                     b.HasOne("KazanlakRun.Data.Models.AidStation", "AidStation")
                         .WithMany("Volunteers")
-                        .HasForeignKey("AidStationId");
+                        .HasForeignKey("AidStationId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("AidStation");
                 });

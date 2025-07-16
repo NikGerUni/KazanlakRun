@@ -1,8 +1,6 @@
-﻿// KazanlakRun.Web.Areas.Admin.Models/AidStationViewModel.cs
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿// Web/Areas/Admin/Models/AidStationViewModel.cs
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace KazanlakRun.Web.Areas.Admin.Models
 {
@@ -11,24 +9,14 @@ namespace KazanlakRun.Web.Areas.Admin.Models
         public int Id { get; set; }
 
         [Required]
-        [Display(Name = "Name")]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; } = string.Empty;
+        [Required]
+        public string ShortName { get; set; } = string.Empty;
 
-        [Display(Name = "Distances")]
-        public List<SelectListItem> AllDistances { get; set; }
-            = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> AllDistances { get; set; } = new List<SelectListItem>();
+        public int[] SelectedDistanceIds { get; set; } = Array.Empty<int>();
 
-        [Display(Name = "Selected Distances")]
-        public int[] SelectedDistanceIds { get; set; }
-            = Array.Empty<int>();
-
-        [Display(Name = "Volunteers")]
-        public List<SelectListItem> AllVolunteers { get; set; }
-            = new List<SelectListItem>();
-
-        [Display(Name = "Selected Volunteers")]
-        public int[] SelectedVolunteerIds { get; set; }
-            = Array.Empty<int>();
+        public IEnumerable<SelectListItem> AllVolunteers { get; set; } = new List<SelectListItem>();
+        public int[] SelectedVolunteerIds { get; set; } = Array.Empty<int>();
     }
 }
-

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KazanlakRun.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class ResetDB : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -128,7 +128,8 @@ namespace KazanlakRun.Data.Migrations
                         name: "FK_Volunteers_AidStations_AidStationId",
                         column: x => x.AidStationId,
                         principalTable: "AidStations",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -311,8 +312,8 @@ namespace KazanlakRun.Data.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "11111111-2222-3333-4444-555555555555", 0, "a9c8a916-f546-448c-8fd2-cf13622a6621", "user@abv.bg", true, false, null, "USER@ABV.BG", "USER@ABV.BG", "AQAAAAIAAYagAAAAEMR9VNzYzwoMyP4TbkzJlQa5JWaLxjmw40LJH9/0ke7bdxMXWpRGoYHOYYqqYVp3sg==", null, false, "af055446-0d50-4188-a431-87d4c5e4965d", false, "user@abv.bg" },
-                    { "7699db7d-964f-4782-8209-d76562e0fece", 0, "4c26e237-ea02-42eb-be4a-7361b58bc2d8", "admin@KazanlakRun.com", true, false, null, "ADMIN@KAZANLAKRUN.COM", "ADMIN@KAZANLAKRUN.COM", "AQAAAAIAAYagAAAAEGQX7X9AArYqE7iBWxKN56fpYCg6QC5zHastSYIIG2e4tBcWiRCrgLWd+xMJ4r/8aw==", null, false, "bfb8d03e-646c-45d8-9ce6-2bb4177db2d0", false, "admin@KazanlakRun.com" }
+                    { "11111111-2222-3333-4444-555555555555", 0, "6de8e3f4-839a-4545-bf4a-1295e61b62d5", "user@abv.bg", true, false, null, "USER@ABV.BG", "USER@ABV.BG", "AQAAAAIAAYagAAAAEO88RlkCc2dHiOc3pvNAphj85SoTzIkrjNK2Z5JzwzejvU6iKqENlnml/X2wX2SVzw==", null, false, "15d8f8d0-4b0b-4a8d-8ad0-7a0bbebcc558", false, "user@abv.bg" },
+                    { "7699db7d-964f-4782-8209-d76562e0fece", 0, "3dff8a57-c210-4d3d-bab1-a4c45ff3fba1", "admin@KazanlakRun.com", true, false, null, "ADMIN@KAZANLAKRUN.COM", "ADMIN@KAZANLAKRUN.COM", "AQAAAAIAAYagAAAAEPZy5h0injNYjfFxLYBTq+BYLAgAvUAUIH9nq7+D23fy7Ru5D3QldvLOuwjlzt/Ztw==", null, false, "936757f2-adbf-4e4c-acd7-89f35d083072", false, "admin@KazanlakRun.com" }
                 });
 
             migrationBuilder.InsertData(
