@@ -150,8 +150,69 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         });
 
 
+        modelBuilder.Entity<AidStation>(entity =>
+        {
+            // Name: Not null, max length
+            entity.Property(a => a.Name)
+                  .IsRequired()
+                  .HasMaxLength(ValidationConstants.AidStationNameMaxLen);
 
+            // Check constraint: минимална дължина
+            entity.HasCheckConstraint(
+                name: "CK_AidStations_Name_MinLength",
+                sql: $"LEN([Name]) >= {ValidationConstants.AidStationNameMinLen}"
+            );
 
+            // ShortName: Not null, max length
+            entity.Property(a => a.ShortName)
+                  .IsRequired()
+                  .HasMaxLength(ValidationConstants.AidStationShortNameMaxLen);
+
+            // Check constraint: минимална дължина
+            entity.HasCheckConstraint(
+                name: "CK_AidStations_ShortName_MinLength",
+                sql: $"LEN([ShortName]) >= {ValidationConstants.AidStationShortNameMinLen}"
+            );
+        });
+
+        modelBuilder.Entity<Volunteer>(entity =>
+        {
+            entity.ToTable("Volunteers");
+
+            // Id по конвенция
+
+            // Names: Required, max и min дължина + CHECK за минимум
+            entity.Property(v => v.Names)
+                  .IsRequired()
+                  .HasMaxLength(ValidationConstants.NamesMaxLen);
+
+            entity.HasCheckConstraint(
+                name: "CK_Volunteers_Names_MinLength",
+                sql: $"LEN([Names]) >= {ValidationConstants.NamesMinLen}");
+
+            // Email: Required, max дължина, уникален индекс
+            entity.Property(v => v.Email)
+                  .IsRequired()
+                  .HasMaxLength(ValidationConstants.EmailMaxLen);
+
+            entity.HasIndex(v => v.Email)
+                  .IsUnique()
+                  .HasDatabaseName("IX_Volunteers_Email");
+
+            // Phone: Required, max и min дължина + CHECK за минимум
+            entity.Property(v => v.Phone)
+                  .IsRequired()
+                  .HasMaxLength(ValidationConstants.PhoneMaxLen);
+
+            entity.HasCheckConstraint(
+                name: "CK_Volunteers_Phone_MinLength",
+                sql: $"LEN([Phone]) >= {ValidationConstants.PhoneMinLen}");
+
+            // Навигации: много към много през VolunteerRole
+            entity.HasMany(v => v.VolunteerRoles)
+                  .WithOne(vr => vr.Volunteer)
+                  .HasForeignKey(vr => vr.VolunteerId);
+        });
 
         // ─── Seed data ───────────────────────────────────────────
 

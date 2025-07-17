@@ -1,13 +1,10 @@
 ﻿
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using KazanlakRun.Data;
 using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using KazanlakRun.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace KazanlakRun.Web.Areas.Admin.Services
 {

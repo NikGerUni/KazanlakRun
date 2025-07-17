@@ -15,7 +15,7 @@ namespace KazanlakRun.Areas.User.Models
             ErrorMessage = "Name must be between {2} and {1} characters long.")]
         [RegularExpression(ValidationConstants.NamesRegex,
             ErrorMessage = "Enter exactly two names (Latin letters), e.g. “John Smith”.")]
-        [Display(Name = "Full Name")]
+        [Display(Name = "Two Names")]
         public string Names { get; set; } = null!;
 
         [Required(ErrorMessage = "Email is required.")]
@@ -23,7 +23,7 @@ namespace KazanlakRun.Areas.User.Models
             ErrorMessage = "Email cannot exceed {1} characters.")]
         [RegularExpression(ValidationConstants.EmailRegex,
             ErrorMessage = "Email must be in format name@domain.ext, no spaces, and TLD at least 2 letters.")]
-        [Display(Name = "Email Address")]
+        [Display(Name = "Email")]
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Phone number is required.")]
@@ -32,7 +32,7 @@ namespace KazanlakRun.Areas.User.Models
             ErrorMessage = "Phone must be between {2} and {1} characters.")]
         [RegularExpression(ValidationConstants.PhoneRegex,
             ErrorMessage = "Invalid phone number format.")]
-        [Display(Name = "Phone Number")]
+        [Display(Name = "Phone")]
         public string Phone { get; set; } = null!;
 
         // This method runs on the server after ModelBinding & DataAnnotations

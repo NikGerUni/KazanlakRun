@@ -26,8 +26,4 @@
     <ProjectReference Include="..\KazanlakRun.Services.Core\KazanlakRun.Services.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\User\Data\" />
-  </ItemGroup>
-
 </Project>

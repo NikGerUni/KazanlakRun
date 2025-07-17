@@ -21,5 +21,11 @@
 
         public const int RoleMinLen = 3;
         public const int RoleMaxLen = 30;
+
+        public const int AidStationNameMinLen = 6;
+        public const int AidStationNameMaxLen = 40;
+
+        public const int AidStationShortNameMinLen = 2;
+        public const int AidStationShortNameMaxLen = 5;
     }
 }

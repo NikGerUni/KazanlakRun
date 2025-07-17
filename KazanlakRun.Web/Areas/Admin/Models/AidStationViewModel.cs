@@ -1,6 +1,6 @@
-﻿// Web/Areas/Admin/Models/AidStationViewModel.cs
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
+using KazanlakRun.GCommon;
 
 namespace KazanlakRun.Web.Areas.Admin.Models
 {
@@ -8,9 +8,18 @@ namespace KazanlakRun.Web.Areas.Admin.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Името е задължително.")]
+        [StringLength(
+            ValidationConstants.AidStationNameMaxLen,
+            MinimumLength = ValidationConstants.AidStationNameMinLen,
+            ErrorMessage = "Името на помощна станция трябва да е между {2} и {1} символа.")]
         public string Name { get; set; } = string.Empty;
-        [Required]
+
+        [Required(ErrorMessage = "Краткото име е задължително.")]
+        [StringLength(
+            ValidationConstants.AidStationShortNameMaxLen,
+            MinimumLength = ValidationConstants.AidStationShortNameMinLen,
+            ErrorMessage = "Краткото име трябва да е между {2} и {1} символа.")]
         public string ShortName { get; set; } = string.Empty;
 
         public IEnumerable<SelectListItem> AllDistances { get; set; } = new List<SelectListItem>();
