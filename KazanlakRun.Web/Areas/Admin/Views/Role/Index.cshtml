@@ -1,110 +1,63 @@
 ﻿@model List<KazanlakRun.Web.Areas.Admin.Models.RoleViewModel>
+@using KazanlakRun.GCommon
 
 @{
     ViewData["Title"] = "Roles of Volunteers";
+    ViewData.TemplateInfo.HtmlFieldPrefix = "roles";
 }
 
 <h2>@ViewData["Title"]</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
 <form asp-area="Admin"
       asp-controller="Role"
       asp-action="SaveAll"
       method="post">
     @Html.AntiForgeryToken()
+
     <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+        <thead><tr><th>ID</th><th>Name</th><th>Actions</th></tr></thead>
         <tbody id="tableBody">
             @for (int i = 0; i < Model.Count; i++)
             {
-                <tr>
-                    <td>
-                        @Model[i].Id
-                        <input type="hidden" name="roles[@i].Id" value="@Model[i].Id" />
-                    </td>
-                    <td class="editable">
-                        <span>@Model[i].Name</span>
-                        <input type="hidden" name="roles[@i].Name" value="@Model[i].Name" />
-                    </td>
-                    <td>
-                        <input type="hidden" name="roles[@i].IsDeleted" value="false" />
-                        <button type="button" class="btn btn-danger"
-                                onclick="markDeleted(this)">
-                            Delete
-                        </button>
-                    </td>
-                </tr>
+                @Html.EditorFor(m => m[i])
             }
         </tbody>
     </table>
 
-    <button type="button" onclick="addRow()" class="btn btn-success">
-        Add Row
-    </button>
-    <button type="submit" class="btn btn-primary">
-        Save All
-    </button>
+    <button type="button" id="addRow" class="btn btn-success">Add Row</button>
+    <button type="submit" class="btn btn-primary">Save All</button>
 </form>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
     <script>
-        function makeEditable() {
-            document.querySelectorAll('.editable').forEach(cell => {
-                const span = cell.querySelector('span');
-                const hiddenInput = cell.querySelector('input[type=hidden]');
-                span.addEventListener('dblclick', function () {
-                    const input = document.createElement('input');
-                    input.value = span.textContent.trim();
-                    input.onblur = () => {
-                        span.textContent = input.value;
-                        hiddenInput.value = input.value;
-                        cell.removeChild(input);
-                        span.style.display = '';
-                    };
-                    span.style.display = 'none';
-                    cell.insertBefore(input, span);
-                    input.focus();
-                });
-            });
-        }
-
-        function addRow() {
-            const tbody = document.getElementById('tableBody');
-            const index = tbody.children.length;
-            const tr = document.createElement('tr');
-
-            tr.innerHTML = `
-                        <td>0
-                            <input type="hidden" name="roles[${index}].Id" value="0" />
-                        </td>
-                        <td class="editable">
-                            <span>New Role</span>
-                            <input type="hidden" name="roles[${index}].Name" value="New Role" />
-                        </td>
-                        <td>
-                            <input type="hidden" name="roles[${index}].IsDeleted" value="false" />
-                            <button type="button" class="btn btn-danger"
-                                    onclick="markDeleted(this)">
-                                Delete
-                            </button>
-                        </td>`;
-
-            tbody.appendChild(tr);
-            makeEditable();
-        }
-
         function markDeleted(btn) {
             const row = btn.closest('tr');
-            const deletedInput = row.querySelector('input[name$=".IsDeleted"]');
-            deletedInput.value = 'true';
+            row.querySelector('input[name$=".IsDeleted"]').value = 'true';
             row.style.display = 'none';
         }
 
-        document.addEventListener('DOMContentLoaded', makeEditable);
+        // Вземаме HTML-а на първия шаблонен ред (индекс 0) и го клонираме:
+        const tmpl = `@Html.Raw(Html.EditorFor(m => m[0]).ToString())`;
+
+        document.getElementById('addRow')
+            .addEventListener('click', () => {
+                const tbody = document.getElementById('tableBody');
+                const idx = tbody.children.length;
+                let html = tmpl
+                    .replace(/\[0\]/g, `[${idx}]`)
+                    .replace(/_0__/g, `_${idx}__`);
+                const frag = document.createRange()
+                    .createContextualFragment(html);
+                tbody.appendChild(frag);
+                $.validator.unobtrusive.parse($(tbody).children().last());
+            });
+
+        $(function () {
+            $.validator.unobtrusive.parse($("#tableBody"));
+        });
     </script>
 }

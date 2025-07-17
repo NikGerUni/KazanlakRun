@@ -18,5 +18,8 @@
 
         public const int RegRunnersMinNumber = 0;
         public const int RegRunnersMaxNumber = 1000;
+
+        public const int RoleMinLen = 3;
+        public const int RoleMaxLen = 30;
     }
 }

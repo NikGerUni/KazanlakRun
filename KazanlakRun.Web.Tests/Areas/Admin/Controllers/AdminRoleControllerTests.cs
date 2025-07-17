@@ -55,16 +55,25 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 
             // Assert
             Assert.IsNotNull(result, "Index трябва да върне ViewResult");
-            var model = result!.Model as List<Role>;
-            Assert.IsNotNull(model, "Model трябва да е List<Role>");
-            Assert.AreEqual(2, model!.Count, "Върнатите роли трябва да са 2");
-            // Проверяваме, че съдържа точно нашите
+
+            var model = result.Model as List<RoleViewModel>;
+            Assert.IsNotNull(model, "Model трябва да е List<RoleViewModel>");
+            Assert.AreEqual(2, model.Count, "Върнатите роли трябва да са 2");
+
+            // Проверяваме, че имената съвпадат
             CollectionAssert.AreEquivalent(
-                rolesSeed.Select(r => r.Name),
-                model.Select(r => r.Name)
+                rolesSeed.Select(r => r.Name).ToList(),
+                model.Select(vm => vm.Name).ToList(),
+                "Имената на ролите не съвпадат"
+            );
+
+            // Проверяваме, че и ID-тата съвпадат
+            CollectionAssert.AreEquivalent(
+                rolesSeed.Select(r => r.Id).ToList(),
+                model.Select(vm => vm.Id).ToList(),
+                "ID-тата на ролите не съвпадат"
             );
         }
-
         [Test]
         public async Task SaveAll_Post_NewAndExistingRoles_AddsAndUpdatesAndRedirects()
         {

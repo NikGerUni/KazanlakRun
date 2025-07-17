@@ -1,4 +1,5 @@
 ﻿using KazanlakRun.Data.Models;
+using KazanlakRun.GCommon;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -133,6 +134,20 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
           .HasCheckConstraint(
           name: "CK_Distances_RegRunners_Range",
           sql: "[RegRunners] >= 0 AND [RegRunners] <= 1000");
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            // 1) Name е задължително и макс. дължина
+            entity.Property(r => r.Name)
+                  .IsRequired()
+                  .HasMaxLength(ValidationConstants.RoleMaxLen);
+
+            // 2) Check constraint за мин. дължина
+            entity.HasCheckConstraint(
+                name: "CK_Roles_Name_MinLength",
+                sql: $"LEN([Name]) >= {ValidationConstants.RoleMinLen}"
+            );
+        });
 
 
 

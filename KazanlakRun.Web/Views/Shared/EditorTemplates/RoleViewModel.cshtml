@@ -1,0 +1,21 @@
+﻿@model KazanlakRun.Web.Areas.Admin.Models.RoleViewModel
+
+<tr>
+    <td>
+        @* Скриваме Id-то, но го показваме за справка *@
+        <input asp-for="Id" type="hidden" />
+        @Model.Id
+    </td>
+    <td>
+        @* Tag‑helper-ът рендерира <input> + data-val-* според DataAnnotations *@
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </td>
+    <td>
+        @* Скриваме „IsDeleted“, за да може JS-а да променя стойността му *@
+        <input asp-for="IsDeleted" type="hidden" />
+        <button type="button" class="btn btn-danger" onclick="markDeleted(this)">
+            Delete
+        </button>
+    </td>
+</tr>
