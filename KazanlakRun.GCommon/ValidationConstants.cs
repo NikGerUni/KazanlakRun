@@ -1,6 +1,6 @@
 ﻿namespace KazanlakRun.GCommon
 {
-    public static class ValidationConstatnts
+    public static class ValidationConstants
     {
         // Names: точно две думи на латиница, разделени с един интервал
         public const string NamesRegex = @"^[A-Za-z]+ [A-Za-z]+$";
@@ -15,5 +15,8 @@
         public const string PhoneRegex = @"^\+?[0-9\s\-]+$";
         public const int PhoneMinLen = 7;
         public const int PhoneMaxLen = 20;
+
+        public const int RegRunnersMinNumber = 0;
+        public const int RegRunnersMaxNumber = 1000;
     }
 }

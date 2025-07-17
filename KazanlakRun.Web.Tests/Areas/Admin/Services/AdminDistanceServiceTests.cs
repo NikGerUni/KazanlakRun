@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using KazanlakRun.Data;
 using KazanlakRun.Data.Models;
+using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services;
-using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
@@ -16,7 +16,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
     {
         private DbContextOptions<ApplicationDbContext> _options = null!;
         private ApplicationDbContext _db = null!;
-        private DistanceService _svc = null!;
+        private DistanceEditDtoService _svc = null!;
 
         [SetUp]
         public void SetUp()
@@ -24,8 +24,9 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
+
             _db = new ApplicationDbContext(_options);
-            _svc = new DistanceService(_db);
+            _svc = new DistanceEditDtoService(_db);
         }
 
         [TearDown]
@@ -37,7 +38,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetAllAsync_ReturnsAllDistances()
         {
-            // Arrange
+            // Arrange: seed entities
             var items = new[]
             {
                 new Distance { Id = 1, Distans = "5K",  RegRunners = 10 },
@@ -55,10 +56,13 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
                 items.Select(x => x.Id),
                 result.Select(x => x.Id)
             );
+            // И още малко проверки, че полетата са картографирани
+            Assert.AreEqual(10, result.Single(r => r.Id == 1).RegRunners);
+            Assert.AreEqual(20, result.Single(r => r.Id == 2).RegRunners);
         }
 
         [Test]
-        public async Task GetByIdAsync_ReturnsEntity_WhenExists()
+        public async Task GetByIdAsync_ReturnsDto_WhenExists()
         {
             // Arrange
             var d = new Distance { Id = 5, Distans = "5K", RegRunners = 7 };
@@ -78,21 +82,30 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetByIdAsync_ReturnsNull_WhenNotFound()
         {
+            // Act
             var result = await _svc.GetByIdAsync(123);
+
+            // Assert
             Assert.IsNull(result);
         }
 
         [Test]
         public async Task UpdateAsync_UpdatesSingleEntity()
         {
-            // Arrange
+            // Arrange: seed
             var d = new Distance { Id = 10, Distans = "X", RegRunners = 1 };
             await _db.Distances.AddAsync(d);
             await _db.SaveChangesAsync();
+            _db.ChangeTracker.Clear();
 
-            // Act
-            d.RegRunners = 99;
-            await _svc.UpdateAsync(d);
+            // Act: подготвяме DTO със 99
+            var dto = new DistanceEditDto
+            {
+                Id = 10,
+                Distans = d.Distans,
+                RegRunners = 99
+            };
+            await _svc.UpdateAsync(dto);
 
             // Assert
             var fromDb = await _db.Distances.FindAsync(10);
@@ -103,7 +116,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task UpdateMultipleAsync_UpdatesOnlyExistingEntities()
         {
-            // Arrange: seed two distances, one extra in the list
+            // Arrange: два seed и един невалиден
             var seed = new[]
             {
                 new Distance { Id = 1, Distans = "A", RegRunners = 1 },
@@ -113,12 +126,11 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             await _db.SaveChangesAsync();
             _db.ChangeTracker.Clear();
 
-            // prepare update list: modify both and include a non-existent Id=99
-            var updates = new List<Distance>
+            var updates = new List<DistanceEditDto>
             {
-                new Distance { Id = 1, RegRunners = 11 },
-                new Distance { Id = 2, RegRunners = 22 },
-                new Distance { Id = 99, RegRunners = 99 }
+                new DistanceEditDto { Id = 1, Distans = seed[0].Distans, RegRunners = 11 },
+                new DistanceEditDto { Id = 2, Distans = seed[1].Distans, RegRunners = 22 },
+                new DistanceEditDto { Id = 99, Distans = "X", RegRunners = 99 }  // не съществува
             };
 
             // Act
@@ -134,19 +146,19 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task UpdateMultipleAsync_DoesNothing_WhenListEmpty()
         {
-            // Arrange: seed a distance
+            // Arrange: seed
             var d = new Distance { Id = 7, Distans = "7K", RegRunners = 7 };
             await _db.Distances.AddAsync(d);
             await _db.SaveChangesAsync();
+            _db.ChangeTracker.Clear();
 
             // Act
-            await _svc.UpdateMultipleAsync(new List<Distance>());
+            await _svc.UpdateMultipleAsync(new List<DistanceEditDto>());
 
-            // Assert: original unchanged
+            // Assert
             var fromDb = await _db.Distances.FindAsync(7);
             Assert.IsNotNull(fromDb);
             Assert.AreEqual(7, fromDb!.RegRunners);
         }
     }
 }
-

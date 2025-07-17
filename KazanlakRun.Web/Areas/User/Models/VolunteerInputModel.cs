@@ -10,27 +10,27 @@ namespace KazanlakRun.Areas.User.Models
     public class VolunteerInputModel : IValidatableObject
     {
         [Required(ErrorMessage = "Please enter your full name.")]
-        [StringLength(ValidationConstatnts.NamesMaxLen,
-            MinimumLength = ValidationConstatnts.NamesMinLen,
+        [StringLength(ValidationConstants.NamesMaxLen,
+            MinimumLength = ValidationConstants.NamesMinLen,
             ErrorMessage = "Name must be between {2} and {1} characters long.")]
-        [RegularExpression(ValidationConstatnts.NamesRegex,
+        [RegularExpression(ValidationConstants.NamesRegex,
             ErrorMessage = "Enter exactly two names (Latin letters), e.g. “John Smith”.")]
         [Display(Name = "Full Name")]
         public string Names { get; set; } = null!;
 
         [Required(ErrorMessage = "Email is required.")]
-        [StringLength(ValidationConstatnts.EmailMaxLen,
+        [StringLength(ValidationConstants.EmailMaxLen,
             ErrorMessage = "Email cannot exceed {1} characters.")]
-        [RegularExpression(ValidationConstatnts.EmailRegex,
+        [RegularExpression(ValidationConstants.EmailRegex,
             ErrorMessage = "Email must be in format name@domain.ext, no spaces, and TLD at least 2 letters.")]
         [Display(Name = "Email Address")]
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Phone number is required.")]
-        [StringLength(ValidationConstatnts.PhoneMaxLen,
-            MinimumLength = ValidationConstatnts.PhoneMinLen,
+        [StringLength(ValidationConstants.PhoneMaxLen,
+            MinimumLength = ValidationConstants.PhoneMinLen,
             ErrorMessage = "Phone must be between {2} and {1} characters.")]
-        [RegularExpression(ValidationConstatnts.PhoneRegex,
+        [RegularExpression(ValidationConstants.PhoneRegex,
             ErrorMessage = "Invalid phone number format.")]
         [Display(Name = "Phone Number")]
         public string Phone { get; set; } = null!;

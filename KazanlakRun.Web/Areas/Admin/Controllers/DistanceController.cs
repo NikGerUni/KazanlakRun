@@ -1,4 +1,4 @@
-﻿using KazanlakRun.Data.Models;
+﻿using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +10,8 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class DistanceController : Controller
     {
-        private readonly IDistanceService _svc;
-        public DistanceController(IDistanceService svc)
+        private readonly IDistanceEditDtoService _svc;
+        public DistanceController(IDistanceEditDtoService svc)
             => _svc = svc;
 
         public async Task<IActionResult> EditAll()
@@ -22,7 +22,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
 
         // POST: Admin/Distance/EditAll
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAll(List<Distance> model)
+        public async Task<IActionResult> EditAll(List<DistanceEditDto> model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -50,7 +50,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
 
         // POST: Admin/Distance/Edit/5
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Distance model)
+        public async Task<IActionResult> Edit(DistanceEditDto model)
         {
             if (!ModelState.IsValid)
                 return View(model);

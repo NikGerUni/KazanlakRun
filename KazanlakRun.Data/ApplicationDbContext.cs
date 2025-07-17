@@ -127,7 +127,12 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .HasOne(ad => ad.Distance)
             .WithMany(d => d.AidStationDistances)
             .HasForeignKey(ad => ad.DistanceId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade); 
+
+        modelBuilder.Entity<Distance>()
+          .HasCheckConstraint(
+          name: "CK_Distances_RegRunners_Range",
+          sql: "[RegRunners] >= 0 AND [RegRunners] <= 1000");
 
 
 

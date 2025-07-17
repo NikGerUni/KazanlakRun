@@ -24,7 +24,7 @@ namespace KazanlakRun.Web
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddScoped<IVolunteerService, VolunteerService>();
-            builder.Services.AddScoped<IDistanceService, DistanceService>();
+            builder.Services.AddScoped<IDistanceEditDtoService, DistanceEditDtoService>();
             builder.Services.AddScoped<IAidStationService, AidStationService>();
             builder.Services.AddScoped<IVolunteerServiceAdmin, VolunteerServiceAdmin>();
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using KazanlakRun.Data.Models;
+using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Controllers;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.AspNetCore.Http;
@@ -15,17 +15,17 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
     [TestFixture]
     public class AdminDistanceControllerTests
     {
-        private Mock<IDistanceService> _mockSvc;
+        private Mock<IDistanceEditDtoService> _mockSvc;
         private DistanceController _controller;
         private DefaultHttpContext _httpContext;
 
         [SetUp]
         public void SetUp()
         {
-            _mockSvc = new Mock<IDistanceService>();
+            _mockSvc = new Mock<IDistanceEditDtoService>();
             _controller = new DistanceController(_mockSvc.Object);
 
-            // (Не е строго необходимо, но за консистентност):
+            // За да има ControllerContext.HttpContext
             _httpContext = new DefaultHttpContext();
             _controller.ControllerContext = new ControllerContext
             {
@@ -46,8 +46,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
             // Arrange
             var distances = new[]
             {
-                new Distance { Id = 1, Distans = "5K", RegRunners = 50 },
-                new Distance { Id = 2, Distans = "10K", RegRunners = 100 }
+                new DistanceEditDto { Id = 1, Distans = "5K",  RegRunners = 50  },
+                new DistanceEditDto { Id = 2, Distans = "10K", RegRunners = 100 }
             };
             _mockSvc.Setup(s => s.GetAllAsync())
                     .ReturnsAsync(distances);
@@ -57,7 +57,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 
             // Assert
             Assert.IsNotNull(result);
-            var model = result!.Model as List<Distance>;
+            var model = result!.Model as List<DistanceEditDto>;
             Assert.IsNotNull(model);
             CollectionAssert.AreEqual(distances, model);
         }
@@ -66,7 +66,10 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         public async Task EditAll_Post_InvalidModel_ReturnsViewWithSameModel()
         {
             // Arrange
-            var list = new List<Distance> { new() { Id = 1 } };
+            var list = new List<DistanceEditDto>
+            {
+                new() { Id = 1, Distans = "X", RegRunners = 10 }
+            };
             _controller.ModelState.AddModelError("x", "err");
 
             // Act
@@ -82,9 +85,9 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         public async Task EditAll_Post_ValidModel_CallsServiceAndRedirects()
         {
             // Arrange
-            var list = new List<Distance>
+            var list = new List<DistanceEditDto>
             {
-                new() { Id = 1, Distans = "5K",  RegRunners = 50 },
+                new() { Id = 1, Distans = "5K",  RegRunners = 50  },
                 new() { Id = 2, Distans = "10K", RegRunners = 100 }
             };
 
@@ -104,7 +107,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         {
             // Arrange
             var distances = new[] {
-                new Distance { Id = 1 }, new Distance { Id = 2 }
+                new DistanceEditDto { Id = 1, Distans = "5K",  RegRunners = 50  },
+                new DistanceEditDto { Id = 2, Distans = "10K", RegRunners = 100 }
             };
             _mockSvc.Setup(s => s.GetAllAsync())
                     .ReturnsAsync(distances);
@@ -114,7 +118,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 
             // Assert
             Assert.IsNotNull(result);
-            var model = result!.Model as IEnumerable<Distance>;
+            var model = result!.Model as IEnumerable<DistanceEditDto>;
             Assert.IsNotNull(model);
             CollectionAssert.AreEqual(distances, model.ToList());
         }
@@ -124,7 +128,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         {
             // Arrange
             _mockSvc.Setup(s => s.GetByIdAsync(42))
-                    .ReturnsAsync((Distance?)null);
+                    .ReturnsAsync((DistanceEditDto?)null);
 
             // Act
             var result = await _controller.Edit(42);
@@ -137,7 +141,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         public async Task Edit_Get_ReturnsViewWithModel()
         {
             // Arrange
-            var dto = new Distance { Id = 7, Distans = "7K" };
+            var dto = new DistanceEditDto { Id = 7, Distans = "7K", RegRunners = 70 };
             _mockSvc.Setup(s => s.GetByIdAsync(7))
                     .ReturnsAsync(dto);
 
@@ -153,7 +157,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         public async Task Edit_Post_InvalidModel_ReturnsViewWithSameModel()
         {
             // Arrange
-            var m = new Distance { Id = 3 };
+            var m = new DistanceEditDto { Id = 3, Distans = "3K", RegRunners = 30 };
             _controller.ModelState.AddModelError("x", "err");
 
             // Act
@@ -169,7 +173,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         public async Task Edit_Post_ValidModel_CallsServiceAndRedirects()
         {
             // Arrange
-            var m = new Distance { Id = 3, Distans = "3K", RegRunners = 30 };
+            var m = new DistanceEditDto { Id = 3, Distans = "3K", RegRunners = 30 };
 
             // Act
             var result = await _controller.Edit(m) as RedirectToActionResult;
