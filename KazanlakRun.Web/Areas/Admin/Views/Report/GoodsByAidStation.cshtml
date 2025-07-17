@@ -13,23 +13,36 @@
             page-break-after: auto;
         }
 
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-
-        td {
+        tr, td {
             page-break-inside: avoid;
             page-break-after: auto;
         }
     }
 </style>
 
-<h1>📊 Goods Consumption per Aid Station</h1>
+<h1>📊 Planned consumption at Aid stations</h1>
 
-<div class="no-print mb-3">
-    <label for="filterInput" class="form-label">Filter Stations:</label>
-    <input id="filterInput" type="text" class="form-control" placeholder="Type to filter by station name..." />
+<div class="no-print mb-3 d-flex align-items-center">
+    <!-- Left: filter input -->
+    <div class="me-3">
+        <label for="filterInput" class="form-label mb-0">Filter Goods:</label>
+        <input id="filterInput"
+               type="text"
+               class="form-control"
+               placeholder="Type to filter by good name..." />
+    </div>
+
+    <!-- Center: pagination controls -->
+    <div class="flex-fill d-flex justify-content-center">
+        <button id="firstBtn" class="btn btn-sm btn-outline-primary me-2">« First</button>
+        <button id="prevBtn" class="btn btn-sm btn-outline-primary me-2">‹ Prev</button>
+        <span id="pageInfo" class="mx-2 align-self-center"></span>
+        <button id="nextBtn" class="btn btn-sm btn-outline-primary ms-2">Next ›</button>
+        <button id="lastBtn" class="btn btn-sm btn-outline-primary ms-2">Last »</button>
+    </div>
+
+    <!-- Right: print button -->
+    <button class="btn btn-secondary ms-3" onclick="window.print()">🖨️ Print</button>
 </div>
 
 <div id="stationsContainer">
@@ -64,20 +77,69 @@
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        (function () {
+        document.addEventListener('DOMContentLoaded', function () {
             var input = document.getElementById('filterInput');
             var container = document.getElementById('stationsContainer');
-            if (!input || !container) return;
-            input.addEventListener('input', function () {
-                var filter = input.value.trim().toLowerCase();
-                var blocks = container.querySelectorAll('.station-block');
-                blocks.forEach(function (block) {
-                    var header = block.querySelector('h2');
-                    var text = header ? header.textContent.toLowerCase() : '';
-                    block.style.display = text.indexOf(filter) !== -1 ? '' : 'none';
+            var blocks = Array.from(container.querySelectorAll('.station-block'));
+            var firstBtn = document.getElementById('firstBtn');
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            var lastBtn = document.getElementById('lastBtn');
+            var pageInfo = document.getElementById('pageInfo');
+            var current = 0;
+
+            function renderPage() {
+                blocks.forEach((b, i) => {
+                    b.style.display = (i === current) ? '' : 'none';
                 });
-            });
-        })();
+                pageInfo.textContent = (current + 1) + ' / ' + blocks.length;
+                firstBtn.disabled = (current === 0);
+                prevBtn.disabled = (current === 0);
+                nextBtn.disabled = (current === blocks.length - 1);
+                lastBtn.disabled = (current === blocks.length - 1);
+            }
+
+            function filterGoods(e) {
+                if (e && e.key === 'Enter') e.preventDefault();
+                var filter = input.value.trim().toLowerCase();
+
+                blocks.forEach(function (block) {
+                    var rows = block.querySelectorAll('tbody tr');
+                    var anyVisible = false;
+                    rows.forEach(function (row) {
+                        var text = row.cells[0].textContent.trim().toLowerCase();
+                        if (text.includes(filter)) {
+                            row.style.display = '';
+                            anyVisible = true;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                    block.style.display = anyVisible ? '' : 'none';
+                });
+
+                // after filtering, reset pagination indices to first visible block
+                blocks.forEach((b, i) => {
+                    if (b.style.display === '') {
+                        current = i;
+                        return false;
+                    }
+                });
+                renderPage();
+            }
+
+            // pagination handlers
+            firstBtn.addEventListener('click', () => { current = 0; renderPage(); });
+            prevBtn.addEventListener('click', () => { current--; renderPage(); });
+            nextBtn.addEventListener('click', () => { current++; renderPage(); });
+            lastBtn.addEventListener('click', () => { current = blocks.length - 1; renderPage(); });
+
+            // wire up filter and initialize
+            input.addEventListener('input', filterGoods);
+            input.addEventListener('keydown', filterGoods);
+            renderPage();
+        });
     </script>
 }
