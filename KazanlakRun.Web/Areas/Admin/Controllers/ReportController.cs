@@ -67,8 +67,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
 
             return View(model);
         }
-
-        // GET: Admin/Report/GoodsByAidStation
         public async Task<IActionResult> GoodsByAidStation()
         {
             // Зареждаме само тези Goods с Quantity > 0
@@ -110,5 +108,44 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
 
             return View(model);
         }
+        // GET: Admin/Report/GoodsForDelivery
+        public async Task<IActionResult> GoodsForDelivery()
+        {
+            // Взимаме всичките станции заедно с техните регистрирани бегачи
+            var stations = await _db.AidStations
+                .Include(a => a.AidStationDistances)
+                    .ThenInclude(ad => ad.Distance)
+                .ToListAsync();
+
+            // За всяка станция – общ брой регистрирани бегачи
+            var runnersPerStation = stations
+                .Select(a => a.AidStationDistances.Sum(ad => ad.Distance.RegRunners))
+                .ToList();
+
+            // Зареждаме всички стоки
+            var goods = await _db.Goods.ToListAsync();
+
+            // За всяка стока изчисляваме:
+            //   NeededQuantity = Σ(регистрирани бегачи на станция * количество на бегач)
+            //   Quantity       = наличното количество в склада (Good.Quantity)
+            var model = goods.Select(g =>
+            {
+                // Σ(регистрирани бегачи на станция * g.QuantityOneRunner)
+                var needed = runnersPerStation
+                    .Sum(runners => runners * g.QuantityOneRunner);
+
+                return new GoodsForDeliveryReportViewModel
+                {
+                    Name = g.Name,
+                    Measure = g.Measure ?? string.Empty,
+                    NeededQuantity = (decimal)needed,
+                    Quantity = (decimal)(g.Quantity ?? 0)
+                };
+            })
+            .ToList();
+
+            return View(model);
+        }
+
     }
 }

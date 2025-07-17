@@ -1,0 +1,132 @@
+﻿@model List<KazanlakRun.Web.Areas.Admin.Models.GoodsForDeliveryReportViewModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Goods for Delivery Report";
+}
+<style>
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+        table {
+            page-break-after: auto;
+        }
+        tr, td {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+    }
+</style>
+
+<h1>🚚 Goods for Delivery</h1>
+
+<div class="no-print mb-3 d-flex align-items-center">
+    <!-- Left: filter input and page size -->
+    <div class="d-flex align-items-center me-3">
+        <div class="me-2">
+            <label for="filterInput" class="form-label mb-0">Filter:</label>
+            <input id="filterInput" type="text" class="form-control" placeholder="Filter rows…" />
+        </div>
+    </div>
+
+    <!-- Center: pagination -->
+     <div class="flex-fill d-flex justify-content-center align-items-center">
+        <label for="pageSizeInput" class="form-label mb-0 me-2">Per Page:</label>
+        <input id="pageSizeInput" type="number" min="1" class="form-control me-4" value="10" style="width:80px" />
+
+        <button id="firstBtn" class="btn btn-sm btn-outline-primary me-1">« First</button>
+        <button id="prevBtn"  class="btn btn-sm btn-outline-primary me-1">‹ Prev</button>
+        <span id="pageInfo" class="mx-2"></span>
+        <button id="nextBtn"  class="btn btn-sm btn-outline-primary ms-1">Next ›</button>
+        <button id="lastBtn"  class="btn btn-sm btn-outline-primary ms-1">Last »</button>
+    </div>
+
+    <!-- Right: print -->
+    <button class="btn btn-secondary ms-3" onclick="window.print()">🖨️ Print</button>
+</div>
+
+<table id="reportTable" class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Measure</th>
+            <th class="text-end">Needed Quantity</th>
+            <th class="text-end">Availability</th>
+            <th class="text-end">For Delivery</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Measure</td>
+                <td class="text-end">@item.NeededQuantity</td>
+                <td class="text-end">@item.Quantity</td>
+                <td class="text-end">@item.ForDelivery</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var filterInput   = document.getElementById('filterInput');
+        var pageSizeInput = document.getElementById('pageSizeInput');
+        var table         = document.getElementById('reportTable');
+        var rows          = Array.from(table.tBodies[0].rows);
+        var firstBtn      = document.getElementById('firstBtn');
+        var prevBtn       = document.getElementById('prevBtn');
+        var nextBtn       = document.getElementById('nextBtn');
+        var lastBtn       = document.getElementById('lastBtn');
+        var pageInfo      = document.getElementById('pageInfo');
+
+        var currentPage = 0;
+        var pageSize    = parseInt(pageSizeInput.value) || 10;
+        var totalPages  = Math.ceil(rows.length / pageSize);
+
+        function renderTable() {
+            // apply filter first
+            var filter = filterInput.value.trim().toLowerCase();
+            var filteredRows = rows.filter(r => {
+                return Array.from(r.cells).some(c =>
+                    c.textContent.trim().toLowerCase().includes(filter)
+                );
+            });
+
+            // recalc pagination
+            pageSize   = parseInt(pageSizeInput.value) || 1;
+            totalPages = Math.ceil(filteredRows.length / pageSize) || 1;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+
+            // hide all rows, then show current page slice
+            rows.forEach(r => r.style.display = 'none');
+            var start = currentPage * pageSize;
+            var end   = start + pageSize;
+            filteredRows.slice(start, end).forEach(r => r.style.display = '');
+
+            // update buttons & info
+            pageInfo.textContent = (currentPage + 1) + ' / ' + totalPages;
+            firstBtn.disabled = currentPage === 0;
+            prevBtn.disabled  = currentPage === 0;
+            nextBtn.disabled  = currentPage === totalPages - 1;
+            lastBtn.disabled  = currentPage === totalPages - 1;
+        }
+
+        // event handlers
+        ['input','keyup','change'].forEach(evt =>
+            filterInput.addEventListener(evt, () => { currentPage = 0; renderTable(); })
+        );
+        pageSizeInput.addEventListener('change', () => { currentPage = 0; renderTable(); });
+
+        firstBtn.addEventListener('click', () => { currentPage = 0; renderTable(); });
+        prevBtn.addEventListener('click',  () => { if (currentPage>0) currentPage--; renderTable(); });
+        nextBtn.addEventListener('click',  () => { if (currentPage<totalPages-1) currentPage++; renderTable(); });
+        lastBtn.addEventListener('click',  () => { currentPage = totalPages-1; renderTable(); });
+
+        // initial render
+        renderTable();
+    });
+    </script>
+}
