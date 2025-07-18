@@ -27,8 +27,9 @@ namespace KazanlakRun.Web
             builder.Services.AddScoped<IDistanceEditDtoService, DistanceEditDtoService>();
             builder.Services.AddScoped<IAidStationService, AidStationService>();
             builder.Services.AddScoped<IVolunteerServiceAdmin, VolunteerServiceAdmin>();
+            builder.Services.AddScoped<IReportService, ReportService>();
 
-             builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+            builder.Services.AddDefaultIdentity<IdentityUser>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
