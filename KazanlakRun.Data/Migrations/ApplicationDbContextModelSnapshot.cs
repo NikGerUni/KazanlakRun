@@ -31,15 +31,22 @@ namespace KazanlakRun.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.Property<string>("ShortName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("AidStations");
+                    b.ToTable("AidStations", t =>
+                        {
+                            t.HasCheckConstraint("CK_AidStations_Name_MinLength", "LEN([Name]) >= 6");
+
+                            t.HasCheckConstraint("CK_AidStations_ShortName_MinLength", "LEN([ShortName]) >= 2");
+                        });
 
                     b.HasData(
                         new
@@ -163,7 +170,10 @@ namespace KazanlakRun.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Distances");
+                    b.ToTable("Distances", t =>
+                        {
+                            t.HasCheckConstraint("CK_Distances_RegRunners_Range", "[RegRunners] >= 0 AND [RegRunners] <= 1000");
+                        });
 
                     b.HasData(
                         new
@@ -288,11 +298,15 @@ namespace KazanlakRun.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", t =>
+                        {
+                            t.HasCheckConstraint("CK_Roles_Name_MinLength", "LEN([Name]) >= 3");
+                        });
 
                     b.HasData(
                         new
@@ -340,15 +354,18 @@ namespace KazanlakRun.Data.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("Names")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
@@ -357,7 +374,16 @@ namespace KazanlakRun.Data.Migrations
 
                     b.HasIndex("AidStationId");
 
-                    b.ToTable("Volunteers");
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Volunteers_Email");
+
+                    b.ToTable("Volunteers", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Volunteers_Names_MinLength", "LEN([Names]) >= 5");
+
+                            t.HasCheckConstraint("CK_Volunteers_Phone_MinLength", "LEN([Phone]) >= 7");
+                        });
 
                     b.HasData(
                         new
@@ -694,15 +720,15 @@ namespace KazanlakRun.Data.Migrations
                         {
                             Id = "7699db7d-964f-4782-8209-d76562e0fece",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3dff8a57-c210-4d3d-bab1-a4c45ff3fba1",
+                            ConcurrencyStamp = "d11ae180-5c85-4fd3-9981-15ed578de3cd",
                             Email = "admin@KazanlakRun.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@KAZANLAKRUN.COM",
                             NormalizedUserName = "ADMIN@KAZANLAKRUN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPZy5h0injNYjfFxLYBTq+BYLAgAvUAUIH9nq7+D23fy7Ru5D3QldvLOuwjlzt/Ztw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEnI9dENyxCl+AiY2hAY0y2hf7O1GEwY31AxcyyTDFQr4P31glpk2MVHhzEr+FNgRQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "936757f2-adbf-4e4c-acd7-89f35d083072",
+                            SecurityStamp = "b4facfba-8503-4bce-9ca4-59cae95fc0cf",
                             TwoFactorEnabled = false,
                             UserName = "admin@KazanlakRun.com"
                         },
@@ -710,15 +736,15 @@ namespace KazanlakRun.Data.Migrations
                         {
                             Id = "11111111-2222-3333-4444-555555555555",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6de8e3f4-839a-4545-bf4a-1295e61b62d5",
+                            ConcurrencyStamp = "19a94845-084e-4c0d-9525-b1aecb030b73",
                             Email = "user@abv.bg",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@ABV.BG",
                             NormalizedUserName = "USER@ABV.BG",
-                            PasswordHash = "AQAAAAIAAYagAAAAEO88RlkCc2dHiOc3pvNAphj85SoTzIkrjNK2Z5JzwzejvU6iKqENlnml/X2wX2SVzw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPhoYogeejGn7aQiNdXn1IkhNOlKgTL8bBZVJirC+ajokBp6L3zqqBO61tsuS34m5Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "15d8f8d0-4b0b-4a8d-8ad0-7a0bbebcc558",
+                            SecurityStamp = "d126a509-9f12-4a13-b4c8-d84a58e8472b",
                             TwoFactorEnabled = false,
                             UserName = "user@abv.bg"
                         });

@@ -84,6 +84,12 @@ namespace KazanlakRun.Web
             // 2. Identity UI
             app.MapRazorPages();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                context.Database.Migrate();
+            }
+
             // 3. MVC Areas + conventional routes
             app.MapControllerRoute(
                 name: "areas",

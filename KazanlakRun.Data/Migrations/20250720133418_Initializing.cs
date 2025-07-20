@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KazanlakRun.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Initializing : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,12 +19,14 @@ namespace KazanlakRun.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ShortName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ShortName = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AidStations", x => x.Id);
+                    table.CheckConstraint("CK_AidStations_Name_MinLength", "LEN([Name]) >= 6");
+                    table.CheckConstraint("CK_AidStations_ShortName_MinLength", "LEN([ShortName]) >= 2");
                 });
 
             migrationBuilder.CreateTable(
@@ -78,6 +80,7 @@ namespace KazanlakRun.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Distances", x => x.Id);
+                    table.CheckConstraint("CK_Distances_RegRunners_Range", "[RegRunners] >= 0 AND [RegRunners] <= 1000");
                 });
 
             migrationBuilder.CreateTable(
@@ -102,11 +105,12 @@ namespace KazanlakRun.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.CheckConstraint("CK_Roles_Name_MinLength", "LEN([Name]) >= 3");
                 });
 
             migrationBuilder.CreateTable(
@@ -116,14 +120,16 @@ namespace KazanlakRun.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Names = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Names = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     AidStationId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Volunteers", x => x.Id);
+                    table.CheckConstraint("CK_Volunteers_Names_MinLength", "LEN([Names]) >= 5");
+                    table.CheckConstraint("CK_Volunteers_Phone_MinLength", "LEN([Phone]) >= 7");
                     table.ForeignKey(
                         name: "FK_Volunteers_AidStations_AidStationId",
                         column: x => x.AidStationId,
@@ -312,8 +318,8 @@ namespace KazanlakRun.Data.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "11111111-2222-3333-4444-555555555555", 0, "6de8e3f4-839a-4545-bf4a-1295e61b62d5", "user@abv.bg", true, false, null, "USER@ABV.BG", "USER@ABV.BG", "AQAAAAIAAYagAAAAEO88RlkCc2dHiOc3pvNAphj85SoTzIkrjNK2Z5JzwzejvU6iKqENlnml/X2wX2SVzw==", null, false, "15d8f8d0-4b0b-4a8d-8ad0-7a0bbebcc558", false, "user@abv.bg" },
-                    { "7699db7d-964f-4782-8209-d76562e0fece", 0, "3dff8a57-c210-4d3d-bab1-a4c45ff3fba1", "admin@KazanlakRun.com", true, false, null, "ADMIN@KAZANLAKRUN.COM", "ADMIN@KAZANLAKRUN.COM", "AQAAAAIAAYagAAAAEPZy5h0injNYjfFxLYBTq+BYLAgAvUAUIH9nq7+D23fy7Ru5D3QldvLOuwjlzt/Ztw==", null, false, "936757f2-adbf-4e4c-acd7-89f35d083072", false, "admin@KazanlakRun.com" }
+                    { "11111111-2222-3333-4444-555555555555", 0, "19a94845-084e-4c0d-9525-b1aecb030b73", "user@abv.bg", true, false, null, "USER@ABV.BG", "USER@ABV.BG", "AQAAAAIAAYagAAAAEPhoYogeejGn7aQiNdXn1IkhNOlKgTL8bBZVJirC+ajokBp6L3zqqBO61tsuS34m5Q==", null, false, "d126a509-9f12-4a13-b4c8-d84a58e8472b", false, "user@abv.bg" },
+                    { "7699db7d-964f-4782-8209-d76562e0fece", 0, "d11ae180-5c85-4fd3-9981-15ed578de3cd", "admin@KazanlakRun.com", true, false, null, "ADMIN@KAZANLAKRUN.COM", "ADMIN@KAZANLAKRUN.COM", "AQAAAAIAAYagAAAAEEnI9dENyxCl+AiY2hAY0y2hf7O1GEwY31AxcyyTDFQr4P31glpk2MVHhzEr+FNgRQ==", null, false, "b4facfba-8503-4bce-9ca4-59cae95fc0cf", false, "admin@KazanlakRun.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -478,6 +484,12 @@ namespace KazanlakRun.Data.Migrations
                 name: "IX_Volunteers_AidStationId",
                 table: "Volunteers",
                 column: "AidStationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Volunteers_Email",
+                table: "Volunteers",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />
