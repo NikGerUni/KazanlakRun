@@ -17,6 +17,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish ./
 
+EXPOSE 8080
+ENV ASPNETCORE_URLS=http://*:8080
+
 # Стартирай именно Web DLL-а
 ENTRYPOINT ["dotnet", "KazanlakRun.Web.dll"]
 

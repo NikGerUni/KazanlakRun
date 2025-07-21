@@ -17,6 +17,9 @@ namespace KazanlakRun.Web
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+            builder.WebHost.UseUrls($"http://*:{port}");
+
             // Add services to the container.
             //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             var connectionString = builder.Configuration["SQL_CONNECTION_STRING"]
