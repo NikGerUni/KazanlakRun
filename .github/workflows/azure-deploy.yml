@@ -1,0 +1,45 @@
+name: Build & Deploy to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Изтегляме кода
+      - uses: actions/checkout@v3
+
+      # 2. Логваме се в Azure
+      - name: 'Login to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 3. (OPTIONAL) Инсталирай dependencies & билдни
+      - name: 'Install and build'
+        run: |
+          # Ако е .NET Core:
+          dotnet restore
+          dotnet build --configuration Release
+          # Ако е Node.js:
+          # npm install
+          # npm run build
+
+      # 4. Конфигуриране на connection string като App Setting
+      - name: 'Configure SQL connection string'
+        run: |
+          az webapp config appsettings set \
+            --resource-group rg-kazanlakrun-exam \
+            --name kazanlakrunapp \
+            --settings SQL_CONNECTION_STRING="${{ secrets.SQL_CONNECTION_STRING }}"
+
+      # 5. Деплой в App Service
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: kazanlakrunapp
+          package: '.'      # или път до артефактите, напр. './bin/Release/net6.0/publish'
