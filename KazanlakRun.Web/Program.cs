@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KazanlakRun.Web
 {
-    
+    using Google.Apis.Auth.OAuth2;
+    using Google.Apis.Drive.v3;
+    using Google.Apis.Services;
     using KazanlakRun.Web.Areas.Admin.Services;
     using KazanlakRun.Web.Areas.Admin.Services.IServices;
     using KazanlakRun.Web.Areas.User.Services;
@@ -73,6 +75,18 @@ namespace KazanlakRun.Web
                     return Task.CompletedTask;
                 };
             });
+
+            var credential = GoogleCredential
+            .FromFile("App_Data/drive-service-account.json")
+            .CreateScoped(DriveService.ScopeConstants.DriveFile);
+
+            // Регистрираме DriveService
+            builder.Services.AddSingleton(_ => new DriveService(new BaseClientService.Initializer
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = builder.Environment.ApplicationName
+            }));
+
 
             builder.Services.AddControllers();            // [ApiController]
             builder.Services.AddControllersWithViews();   // MVC + Views + Areas

@@ -62,3 +62,5 @@ wwwroot/**
 
 # Optionally, keep the folder structure in Git (uncomment if needed):
 # !wwwroot/
+
+App_Data/drive-service-account.json

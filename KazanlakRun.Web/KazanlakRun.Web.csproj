@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.70.0.3834" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.16" />
@@ -25,5 +26,10 @@
     <ProjectReference Include="..\KazanlakRun.GCommon\KazanlakRun.GCommon.csproj" />
     <ProjectReference Include="..\KazanlakRun.Services.Core\KazanlakRun.Services.Core.csproj" />
   </ItemGroup>
+	<ItemGroup>
+		<None Include="App_Data\drive-service-account.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>
