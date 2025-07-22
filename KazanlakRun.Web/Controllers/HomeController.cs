@@ -35,6 +35,10 @@ namespace KazanlakRun.Web.Controllers
             // Връща Views/Home/Privacy.cshtml
             return View();
         }
+        public IActionResult Map()
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

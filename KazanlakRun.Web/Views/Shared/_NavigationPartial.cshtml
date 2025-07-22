@@ -26,6 +26,14 @@
                                 <i class="bi bi-house"></i> Home
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark"
+                               asp-area=""
+                               asp-controller="Home"
+                               asp-action="Map">
+                                <i class="bi bi-geo-alt"></i> Map
+                            </a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="supportDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
@@ -67,7 +75,7 @@
                                 <li>
                                     <a class="dropdown-item"
                                        asp-area="Admin"
-                                       asp-controller="AidStation"
+                                       asp-controller="Aid Station"
                                        asp-action="Index">
                                         AidStations
                                     </a>
@@ -126,7 +134,14 @@
                     }
                     else
                     {
-                        @* Обикновен потребител – само Logout *@
+                        @* Обикновен потребител *@
+                        <li class="nav-item">
+                            <a class="nav-link text-dark"
+                               asp-controller="Home"
+                               asp-action="Map">
+                                <i class="bi bi-geo-alt"></i> Map
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark"
                                asp-area="Identity"
@@ -139,6 +154,8 @@
                 else
                 {
                     @* Нелогнат потребител – Login и Register *@
+                    
+
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">
                             <i class="bi bi-box-arrow-in-right"></i> Login
