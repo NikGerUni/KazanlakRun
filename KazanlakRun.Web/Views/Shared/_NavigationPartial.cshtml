@@ -138,7 +138,15 @@
                                 </li>
                             </ul>
                         </li>
-
+                        <li class="nav-item">
+                            <a class="nav-link text-dark"
+                               asp-area="Admin"
+                               asp-controller="Users"
+                               asp-action="Index">
+                                <i class="bi bi-box-arrow-right"></i>
+                                User Roles
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark"
                                asp-area="Identity"
@@ -146,6 +154,7 @@
                                 <i class="bi bi-box-arrow-right"></i> Logout
                             </a>
                         </li>
+
                     }
                     else
                     {

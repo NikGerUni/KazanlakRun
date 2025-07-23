@@ -1,0 +1,22 @@
+﻿@model KazanlakRun.Web.Areas.Admin.Models.EditUserRoleViewModel
+@{
+    ViewData["Title"] = "Edit Role for " + Model.Email;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-area="Admin" asp-controller="Users" asp-action="Edit" method="post">
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="mb-3">
+        <label asp-for="SelectedRole" class="form-label">Role</label>
+        <select asp-for="SelectedRole" class="form-select"
+                asp-items="@(new SelectList(Model.Roles))">
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-area="Admin" asp-controller="Users" asp-action="Index"
+       class="btn btn-secondary">Cancel</a>
+</form>
+

@@ -1,0 +1,28 @@
+﻿@model IEnumerable<KazanlakRun.Web.Areas.Admin.Models.UserRoleViewModel>
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<h1>@ViewData["Title"]</h1>
+<table class="table">
+    <thead>
+        <tr><th>Email</th><th>Role</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Email</td>
+                <td>@u.Role</td>
+                <td>
+                    <a asp-area="Admin" asp-controller="Users"
+                       asp-action="Edit" asp-route-id="@u.UserId"
+                       class="btn btn-sm btn-primary">
+                        Edit
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
