@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 
 namespace KazanlakRun.Web
@@ -9,8 +8,9 @@ namespace KazanlakRun.Web
     using KazanlakRun.Web.Areas.Admin.Services;
     using KazanlakRun.Web.Areas.Admin.Services.IServices;
     using KazanlakRun.Web.Areas.User.Services;
-    
-    
+    using KazanlakRun.Web.MappingProfiles;
+
+
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     public class Program
@@ -87,6 +87,8 @@ namespace KazanlakRun.Web
                 ApplicationName = builder.Environment.ApplicationName
             }));
 
+            builder.Services.AddAutoMapper(typeof(VolunteerProfile).Assembly);
+            builder.Services.AddScoped<IVolunteerService, VolunteerService>();
 
             builder.Services.AddControllers();            // [ApiController]
             builder.Services.AddControllersWithViews();   // MVC + Views + Areas

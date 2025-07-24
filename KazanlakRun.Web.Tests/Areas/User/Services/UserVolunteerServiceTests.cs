@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using KazanlakRun.Areas.User.Models;
 using KazanlakRun.Data;
 using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.User.Services;
+using KazanlakRun.Web.MappingProfiles;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
@@ -15,17 +17,28 @@ namespace KazanlakRun.Web.Tests.Areas.User.Services
         private DbContextOptions<ApplicationDbContext> _options = null!;
         private ApplicationDbContext _db = null!;
         private VolunteerService _svc = null!;
+        private IMapper _mapper = null!;
 
         private const string UserId = "user-abc";
 
         [SetUp]
         public void SetUp()
         {
+            // In-memory database for isolation
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             _db = new ApplicationDbContext(_options);
-            _svc = new VolunteerService(_db);
+
+            // Configure AutoMapper with our profile
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<VolunteerProfile>();
+            });
+            _mapper = config.CreateMapper();
+
+            // Inject both DbContext and IMapper
+            _svc = new VolunteerService(_db, _mapper);
         }
 
         [TearDown]
@@ -55,7 +68,7 @@ namespace KazanlakRun.Web.Tests.Areas.User.Services
 
             var v = await _db.Volunteers.FirstOrDefaultAsync(x => x.UserId == UserId);
             Assert.IsNotNull(v);
-            Assert.AreEqual("Alice", v.Names);
+            Assert.AreEqual("Alice", v!.Names);
             Assert.AreEqual("alice@example.com", v.Email);
             Assert.AreEqual("555-1234", v.Phone);
             Assert.AreEqual(1, v.AidStationId);
@@ -71,6 +84,7 @@ namespace KazanlakRun.Web.Tests.Areas.User.Services
         [Test]
         public async Task GetByUserIdAsync_ReturnsInputModel_WhenFound()
         {
+            // seed a volunteer entity directly
             await _db.Volunteers.AddAsync(new Volunteer
             {
                 UserId = UserId,
@@ -99,6 +113,7 @@ namespace KazanlakRun.Web.Tests.Areas.User.Services
         [Test]
         public async Task UpdateAsync_ChangesProperties_WhenFound()
         {
+            // seed initial entity
             var v = new Volunteer
             {
                 UserId = UserId,
@@ -127,10 +142,9 @@ namespace KazanlakRun.Web.Tests.Areas.User.Services
         [Test]
         public async Task DeleteAsync_DoesNothing_WhenNotFound()
         {
-            // no exception, no side-effects
+            // no exception and no side-effects
             await _svc.DeleteAsync("unknown");
             Assert.Pass();
         }
     }
 }
-
