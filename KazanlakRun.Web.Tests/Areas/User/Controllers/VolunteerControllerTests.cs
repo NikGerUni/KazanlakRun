@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using KazanlakRun.Areas.User.Models;
-using KazanlakRun.Areas.User.Controllers;
+using KazanlakRun.Web.Areas.User.Models;
+using KazanlakRun.Web.Areas.User.Controllers;
 using KazanlakRun.Web.Areas.User.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AutoMapper;
-using KazanlakRun.Areas.User.Models;
+using KazanlakRun.Web.Areas.User.Models;
 using KazanlakRun.Data;
 using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.User.Services;

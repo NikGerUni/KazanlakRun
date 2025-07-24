@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using KazanlakRun.Data.Models;
-using KazanlakRun.Areas.User.Models;
+using KazanlakRun.Web.Areas.User.Models;
 
 namespace KazanlakRun.Web.MappingProfiles
 {

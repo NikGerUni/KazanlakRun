@@ -5,7 +5,7 @@ using System.Net.Mail;
 using System.Text.RegularExpressions;
 using KazanlakRun.GCommon;
 
-namespace KazanlakRun.Areas.User.Models
+namespace KazanlakRun.Web.Areas.User.Models
 {
     public class VolunteerInputModel : IValidatableObject
     {

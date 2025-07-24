@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
-using KazanlakRun.Areas.User.Models;
+using KazanlakRun.Web.Areas.User.Models;
 using KazanlakRun.Web.Areas.User.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KazanlakRun.Areas.User.Controllers
+namespace KazanlakRun.Web.Areas.User.Controllers
 {
     [Area("User")]
     [Authorize(Roles = "User")]
