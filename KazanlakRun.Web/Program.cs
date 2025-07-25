@@ -5,6 +5,7 @@ namespace KazanlakRun.Web
     using Google.Apis.Auth.OAuth2;
     using Google.Apis.Drive.v3;
     using Google.Apis.Services;
+    using KazanlakRun.Data;
     using KazanlakRun.Web.Areas.Admin.Services;
     using KazanlakRun.Web.Areas.Admin.Services.IServices;
     using KazanlakRun.Web.Areas.User.Services;
@@ -19,17 +20,14 @@ namespace KazanlakRun.Web
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-            //builder.WebHost.UseUrls($"http://*:{port}");
+
             var port = Environment.GetEnvironmentVariable("PORT");
             if (!string.IsNullOrEmpty(port))
             {
                 builder.WebHost.UseUrls($"http://*:{port}");
             }
 
-            // Add services to the container.
-            //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            var connectionString = builder.Configuration["SQL_CONNECTION_STRING"]
+                       var connectionString = builder.Configuration["SQL_CONNECTION_STRING"]
                          ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -80,7 +78,7 @@ namespace KazanlakRun.Web
             .FromFile("App_Data/drive-service-account.json")
             .CreateScoped(DriveService.ScopeConstants.DriveFile);
 
-            // Регистрираме DriveService
+          
             builder.Services.AddSingleton(_ => new DriveService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
@@ -89,10 +87,11 @@ namespace KazanlakRun.Web
 
             builder.Services.AddAutoMapper(typeof(VolunteerProfile).Assembly);
             builder.Services.AddScoped<IVolunteerService, VolunteerService>();
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            builder.Services.AddControllers();            // [ApiController]
-            builder.Services.AddControllersWithViews();   // MVC + Views + Areas
-            builder.Services.AddRazorPages();             // Razor Pages (Identity UI)
+            builder.Services.AddControllers();            
+            builder.Services.AddControllersWithViews();   
+            builder.Services.AddRazorPages();             
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
@@ -105,10 +104,10 @@ namespace KazanlakRun.Web
             app.UseExceptionHandler("/Error/500");
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
-            // 1. API (attribute routes)
+           
             app.MapControllers();
 
-            // 2. Identity UI
+           
             app.MapRazorPages();
 
             using (var scope = app.Services.CreateScope())
@@ -117,7 +116,7 @@ namespace KazanlakRun.Web
                 context.Database.Migrate();
             }
 
-            // 3. MVC Areas + conventional routes
+            
             app.MapControllerRoute(
                 name: "areas",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
