@@ -17,16 +17,19 @@ namespace KazanlakRun.Web.Areas.User.Controllers
             _volunteerService = volunteerService;
         }
 
+
         public async Task<IActionResult> Index()
         {
-            bool volunteerExists = false;
-            
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-                volunteerExists = await _volunteerService.ExistsAsync(userId);
-            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            if (userId == null)
+                return Unauthorized(); 
+
+            var volunteerExists = await _volunteerService.ExistsAsync(userId);
             return View(volunteerExists);
         }
+
+
     }
 }
 
