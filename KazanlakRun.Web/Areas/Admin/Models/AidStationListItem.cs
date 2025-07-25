@@ -1,4 +1,4 @@
-﻿// KazanlakRun.Web.Areas.Admin.Models/AidStationListItem.cs
+﻿
 namespace KazanlakRun.Web.Areas.Admin.Models
 {
     public class AidStationListItem

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
+using KazanlakRun.Web.Areas.Admin.Models;
 
 namespace KazanlakRun.Web.Areas.Admin.Controllers
 {
@@ -20,10 +21,50 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> VolunteersByAidStation()
+        public async Task<IActionResult> VolunteersByAidStation(int page = 1, string filter = "")
         {
-            var model = await _reportService.GetVolunteersByAidStationAsync();
-            return View(model);
+            var allStations = await _reportService.GetVolunteersByAidStationAsync();
+
+            // Server-side filtering
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                allStations = allStations
+                    .Select(a => new AidStationVolunteersReportViewModel
+                    {
+                        AidStationName = a.AidStationName,
+                        Volunteers = a.Volunteers
+                            .Where(v =>
+                                v.Names.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                                v.Email.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                                v.Phone.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                                v.Roles.Any(r => r.Contains(filter, StringComparison.OrdinalIgnoreCase))
+                            ).ToList()
+                    })
+                    .Where(a => a.Volunteers.Any())
+                    .ToList();
+            }
+
+            int total = allStations.Count;
+            int pageSize = 1; // по 1 станция на страница
+            int totalPages = (int)Math.Ceiling(total / (double)pageSize);
+
+            // Граници на page
+            page = Math.Clamp(page, 1, Math.Max(1, totalPages));
+
+            var station = allStations
+                .Skip((page - 1) * pageSize)
+                .FirstOrDefault()
+                ?? new AidStationVolunteersReportViewModel { AidStationName = "–", Volunteers = new() };
+
+            var vm = new VolunteersByAidStationPageViewModel
+            {
+                Station = station,
+                PageNumber = page,
+                TotalPages = totalPages,
+                FilterText = filter
+            };
+
+            return View(vm);
         }
 
         public async Task<IActionResult> GoodsByAidStation()

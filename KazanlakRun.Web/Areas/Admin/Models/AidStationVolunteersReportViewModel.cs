@@ -15,5 +15,14 @@ namespace KazanlakRun.Web.Areas.Admin.Models
         public string AidStationName { get; set; } = null!;
         public List<VolunteerReport> Volunteers { get; set; } = new();
     }
-}
+        public class VolunteersByAidStationPageViewModel
+        {
+            public AidStationVolunteersReportViewModel Station { get; set; } = null!;
+            public int PageNumber { get; set; }
+            public int TotalPages { get; set; }
+            public string FilterText { get; set; } = string.Empty;
+           public int PageSize { get; set; }
+    }
+    }
+
 

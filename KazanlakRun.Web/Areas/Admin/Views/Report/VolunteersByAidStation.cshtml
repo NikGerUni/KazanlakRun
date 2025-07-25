@@ -1,164 +1,98 @@
-﻿@model List<KazanlakRun.Web.Areas.Admin.Models.AidStationVolunteersReportViewModel>
+﻿@model KazanlakRun.Web.Areas.Admin.Models.VolunteersByAidStationPageViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Volunteers by Aid Station Report";
 }
 
 <style>
-    @@media print {
-        .no-print {
-            display: none !important;
-        }
-
-        table {
-            page-break-after: auto;
-        }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-
-        td {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-    }
+  @@media print {
+    .no-print { display: none !important; }
+    table      { page-break-after: auto; }
+    tr         { page-break-inside: avoid; page-break-after: auto; }
+    td         { page-break-inside: avoid; page-break-after: auto; }
+  }
 </style>
 
 <h1>📋 Volunteers per Aid Station</h1>
 
-@* <div class="no-print mb-3 d-flex align-items-center">
-    <!-- Filter across all visible fields -->
-    <div class="me-3">
-        <label for="filterInput" class="form-label mb-0">Filter Volunteers:</label>
-        <input id="filterInput"
-               type="text"
-               class="form-control"
-               placeholder="Type to filter any column..." />
-    </div>
-
-    <!-- Pagination controls -->
-    <button id="firstBtn" class="btn btn-sm btn-outline-primary me-2">« First</button>
-    <button id="prevBtn" class="btn btn-sm btn-outline-primary me-2">‹ Prev</button>
-    <span id="pageInfo" class="mx-2"></span>
-    <button id="nextBtn" class="btn btn-sm btn-outline-primary ms-2">Next ›</button>
-    <button id="lastBtn" class="btn btn-sm btn-outline-primary ms-2">Last »</button>
-
-    <button class="btn btn-secondary ms-auto" onclick="window.print()">🖨️ Print</button>
-</div> *@
-
 <div class="no-print mb-3 d-flex align-items-center">
-    <!-- Ляво: филтър -->
-    <div class="me-3">
-        <label for="filterInput" class="form-label mb-0">Filter Volunteers:</label>
-        <input id="filterInput"
-               type="text"
-               class="form-control"
-               placeholder="Type to filter any column..." />
-    </div>
+  <!-- Filter -->
+  <div class="me-3">
+    <label asp-for="FilterText" class="form-label mb-0" aria-label="Filter volunteers">Filter Volunteers:</label>
+    <input id="filterInput"
+           asp-for="FilterText"
+           class="form-control"
+           placeholder="Type to filter any column..."
+           aria-label="Filter volunteers" />
+  </div>
 
-    <!-- Център: пагинация, центрирана -->
-    <div class="flex-fill d-flex justify-content-center">
-        <button id="firstBtn" class="btn btn-sm btn-outline-primary me-2">« First</button>
-        <button id="prevBtn" class="btn btn-sm btn-outline-primary me-2">‹ Prev</button>
-        <span id="pageInfo" class="mx-2 align-self-center"></span>
-        <button id="nextBtn" class="btn btn-sm btn-outline-primary ms-2">Next ›</button>
-        <button id="lastBtn" class="btn btn-sm btn-outline-primary ms-2">Last »</button>
-    </div>
+  <!-- Server-side pagination -->
+  <div class="flex-fill d-flex justify-content-center">
+    <a asp-action="VolunteersByAidStation" 
+       asp-route-page="1" 
+       asp-route-filter="@Model.FilterText"
+       class="btn btn-sm btn-outline-primary me-2"
+       aria-label="First Station">
+      « First
+    </a>
+    <a asp-action="VolunteersByAidStation"
+       asp-route-page="@(Model.PageNumber - 1)"
+       asp-route-filter="@Model.FilterText"
+       class="btn btn-sm btn-outline-primary me-2"
+       aria-label="Previous Station"
+       aria-disabled="@(Model.PageNumber == 1)">
+      ‹ Prev
+    </a>
+    <span class="mx-2 align-self-center">
+      @Model.PageNumber / @Model.TotalPages
+    </span>
+    <a asp-action="VolunteersByAidStation"
+       asp-route-page="@(Model.PageNumber + 1)"
+       asp-route-filter="@Model.FilterText"
+       class="btn btn-sm btn-outline-primary ms-2"
+       aria-label="Next Station"
+       aria-disabled="@(Model.PageNumber == Model.TotalPages)">
+      Next ›
+    </a>
+    <a asp-action="VolunteersByAidStation"
+       asp-route-page="@Model.TotalPages"
+       asp-route-filter="@Model.FilterText"
+       class="btn btn-sm btn-outline-primary ms-2"
+       aria-label="Last Station">
+      Last »
+    </a>
+  </div>
 
-    <!-- Дясно: Print -->
-    <button class="btn btn-secondary ms-3" onclick="window.print()">🖨️ Print</button>
+  <!-- Print -->
+  <button class="btn btn-secondary ms-3 no-print"
+          onclick="window.print()"
+          aria-label="Print Report">
+    🖨️ Print
+  </button>
 </div>
 
-<div id="stationsContainer">
-    @foreach (var station in Model)
-    {
-        <div class="station-block">
-            <h2 class="mt-4">@station.AidStationName</h2>
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Names</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Roles</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var v in station.Volunteers)
-                    {
-                        <tr>
-                            <td>@v.Names</td>
-                            <td>@v.Email</td>
-                            <td>@v.Phone</td>
-                            <td>@string.Join(", ", v.Roles)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
+<div id="stationsContainer" class="mb-5">
+  @Html.Partial("_VolunteerStationBlock", Model.Station)
 </div>
 
 @section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const blocks = Array.from(document.querySelectorAll('.station-block'));
-            const firstBtn = document.getElementById('firstBtn');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const lastBtn = document.getElementById('lastBtn');
-            const pageInfo = document.getElementById('pageInfo');
-            const filterInput = document.getElementById('filterInput');
-            let current = 0;
-
-            function renderPage() {
-                blocks.forEach((b, i) => b.style.display = i === current ? '' : 'none');
-                pageInfo.textContent = `${current + 1} / ${blocks.length}`;
-                firstBtn.disabled = current === 0;
-                prevBtn.disabled = current === 0;
-                nextBtn.disabled = current === blocks.length - 1;
-                lastBtn.disabled = current === blocks.length - 1;
-            }
-
-            function filterVolunteers() {
-                const filter = filterInput.value.trim().toLowerCase();
-                // For each station-block, filter its rows
-                blocks.forEach(block => {
-                    const rows = Array.from(block.querySelectorAll('tbody tr'));
-                    let anyVisible = false;
-                    rows.forEach(row => {
-                        // Check all cells in row
-                        const cells = Array.from(row.cells);
-                        const matches = cells.some(cell =>
-                            cell.textContent.trim().toLowerCase().includes(filter)
-                        );
-                        row.style.display = matches ? '' : 'none';
-                        if (matches) anyVisible = true;
-                    });
-                    // Show or hide the entire station based on any matching row
-                    block.style.display = anyVisible ? '' : 'none';
-                });
-                // After filtering, if current block is hidden, jump to first visible
-                const visibleIdx = blocks.findIndex(b => b.style.display === '');
-                if (visibleIdx >= 0) current = visibleIdx;
-                renderPage();
-            }
-
-            // Pagination handlers
-            firstBtn.addEventListener('click', () => { current = 0; renderPage(); });
-            prevBtn.addEventListener('click', () => { if (current > 0) current--; renderPage(); });
-            nextBtn.addEventListener('click', () => { if (current < blocks.length - 1) current++; renderPage(); });
-            lastBtn.addEventListener('click', () => { current = blocks.length - 1; renderPage(); });
-
-            // Wire up filter to input events
-            ['input', 'keyup', 'change'].forEach(evt =>
-                filterInput.addEventListener(evt, filterVolunteers)
-            );
-
-            // Initialize
-            renderPage();
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const filterInput = document.getElementById('filterInput');
+      let debounceTimer;
+      if (filterInput) {
+        filterInput.addEventListener('input', function () {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(function () {
+            const url = new URL(window.location.href);
+            url.searchParams.set('filter', filterInput.value);
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
+          }, 1000);
         });
-    </script>
+      }
+    });
+  </script>
 }
