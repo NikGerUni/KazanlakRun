@@ -6,12 +6,13 @@ namespace KazanlakRun.Web
     using Google.Apis.Drive.v3;
     using Google.Apis.Services;
     using KazanlakRun.Data;
+    using KazanlakRun.GCommon;
     using KazanlakRun.Web.Areas.Admin.Services;
     using KazanlakRun.Web.Areas.Admin.Services.IServices;
     using KazanlakRun.Web.Areas.User.Services;
     using KazanlakRun.Web.MappingProfiles;
-
-
+    using KazanlakRun.Web.Services;
+    using KazanlakRun.Web.Services.IServices;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     public class Program
@@ -88,6 +89,9 @@ namespace KazanlakRun.Web
             builder.Services.AddAutoMapper(typeof(VolunteerProfile).Assembly);
             builder.Services.AddScoped<IVolunteerService, VolunteerService>();
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddScoped<IGpxFileService, GpxFileService>();
+            builder.Services.Configure<GpxFileSettings>( builder.Configuration.GetSection("GpxFileSettings"));
+
 
             builder.Services.AddControllers();            
             builder.Services.AddControllersWithViews();   
