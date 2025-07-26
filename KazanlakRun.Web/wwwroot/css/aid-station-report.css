@@ -1,0 +1,14 @@
+﻿@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    table {
+        page-break-after: auto;
+    }
+
+    tr, td {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+}
