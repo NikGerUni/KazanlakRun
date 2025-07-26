@@ -1,4 +1,4 @@
-// Предава filter като query string и връща page=1 при всяка промяна
+
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('FilterText');
     if (!input) return;
@@ -11,4 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = url.toString();
     });
 });
+
+
 
