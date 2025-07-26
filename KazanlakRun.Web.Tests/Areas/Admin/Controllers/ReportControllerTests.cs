@@ -16,10 +16,10 @@ using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 
-namespace KazanlakRun.Tests
+namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 {
     [TestFixture]
-    public class ReportControllerTests      
+    public class ReportControllerTests
     {
         private Mock<IReportService> _serviceMock;
         private ReportController _controller;
@@ -36,11 +36,13 @@ namespace KazanlakRun.Tests
             _tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
             _controller.TempData = _tempData;
         }
+
         [TearDown]
         public void TearDown()
         {
             if (_controller is IDisposable d) d.Dispose();
         }
+
         [Test]
         public async Task RunnersByAidStation_ReturnsViewWithModel()
         {
@@ -67,25 +69,6 @@ namespace KazanlakRun.Tests
             Assert.IsInstanceOf<ViewResult>(result);
             var view = (ViewResult)result;
             Assert.AreSame(sample, view.Model);
-        }
-
-        [Test]
-        public async Task RunnersByAidStation_OnException_SetsTempDataAndEmptyModel()
-        {
-            // Arrange
-            _serviceMock
-                .Setup(s => s.GetRunnersByAidStationAsync())
-                .ThrowsAsync(new Exception("db error"));
-
-            // Act
-            var result = await _controller.RunnersByAidStation();
-
-            // Assert
-            Assert.IsInstanceOf<ViewResult>(result);
-            var view = (ViewResult)result;
-            Assert.IsInstanceOf<IEnumerable<AidStationRunnersReportViewModel>>(view.Model);
-            Assert.IsEmpty((IEnumerable<AidStationRunnersReportViewModel>)view.Model);
-            Assert.IsTrue(_controller.TempData.ContainsKey("Error"));
         }
 
         [Test]
@@ -117,26 +100,6 @@ namespace KazanlakRun.Tests
             Assert.AreSame(sample, view.Model);
         }
 
-        [Test]
-        public async Task GoodsByAidStation_OnException_SetsTempDataAndEmptyModel()
-        {
-            // Arrange
-            _serviceMock
-                .Setup(s => s.GetGoodsByAidStationAsync())
-                .ThrowsAsync(new InvalidOperationException());
-
-            // Act
-            var result = await _controller.GoodsByAidStation();
-
-            // Assert
-            Assert.IsInstanceOf<ViewResult>(result);
-            var view = (ViewResult)result;
-            Assert.IsInstanceOf<IEnumerable<AidStationGoodsReportViewModel>>(view.Model);
-            Assert.IsEmpty((IEnumerable<AidStationGoodsReportViewModel>)view.Model);
-            Assert.IsTrue(_controller.TempData.ContainsKey("Error"));
-        }
     }
-
-
+  
 }
-

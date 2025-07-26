@@ -10,6 +10,7 @@ namespace KazanlakRun.Web
     using KazanlakRun.Web.Areas.Admin.Services;
     using KazanlakRun.Web.Areas.Admin.Services.IServices;
     using KazanlakRun.Web.Areas.User.Services;
+    using KazanlakRun.Web.Filters;
     using KazanlakRun.Web.MappingProfiles;
     using KazanlakRun.Web.Services;
     using KazanlakRun.Web.Services.IServices;
@@ -93,8 +94,14 @@ namespace KazanlakRun.Web
             builder.Services.Configure<GpxFileSettings>( builder.Configuration.GetSection("GpxFileSettings"));
 
 
-            builder.Services.AddControllers();            
-            builder.Services.AddControllersWithViews();   
+            builder.Services.AddControllers();
+
+            builder.Services.AddScoped<ReportExceptionFilter>();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.AddService<ReportExceptionFilter>();
+            });
+                       
             builder.Services.AddRazorPages();             
             builder.Services.AddAuthorization();
 
