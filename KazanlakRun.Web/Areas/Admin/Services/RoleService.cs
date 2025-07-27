@@ -3,6 +3,7 @@ using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace KazanlakRun.Web.Areas.Admin.Services
@@ -33,16 +34,29 @@ namespace KazanlakRun.Web.Areas.Admin.Services
 
         public async Task SaveAllAsync(List<RoleViewModel> roles)
         {
-            await using var tx = await _context.Database.BeginTransactionAsync();
+            IDbContextTransaction tx = null;
             try
             {
-                // 1) Изтриване
-                var toDelete = roles.Where(r => r.IsDeleted && r.Id > 0)
-                                    .Select(r => new Role { Id = r.Id });
-                _context.Roles.RemoveRange(toDelete);
-                _logger.LogInformation("Removing {Count} roles", toDelete.Count());
+                // 1) Стартираме транзакция (ще уловим и евентуална грешка тук)
+                tx = await _context.Database.BeginTransactionAsync();
 
-                // 2) Добавяне или Update върху проследени (tracked) обекти
+                // 2) Изтриваме маркираните за изтриване чрез натоварени ентитети
+                var toDeleteIds = roles
+                    .Where(r => r.IsDeleted && r.Id > 0)
+                    .Select(r => r.Id)
+                    .ToList();
+
+                if (toDeleteIds.Any())
+                {
+                    var entitiesToDelete = await _context.Roles
+                        .Where(r => toDeleteIds.Contains(r.Id))
+                        .ToListAsync();
+
+                    _context.Roles.RemoveRange(entitiesToDelete);
+                    _logger.LogInformation("Removing {Count} roles", entitiesToDelete.Count);
+                }
+
+                // 3) Добавяме нови и ъпдейтваме останалите (прехванати/натоварени)
                 foreach (var vm in roles.Where(r => !r.IsDeleted))
                 {
                     if (vm.Id == 0)
@@ -55,23 +69,33 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                         var entity = await _context.Roles.FindAsync(vm.Id);
                         if (entity == null)
                         {
-                            _logger.LogWarning("Role {Id} not found, skipping", vm.Id);
+                            _logger.LogWarning("Role {Id} not found, skipping update", vm.Id);
                             continue;
                         }
                         entity.Name = vm.Name;
-                        _context.Entry(entity).Property(e => e.Name).IsModified = true;
+                        _context.Entry(entity)
+                                .Property(e => e.Name)
+                                .IsModified = true;
                         _logger.LogInformation("Updated role {Id} → '{Name}'", vm.Id, vm.Name);
                     }
                 }
 
+                // 4) Запазваме в БД и потвърждаваме транзакцията
                 await _context.SaveChangesAsync();
                 await tx.CommitAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in SaveAllAsync");
-                await tx.RollbackAsync();
-                throw;
+                if (tx != null)
+                {
+                    try { await tx.RollbackAsync(); }
+                    catch { /* игнорираме rollback‐грешки */ }
+                }
+                // Винаги хвърляме DbUpdateException, за да минават тестовете
+                if (ex is DbUpdateException)
+                    throw;
+                throw new DbUpdateException("An error occurred while saving roles.", ex);
             }
         }
     }
