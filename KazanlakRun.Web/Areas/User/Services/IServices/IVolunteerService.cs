@@ -1,5 +1,4 @@
 ﻿using KazanlakRun.Web.Areas.User.Models;
-using KazanlakRun.Data.Models;
 
 namespace KazanlakRun.Web.Areas.User.Services
 {

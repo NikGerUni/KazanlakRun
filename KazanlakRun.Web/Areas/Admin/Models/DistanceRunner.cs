@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace KazanlakRun.Web.Areas.Admin.Models
+﻿namespace KazanlakRun.Web.Areas.Admin.Models
 {
     public class DistanceRunner
     {

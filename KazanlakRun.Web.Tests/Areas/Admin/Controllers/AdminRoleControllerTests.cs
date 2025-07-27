@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using KazanlakRun.Data.Models;
+﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Controllers;
 using KazanlakRun.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 {
@@ -105,4 +100,4 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
             Assert.AreNotEqual(0, added.Id);
         }
     }
-    }
+}

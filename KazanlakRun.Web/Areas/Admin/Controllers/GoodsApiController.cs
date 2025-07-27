@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using KazanlakRun.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using KazanlakRun.Data;
-using KazanlakRun.Data.Models;
 
 namespace KazanlakRun.Web.Areas.Admin.Controllers
 {
@@ -137,7 +133,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
                     existingGood.Measure = good.Measure;
                     existingGood.Quantity = good.Quantity;
                     existingGood.QuantityOneRunner = good.QuantityOneRunner;
-                   
+
                 }
 
                 // Добави новите записи (нулирай ID за автоматично генериране)

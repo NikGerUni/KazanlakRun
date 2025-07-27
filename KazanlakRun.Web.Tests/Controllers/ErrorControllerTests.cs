@@ -1,7 +1,6 @@
-﻿using NUnit.Framework;
-using Microsoft.AspNetCore.Mvc;
+﻿using KazanlakRun.Web.Controllers;
 using Microsoft.AspNetCore.Http;
-using KazanlakRun.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KazanlakRun.Web.Tests.Controllers
 {

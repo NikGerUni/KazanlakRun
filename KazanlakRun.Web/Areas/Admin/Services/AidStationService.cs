@@ -1,8 +1,4 @@
 ﻿// KazanlakRun.Services.Core/Services/AidStationService.cs
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using KazanlakRun.Web.Areas.Admin.Services;
 using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
@@ -41,7 +37,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 .ToListAsync();
 
 
-        
+
         public async Task<AidStationViewModel> GetForCreateAsync()
         {
             var distances = await _db.Distances
@@ -55,7 +51,8 @@ namespace KazanlakRun.Web.Areas.Admin.Services
             var volunteersRaw = await _db.Volunteers
                 .Include(v => v.VolunteerRoles)
                     .ThenInclude(vr => vr.Role)
-                .Select(v => new {
+                .Select(v => new
+                {
                     v.Id,
                     v.Names,
                     RoleNames = v.VolunteerRoles.Select(vr => vr.Role.Name)
@@ -81,7 +78,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
         }
 
 
-public async Task<AidStationViewModel> GetForEditAsync(int id)
+        public async Task<AidStationViewModel> GetForEditAsync(int id)
         {
             var station = await _db.AidStations
                 .Include(a => a.AidStationDistances)

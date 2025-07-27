@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using KazanlakRun.Web.Areas.Admin.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using KazanlakRun.Web.Areas.Admin.Models;
 
 namespace KazanlakRun.Web.Areas.Admin.Controllers
 {

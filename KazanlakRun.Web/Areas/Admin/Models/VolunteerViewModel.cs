@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using KazanlakRun.GCommon;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
-using System.Text.RegularExpressions;
-using KazanlakRun.GCommon;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace KazanlakRun.Web.Areas.Admin.Models
 {

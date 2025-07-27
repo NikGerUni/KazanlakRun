@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace KazanlakRun.Web.Areas.Admin.Models
+﻿namespace KazanlakRun.Web.Areas.Admin.Models
 {
     public class GoodReport
     {

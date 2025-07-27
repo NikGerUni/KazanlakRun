@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using KazanlakRun.Web.Controllers;
+using KazanlakRun.Web.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using KazanlakRun.Web.Controllers;
-using KazanlakRun.Web.ViewModels;
 
 
 namespace KazanlakRun.Web.Tests.Controllers

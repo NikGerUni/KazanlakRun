@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using KazanlakRun.Web.Areas.Admin.Controllers;
+﻿using KazanlakRun.Web.Areas.Admin.Controllers;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 {

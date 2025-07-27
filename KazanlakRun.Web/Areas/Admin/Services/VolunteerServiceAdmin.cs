@@ -1,7 +1,7 @@
 ﻿
 using KazanlakRun.Data.Models;
-using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using KazanlakRun.Web.Areas.Admin.Models;
+using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 

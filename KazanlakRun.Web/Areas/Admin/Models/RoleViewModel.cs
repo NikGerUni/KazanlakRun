@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using KazanlakRun.GCommon;
+﻿using KazanlakRun.GCommon;
+using System.ComponentModel.DataAnnotations;
 
 namespace KazanlakRun.Web.Areas.Admin.Models
 {

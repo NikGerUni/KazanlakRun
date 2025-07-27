@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using KazanlakRun.Web.Areas.Admin.Controllers;
+using KazanlakRun.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Logging;
-using KazanlakRun.Web.Areas.Admin.Models;
-using KazanlakRun.Web.Areas.Admin.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace KazanlakRun.Web.Filters
 {

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using KazanlakRun.Data;
-using KazanlakRun.Data.Models;
-using KazanlakRun.Web.Areas.Admin.Models;
+﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 {
@@ -21,8 +14,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         public void SetUp()
         {
             var opts = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: $"TestDb_{TestContext.CurrentContext.Test.ID}")
-                .Options;
+               .UseInMemoryDatabase(databaseName: $"TestDb_{TestContext.CurrentContext.Test.ID}")
+               .Options;
 
             _db = new ApplicationDbContext(opts);
             _service = new ReportService(_db, NullLogger<ReportService>.Instance);

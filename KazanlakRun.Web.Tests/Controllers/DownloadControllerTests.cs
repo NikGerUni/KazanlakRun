@@ -1,13 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using KazanlakRun.GCommon;
+﻿using KazanlakRun.GCommon;
 using KazanlakRun.Web.Controllers;
 using KazanlakRun.Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
-using NUnit.Framework;
 
 namespace KazanlakRun.Web.Tests.Controllers
 {
@@ -32,13 +28,13 @@ namespace KazanlakRun.Web.Tests.Controllers
             _options = Options.Create(_fileSettings);
             _controller = new DownloadController(_serviceMock.Object, _options);
         }
-           [TearDown]
-    public void TearDown()
-    {
-        // direct Dispose() call satisfies the analyzer
-        _controller.Dispose();
-        _controller = null!;
-    }
+        [TearDown]
+        public void TearDown()
+        {
+            // direct Dispose() call satisfies the analyzer
+            _controller.Dispose();
+            _controller = null!;
+        }
 
         [Test]
         public void DownloadGPX_ShouldReturnViewResult()

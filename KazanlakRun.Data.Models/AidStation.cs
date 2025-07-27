@@ -1,8 +1,7 @@
 ﻿
 // Data/Models/AidStation.cs
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using KazanlakRun.GCommon;
+using System.ComponentModel.DataAnnotations;
 
 namespace KazanlakRun.Data.Models
 {

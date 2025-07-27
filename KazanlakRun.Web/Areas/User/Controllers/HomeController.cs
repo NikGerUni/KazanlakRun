@@ -1,6 +1,5 @@
 ﻿using KazanlakRun.Web.Areas.User.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -23,7 +22,7 @@ namespace KazanlakRun.Web.Areas.User.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
-                return Unauthorized(); 
+                return Unauthorized();
 
             var volunteerExists = await _volunteerService.ExistsAsync(userId);
             return View(volunteerExists);

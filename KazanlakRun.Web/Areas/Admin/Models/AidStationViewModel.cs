@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using KazanlakRun.GCommon;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
-using KazanlakRun.GCommon;
 
 namespace KazanlakRun.Web.Areas.Admin.Models
 {
@@ -9,10 +9,9 @@ namespace KazanlakRun.Web.Areas.Admin.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Името е задължително.")]
-        [StringLength(
-            ValidationConstants.AidStationNameMaxLen,
-            MinimumLength = ValidationConstants.AidStationNameMinLen,
-            ErrorMessage = "Името на помощна станция трябва да е между {2} и {1} символа.")]
+        [StringLength(ValidationConstants.AidStationNameMaxLen,
+             MinimumLength = ValidationConstants.AidStationNameMinLen,
+             ErrorMessage = "Името на помощна станция трябва да е между {2} и {1} символа.")]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Краткото име е задължително.")]

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using KazanlakRun.Data;
-using KazanlakRun.Data.Models;
+﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services;
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 {

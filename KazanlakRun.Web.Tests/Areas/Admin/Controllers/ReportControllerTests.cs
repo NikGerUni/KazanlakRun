@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using KazanlakRun.Web.Areas.Admin.Controllers;
+using KazanlakRun.Web.Areas.Admin.Models;
+using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using NUnit.Framework;
-using KazanlakRun.Data;
-using KazanlakRun.Data.Models;
-using KazanlakRun.Web.Areas.Admin.Controllers;
-using KazanlakRun.Web.Areas.Admin.Models;
-using KazanlakRun.Web.Areas.Admin.Services;
-using KazanlakRun.Web.Areas.Admin.Services.IServices;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 {
@@ -101,5 +92,5 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         }
 
     }
-  
+
 }

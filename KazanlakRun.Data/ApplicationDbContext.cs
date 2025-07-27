@@ -128,7 +128,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .HasOne(ad => ad.Distance)
             .WithMany(d => d.AidStationDistances)
             .HasForeignKey(ad => ad.DistanceId)
-            .OnDelete(DeleteBehavior.Cascade); 
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Distance>()
           .HasCheckConstraint(
@@ -226,7 +226,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         );
         modelBuilder.Entity<Role>()
        .Property(r => r.Id)
-       .UseIdentityColumn(1, 1); 
+       .UseIdentityColumn(1, 1);
 
         modelBuilder.Entity<AidStation>().HasData(
             new AidStation { Id = 1, ShortName = "A1", Name = "Aid stationn 1" },
@@ -236,10 +236,10 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             new AidStation { Id = 5, ShortName = "A5", Name = "Aid stationn 5" }
         );
 
-         modelBuilder.Entity<Distance>().HasData(
-          new Distance { Id = 1, Distans = "10 km", RegRunners = 100 },
-          new Distance { Id = 2, Distans = "20 km", RegRunners = 80 },
-          new Distance { Id = 3, Distans = "40 km", RegRunners = 60 }
+        modelBuilder.Entity<Distance>().HasData(
+         new Distance { Id = 1, Distans = "10 km", RegRunners = 100 },
+         new Distance { Id = 2, Distans = "20 km", RegRunners = 80 },
+         new Distance { Id = 3, Distans = "40 km", RegRunners = 60 }
 );
 
         modelBuilder.Entity<Volunteer>().HasData(
@@ -256,7 +256,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         );
 
         modelBuilder.Entity<Good>().HasData(
-            
+
             new Good { Id = 5, Name = "Cups", Measure = "pcs", Quantity = 200, QuantityOneRunner = 1 },
             new Good { Id = 6, Name = "Salt", Measure = "kg", Quantity = 1, QuantityOneRunner = 0.003 },
             new Good { Id = 7, Name = "Drinking water", Measure = "l", Quantity = 100, QuantityOneRunner = 0.5 },
@@ -265,11 +265,11 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             new Good { Id = 10, Name = "Apples", Measure = "kg", Quantity = 100, QuantityOneRunner = 0.5 },
             new Good { Id = 11, Name = "Bananas", Measure = "pcs", Quantity = 100, QuantityOneRunner = 0.5 },
             new Good { Id = 12, Name = "Chocolate", Measure = "pcs", Quantity = 50, QuantityOneRunner = 0.01 }
-            
+
         );
 
         modelBuilder.Entity<AidStationDistance>().HasData(
-    
+
     new AidStationDistance { AidStationId = 1, DistanceId = 1 },
     new AidStationDistance { AidStationId = 1, DistanceId = 2 },
     new AidStationDistance { AidStationId = 1, DistanceId = 3 },

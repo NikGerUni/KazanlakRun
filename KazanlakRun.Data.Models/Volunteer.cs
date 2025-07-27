@@ -1,12 +1,6 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
-using KazanlakRun.GCommon;
-
-namespace KazanlakRun.Data.Models
+﻿namespace KazanlakRun.Data.Models
 {
-    public class Volunteer 
+    public class Volunteer
     {
         public int Id { get; set; }
         public string? UserId { get; set; }
@@ -25,7 +19,7 @@ namespace KazanlakRun.Data.Models
         public ICollection<VolunteerRole> VolunteerRoles { get; set; }
             = new List<VolunteerRole>();
 
-   }
+    }
 }
 
 

@@ -1,9 +1,8 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
-using KazanlakRun.Web.Areas.User.Models;
+﻿using KazanlakRun.Web.Areas.User.Models;
 using KazanlakRun.Web.Areas.User.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace KazanlakRun.Web.Areas.User.Controllers
 {

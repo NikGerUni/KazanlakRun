@@ -1,10 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using KazanlakRun.Web.Areas.Admin.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NUnit.Framework;
-using KazanlakRun.Web.Areas.Admin.Controllers;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 {

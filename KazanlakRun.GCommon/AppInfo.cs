@@ -3,6 +3,6 @@
     public static class AppInfo
     {
         public const string Name = "KazanlakRun";
-        public const string Version = "v1.0.3"; 
+        public const string Version = "v1.0.3";
     }
 }

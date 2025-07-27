@@ -2,10 +2,7 @@
 using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services;
-using KazanlakRun.Web.Areas.Admin.Services.IServices;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 {

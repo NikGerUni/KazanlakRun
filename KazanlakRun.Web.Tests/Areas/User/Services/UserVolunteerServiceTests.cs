@@ -1,13 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoMapper;
-using KazanlakRun.Web.Areas.User.Models;
+﻿using AutoMapper;
 using KazanlakRun.Data;
 using KazanlakRun.Data.Models;
+using KazanlakRun.Web.Areas.User.Models;
 using KazanlakRun.Web.Areas.User.Services;
 using KazanlakRun.Web.MappingProfiles;
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 
 namespace KazanlakRun.Web.Tests.Areas.User.Services
 {

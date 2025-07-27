@@ -1,6 +1,4 @@
 ﻿using KazanlakRun.Web.Areas.Admin.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace KazanlakRun.Web.Areas.Admin.Services.IServices
 {

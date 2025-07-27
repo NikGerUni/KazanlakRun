@@ -29,8 +29,8 @@ namespace KazanlakRun.Web
                 builder.WebHost.UseUrls($"http://*:{port}");
             }
 
-                       var connectionString = builder.Configuration["SQL_CONNECTION_STRING"]
-                         ?? builder.Configuration.GetConnectionString("DefaultConnection");
+            var connectionString = builder.Configuration["SQL_CONNECTION_STRING"]
+              ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -80,7 +80,7 @@ namespace KazanlakRun.Web
             .FromFile("App_Data/drive-service-account.json")
             .CreateScoped(DriveService.ScopeConstants.DriveFile);
 
-          
+
             builder.Services.AddSingleton(_ => new DriveService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
@@ -91,7 +91,7 @@ namespace KazanlakRun.Web
             builder.Services.AddScoped<IVolunteerService, VolunteerService>();
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped<IGpxFileService, GpxFileService>();
-            builder.Services.Configure<GpxFileSettings>( builder.Configuration.GetSection("GpxFileSettings"));
+            builder.Services.Configure<GpxFileSettings>(builder.Configuration.GetSection("GpxFileSettings"));
 
 
             builder.Services.AddControllers();
@@ -101,8 +101,8 @@ namespace KazanlakRun.Web
             {
                 options.Filters.AddService<ReportExceptionFilter>();
             });
-                       
-            builder.Services.AddRazorPages();             
+
+            builder.Services.AddRazorPages();
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
@@ -115,10 +115,10 @@ namespace KazanlakRun.Web
             app.UseExceptionHandler("/Error/500");
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
-           
+
             app.MapControllers();
 
-           
+
             app.MapRazorPages();
 
             using (var scope = app.Services.CreateScope())
@@ -127,7 +127,7 @@ namespace KazanlakRun.Web
                 context.Database.Migrate();
             }
 
-            
+
             app.MapControllerRoute(
                 name: "areas",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
@@ -138,5 +138,5 @@ namespace KazanlakRun.Web
 
             app.Run();
         }
-        }
+    }
 }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using KazanlakRun.GCommon;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
-using System.Text.RegularExpressions;
-using KazanlakRun.GCommon;
 
 namespace KazanlakRun.Web.Areas.User.Models
 {

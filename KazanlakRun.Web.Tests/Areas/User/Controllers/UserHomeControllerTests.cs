@@ -1,11 +1,9 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using KazanlakRun.Web.Areas.User.Controllers;
+using KazanlakRun.Web.Areas.User.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
-using KazanlakRun.Web.Areas.User.Controllers;
-using KazanlakRun.Web.Areas.User.Services;
+using System.Security.Claims;
 
 namespace KazanlakRun.Web.Tests.Areas.User.Controllers
 {

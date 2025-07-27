@@ -1,9 +1,7 @@
-﻿
-using System.Threading.Tasks;
+﻿using KazanlakRun.Web.Areas.Admin.Models;
+using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using KazanlakRun.Web.Areas.Admin.Models;
-using KazanlakRun.Web.Areas.Admin.Services.IServices;
 
 namespace KazanlakRun.Web.Areas.Admin.Controllers
 {
