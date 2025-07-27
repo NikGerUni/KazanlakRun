@@ -1,0 +1,33 @@
+﻿@model KazanlakRun.Web.Areas.Admin.Models.RoleViewModel
+@{
+    var idx = ViewData["idx"]?.ToString() ?? "0";
+}
+<tr>
+    <td>
+        <span>@Model.Id</span>
+        <input type="hidden" name="roles[@idx].Id" value="@Model.Id" />
+    </td>
+    <td>
+        <input type="text"
+               class="form-control"
+               name="roles[@idx].Name"
+               value="@Model.Name"
+               data-val="true"
+               data-val-required="Името е задължително."
+               data-val-length-min="@KazanlakRun.GCommon.ValidationConstants.RoleMinLen"
+               data-val-length-max="@KazanlakRun.GCommon.ValidationConstants.RoleMaxLen"
+               data-val-length="Името трябва да е между {2} и {1} символа." />
+        <span class="text-danger"
+              data-valmsg-for="roles[@idx].Name"
+              data-valmsg-replace="true"></span>
+    </td>
+    <td>
+        <button type="button" class="btn btn-sm btn-danger" onclick="markDeleted(this)">
+            Delete
+        </button>
+        <input type="hidden"
+               class="is-deleted"
+               name="roles[@idx].IsDeleted"
+               value="false" />
+    </td>
+</tr>

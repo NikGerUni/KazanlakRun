@@ -1,13 +1,15 @@
 ﻿@model List<KazanlakRun.Web.Areas.Admin.Models.RoleViewModel>
-@using KazanlakRun.GCommon
-
 @{
     ViewData["Title"] = "Roles of Volunteers";
-    ViewData.TemplateInfo.HtmlFieldPrefix = "roles";
 }
-
 <h2>@ViewData["Title"]</h2>
 
+@if (TempData["Success"] != null)
+{
+    <div id="success-alert" class="alert alert-success" role="alert">
+        @TempData["Success"]
+    </div>
+}
 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
 <form asp-area="Admin"
@@ -15,49 +17,24 @@
       asp-action="SaveAll"
       method="post">
     @Html.AntiForgeryToken()
-
     <table class="table table-striped">
-        <thead><tr><th>ID</th><th>Name</th><th>Actions</th></tr></thead>
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Actions</th></tr>
+        </thead>
         <tbody id="tableBody">
             @for (int i = 0; i < Model.Count; i++)
             {
-                @Html.EditorFor(m => m[i])
+                @await Html.PartialAsync("_RoleRow",
+                         Model[i],
+                         new ViewDataDictionary(ViewData) { { "idx", i } })
             }
         </tbody>
     </table>
-
     <button type="button" id="addRow" class="btn btn-success">Add Row</button>
     <button type="submit" class="btn btn-primary">Save All</button>
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        function markDeleted(btn) {
-            const row = btn.closest('tr');
-            row.querySelector('input[name$=".IsDeleted"]').value = 'true';
-            row.style.display = 'none';
-        }
-
-        // Вземаме HTML-а на първия шаблонен ред (индекс 0) и го клонираме:
-        const tmpl = `@Html.Raw(Html.EditorFor(m => m[0]).ToString())`;
-
-        document.getElementById('addRow')
-            .addEventListener('click', () => {
-                const tbody = document.getElementById('tableBody');
-                const idx = tbody.children.length;
-                let html = tmpl
-                    .replace(/\[0\]/g, `[${idx}]`)
-                    .replace(/_0__/g, `_${idx}__`);
-                const frag = document.createRange()
-                    .createContextualFragment(html);
-                tbody.appendChild(frag);
-                $.validator.unobtrusive.parse($(tbody).children().last());
-            });
-
-        $(function () {
-            $.validator.unobtrusive.parse($("#tableBody"));
-        });
-    </script>
+    <script src="~/js/admin-roles.js" asp-append-version="true"></script>
 }

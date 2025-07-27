@@ -1,8 +1,8 @@
-﻿using KazanlakRun.Data.Models;
+﻿using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using KazanlakRun.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace KazanlakRun.Web.Areas.Admin.Controllers
 {
@@ -10,54 +10,47 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class RoleController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public RoleController(ApplicationDbContext context)
-            => _context = context;
+        private readonly IRoleService _roleService;
+        private readonly ILogger<RoleController> _logger;
 
-        // GET: Admin/Role
+        public RoleController(IRoleService roleService, ILogger<RoleController> logger)
+        {
+            _roleService = roleService;
+            _logger = logger;
+        }
+
         public async Task<IActionResult> Index()
         {
-            var roles = await _context.Roles
-                                      .AsNoTracking()
-                                      .Select(r => new RoleViewModel
-                                      {
-                                          Id = r.Id,
-                                          Name = r.Name,
-                                          IsDeleted = false
-                                      })
-                                      .ToListAsync();
+            var roles = await _roleService.GetAllAsync();
             return View(roles);
         }
 
-        // POST: Admin/Role/SaveAll
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveAll(List<RoleViewModel> roles)
         {
-            // 1) Изтриваме маркираните за изтриване
-            var toDelete = roles.Where(r => r.IsDeleted && r.Id > 0)
-                                .Select(r => new Role { Id = r.Id });
-            _context.Roles.RemoveRange(toDelete);
+            if (!ModelState.IsValid)
+                return View(nameof(Index), roles);
 
-            // 2) Обновяваме/добавяме останалите
-            foreach (var vm in roles.Where(r => !r.IsDeleted))
+            try
             {
-                if (vm.Id == 0)
-                {
-                    _context.Roles.Add(new Role { Name = vm.Name });
-                }
-                else
-                {
-                    _context.Roles.Update(new Role
-                    {
-                        Id = vm.Id,
-                        Name = vm.Name
-                    });
-                }
+                await _roleService.SaveAllAsync(roles);
+                TempData["Success"] = "Changes saved.";
+                return RedirectToAction(nameof(Index));
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to save roles");
+                ModelState.AddModelError(string.Empty, "An error occurred. Please try again later.");
+                return View(nameof(Index), roles);
+            }
+        }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+        [HttpGet]
+        public IActionResult RowTemplate()
+        {
+            ViewData["idx"] = "__index__";
+            return PartialView("_RoleRow", new RoleViewModel());
         }
     }
 }

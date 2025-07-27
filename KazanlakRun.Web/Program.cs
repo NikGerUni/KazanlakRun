@@ -91,6 +91,8 @@ namespace KazanlakRun.Web
             builder.Services.AddScoped<IVolunteerService, VolunteerService>();
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped<IGpxFileService, GpxFileService>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
+
             builder.Services.Configure<GpxFileSettings>(builder.Configuration.GetSection("GpxFileSettings"));
 
 
