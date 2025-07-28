@@ -1,10 +1,10 @@
 ﻿@model List<KazanlakRun.Web.Areas.Admin.Models.DistanceEditDto>
 
 @{
-    ViewData["Title"] = "Edit All Distances";
+    ViewData["Title"] = "Edit Number of Registered Runners";
 }
 
-<h2>Distances</h2>
+<h2>Edit Number of Registered Runners</h2>
 
 <form asp-area="Admin"
       asp-controller="Distance"
@@ -17,7 +17,7 @@
             <tr>
                 <th>Id</th>
                 <th>Distance</th>
-                <th>Number of runners</th>
+                <th>Number of Registered Runners</th>
             </tr>
         </thead>
         <tbody>
@@ -29,14 +29,25 @@
                         @Html.HiddenFor(m => m[i].Id)
                     </td>
                     <td>
-                        @Html.DisplayFor(m => m[i].Distans)
+                        <input type="text"
+                               class="form-control"
+                               value="@Model[i].Distans"
+                               readonly />
                         @Html.HiddenFor(m => m[i].Distans)
                     </td>
                     <td>
                         @Html.EditorFor(
                                  m => m[i].RegRunners,
-                                 new { htmlAttributes = new { @class = "form-control", type = "number" } }
-                                 )
+                                 new
+                                 {
+                                     htmlAttributes = new
+                                     {
+                                         @class = "form-control",
+                                         type = "number",
+                                         min = "1",
+                                         max = "1000"
+                                     }
+                                 })
                         @Html.ValidationMessageFor(m => m[i].RegRunners, "", new { @class = "text-danger" })
                     </td>
                 </tr>

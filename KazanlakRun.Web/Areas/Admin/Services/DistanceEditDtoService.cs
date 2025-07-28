@@ -46,15 +46,23 @@ namespace KazanlakRun.Web.Areas.Admin.Services
 
         public async Task UpdateMultipleAsync(IEnumerable<DistanceEditDto> distances)
         {
+            var ids = distances.Select(d => d.Id).ToList();
+
+            var entities = await _db.Distances
+                                    .Where(d => ids.Contains(d.Id))
+                                    .ToListAsync();
+
             foreach (var dto in distances)
             {
-                var entity = await _db.Distances.FindAsync(dto.Id);
+                var entity = entities.FirstOrDefault(e => e.Id == dto.Id);
                 if (entity is null)
-                    continue;
+                    throw new InvalidOperationException($"Expected Distance with Id={dto.Id}, but not found.");
 
                 entity.RegRunners = dto.RegRunners;
             }
+
             await _db.SaveChangesAsync();
         }
+
     }
 }

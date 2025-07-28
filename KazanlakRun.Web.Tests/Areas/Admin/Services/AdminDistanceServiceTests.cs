@@ -108,33 +108,18 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         }
 
         [Test]
-        public async Task UpdateMultipleAsync_UpdatesOnlyExistingEntities()
+        public void UpdateMultipleAsync_Throws_WhenEntityNotFound()
         {
-            // Arrange: два seed и един невалиден
-            var seed = new[]
-            {
-                new Distance { Id = 1, Distans = "A", RegRunners = 1 },
-                new Distance { Id = 2, Distans = "B", RegRunners = 2 }
-            };
-            await _db.Distances.AddRangeAsync(seed);
-            await _db.SaveChangesAsync();
-            _db.ChangeTracker.Clear();
+            // Arrange
+            var svc = new DistanceEditDtoService(_db);
+            var model = new List<DistanceEditDto>
+    {
+        new DistanceEditDto { Id = 99, RegRunners = 5, Distans = "Test" }
+    };
 
-            var updates = new List<DistanceEditDto>
-            {
-                new DistanceEditDto { Id = 1, Distans = seed[0].Distans, RegRunners = 11 },
-                new DistanceEditDto { Id = 2, Distans = seed[1].Distans, RegRunners = 22 },
-                new DistanceEditDto { Id = 99, Distans = "X", RegRunners = 99 }  // не съществува
-            };
-
-            // Act
-            await _svc.UpdateMultipleAsync(updates);
-
-            // Assert
-            var all = await _db.Distances.AsNoTracking().ToListAsync();
-            Assert.AreEqual(2, all.Count);
-            Assert.AreEqual(11, all.Single(x => x.Id == 1).RegRunners);
-            Assert.AreEqual(22, all.Single(x => x.Id == 2).RegRunners);
+            // Act & Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await svc.UpdateMultipleAsync(model));
         }
 
         [Test]
