@@ -1,7 +1,9 @@
 ﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 {
@@ -9,6 +11,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
     {
         private ApplicationDbContext _db;
         private ReportService _service;
+
 
         [SetUp]
         public void SetUp()
@@ -18,7 +21,10 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
                .Options;
 
             _db = new ApplicationDbContext(opts);
-            _service = new ReportService(_db, NullLogger<ReportService>.Instance);
+
+            var memoryCache = new MemoryCache(new MemoryCacheOptions());
+
+            _service = new ReportService(_db, NullLogger<ReportService>.Instance, memoryCache);
         }
 
         [TearDown]

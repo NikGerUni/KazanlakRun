@@ -85,6 +85,9 @@ public class Program
         });
         builder.Services.AddRazorPages();
         builder.Services.AddAuthorization();
+        builder.Services.AddMemoryCache();
+        builder.Services.AddScoped<ICacheService, CacheService>();
+
 
         var app = builder.Build();
         app.UseExceptionHandler("/Error/500");

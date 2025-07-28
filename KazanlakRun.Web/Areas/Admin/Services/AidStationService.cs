@@ -1,16 +1,23 @@
 ﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
+using KazanlakRun.Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace KazanlakRun.Web.Areas.Admin.Services
 {
     public class AidStationService : IAidStationService
     {
         private readonly ApplicationDbContext _db;
+        private readonly ICacheService _cacheService;
 
-        public AidStationService(ApplicationDbContext db) => _db = db;
+        public AidStationService(ApplicationDbContext db, ICacheService cacheService)
+        {
+            _db = db;
+            _cacheService = cacheService;
+        }
 
 
         public async Task<List<AidStationListItem>> GetAllAsync() =>
@@ -160,6 +167,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 vols.ForEach(v => v.AidStationId = entity.Id);
                 await _db.SaveChangesAsync();
             }
+            _cacheService.ClearReportCache();
         }
 
 
@@ -215,8 +223,9 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                     vol.AidStationId = station.Id;
                 }
             }
-
             await _db.SaveChangesAsync();
+
+            _cacheService.ClearReportCache();
         }
 
 
@@ -226,6 +235,8 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 ?? throw new KeyNotFoundException();
             _db.AidStations.Remove(station);
             await _db.SaveChangesAsync();
+
+            _cacheService.ClearReportCache();
         }
     }
 }

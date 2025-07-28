@@ -2,7 +2,9 @@
 using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services;
+using KazanlakRun.Web.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 {
@@ -12,15 +14,19 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         private DbContextOptions<ApplicationDbContext> _options = null!;
         private ApplicationDbContext _db = null!;
         private AidStationService _svc = null!;
+        private Mock<ICacheService> _cacheServiceMock;
 
         [SetUp]
         public void SetUp()
         {
-            _options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
-            _db = new ApplicationDbContext(_options);
-            _svc = new AidStationService(_db);
+
+            _db = new ApplicationDbContext(options);
+            _cacheServiceMock = new Mock<ICacheService>();
+
+            _svc = new AidStationService(_db, _cacheServiceMock.Object);
         }
 
         [TearDown]

@@ -1,6 +1,7 @@
 ﻿using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace KazanlakRun.Web.Areas.Admin.Services
 {
@@ -8,22 +9,27 @@ namespace KazanlakRun.Web.Areas.Admin.Services
     {
         private readonly ApplicationDbContext _db;
         private readonly ILogger<ReportService> _logger;
+        private readonly IMemoryCache _cache;
 
-        public ReportService(ApplicationDbContext db, ILogger<ReportService> logger)
+        public ReportService(ApplicationDbContext db, ILogger<ReportService> logger, IMemoryCache cache)
         {
             _db = db;
             _logger = logger;
+            _cache = cache;
         }
 
         public async Task<List<AidStationRunnersReportViewModel>> GetRunnersByAidStationAsync()
         {
+            const string cacheKey = "RunnersByAidStation";
+            if (_cache.TryGetValue(cacheKey, out List<AidStationRunnersReportViewModel> cached))
+                return cached;
+
             var stations = await _db.AidStations
-                .Include(a => a.AidStationDistances)
-                    .ThenInclude(ad => ad.Distance)
+                .Include(a => a.AidStationDistances).ThenInclude(ad => ad.Distance)
                 .AsNoTracking()
                 .ToListAsync();
 
-            return stations
+            var result = stations
                 .Select(a => new AidStationRunnersReportViewModel
                 {
                     AidStationName = a.Name,
@@ -36,10 +42,17 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                         .ToList()
                 })
                 .ToList();
+
+            _cache.Set(cacheKey, result, TimeSpan.FromMinutes(5));
+            return result;
         }
 
         public async Task<List<AidStationVolunteersReportViewModel>> GetVolunteersByAidStationAsync()
         {
+            const string cacheKey = "VolunteersByAidStation";
+            if (_cache.TryGetValue(cacheKey, out List<AidStationVolunteersReportViewModel> cached))
+                return cached;
+
             var stations = await _db.AidStations
                 .Include(a => a.Volunteers)
                     .ThenInclude(v => v.VolunteerRoles)
@@ -47,7 +60,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 .AsNoTracking()
                 .ToListAsync();
 
-            return stations
+            var result = stations
                 .Select(a => new AidStationVolunteersReportViewModel
                 {
                     AidStationName = a.Name,
@@ -64,10 +77,17 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                         .ToList()
                 })
                 .ToList();
+
+            _cache.Set(cacheKey, result, TimeSpan.FromMinutes(5));
+            return result;
         }
 
         public async Task<List<AidStationGoodsReportViewModel>> GetGoodsByAidStationAsync()
         {
+            const string cacheKey = "GoodsByAidStation";
+            if (_cache.TryGetValue(cacheKey, out List<AidStationGoodsReportViewModel> cached))
+                return cached;
+
             var goods = await _db.Goods
                 .Where(g => g.QuantityOneRunner > 0)
                 .AsNoTracking()
@@ -79,7 +99,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 .AsNoTracking()
                 .ToListAsync();
 
-            return stations
+            var result = stations
                 .Select(a =>
                 {
                     var totalRunners = a.AidStationDistances.Sum(ad => ad.Distance.RegRunners);
@@ -100,10 +120,17 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                     };
                 })
                 .ToList();
+
+            _cache.Set(cacheKey, result, TimeSpan.FromMinutes(5));
+            return result;
         }
 
         public async Task<List<GoodsForDeliveryReportViewModel>> GetGoodsForDeliveryAsync()
         {
+            const string cacheKey = "GoodsForDelivery";
+            if (_cache.TryGetValue(cacheKey, out List<GoodsForDeliveryReportViewModel> cached))
+                return cached;
+
             var stations = await _db.AidStations
                 .Include(a => a.AidStationDistances)
                     .ThenInclude(ad => ad.Distance)
@@ -118,7 +145,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 .AsNoTracking()
                 .ToListAsync();
 
-            return goods
+            var result = goods
                 .Select(g =>
                 {
                     var needed = runnersPerStation.Sum(r => r * g.QuantityOneRunner);
@@ -131,6 +158,9 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                     };
                 })
                 .ToList();
+
+            _cache.Set(cacheKey, result, TimeSpan.FromMinutes(5));
+            return result;
         }
     }
 }
