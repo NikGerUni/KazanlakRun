@@ -30,7 +30,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetAllRolesAsync_ReturnsMappedRoles()
         {
-            // Arrange
             var roles = new[]
             {
                 new Role { Id = 1, Name = "Admin" },
@@ -40,10 +39,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             await _db.SaveChangesAsync();
             _db.ChangeTracker.Clear();
 
-            // Act
             var result = await _svc.GetAllRolesAsync();
 
-            // Assert
             Assert.AreEqual(2, result.Count);
             CollectionAssert.AreEquivalent(
                 new[] { 1, 2 }, result.Select(r => r.Id)
@@ -56,10 +53,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetAllVolunteersAsync_ReturnsListItemsWithRoles()
         {
-            // Arrange: seed roles
             var role1 = new Role { Id = 1, Name = "Leader" };
             var role2 = new Role { Id = 2, Name = "Support" };
-            // seed volunteer with roles
             var vol = new Volunteer
             {
                 Id = 10,
@@ -77,10 +72,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             await _db.SaveChangesAsync();
             _db.ChangeTracker.Clear();
 
-            // Act
             var list = await _svc.GetAllVolunteersAsync();
 
-            // Assert
             Assert.AreEqual(1, list.Count);
             var item = list.Single();
             Assert.AreEqual(10, item.Id);
@@ -96,15 +89,12 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetForCreateAsync_ReturnsViewModelWithSelectItems()
         {
-            // Arrange
             _db.Roles.Add(new Role { Id = 5, Name = "Gamma" });
             _db.Roles.Add(new Role { Id = 6, Name = "Delta" });
             await _db.SaveChangesAsync();
 
-            // Act
             var vm = await _svc.GetForCreateAsync();
 
-            // Assert
             Assert.That(vm.AllRoles, Has.Count.EqualTo(2));
             var texts = vm.AllRoles.Select(i => i.Text).ToList();
             var vals = vm.AllRoles.Select(i => i.Value).ToList();
@@ -116,7 +106,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task CreateAsync_AddsVolunteerAndRoles()
         {
-            // Arrange
             var model = new VolunteerViewModel
             {
                 Names = "Bob",
@@ -125,10 +114,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
                 SelectedRoleIds = new[] { 1, 2 }
             };
 
-            // Act
             await _svc.CreateAsync(model);
 
-            // Assert: one volunteer
             var v = await _db.Volunteers
                 .Include(x => x.VolunteerRoles)
                 .FirstAsync();
@@ -144,7 +131,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetForEditAsync_ThrowsWhenNotFound()
         {
-            // Act & Assert
             Assert.ThrowsAsync<KeyNotFoundException>(
                 () => _svc.GetForEditAsync(999)
             );
@@ -153,11 +139,9 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetForEditAsync_ReturnsPopulatedViewModel()
         {
-            // Arrange roles
             var r1 = new Role { Id = 1, Name = "R1" };
             var r2 = new Role { Id = 2, Name = "R2" };
             _db.Roles.AddRange(r1, r2);
-            // seed volunteer with only role1
             var vol = new Volunteer
             {
                 Id = 20,
@@ -173,21 +157,16 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             await _db.SaveChangesAsync();
             _db.ChangeTracker.Clear();
 
-            // Act
             var vm = await _svc.GetForEditAsync(20);
 
-            // Assert
             Assert.AreEqual(20, vm.Id);
             Assert.AreEqual("Cat", vm.Names);
             Assert.AreEqual("cat@x", vm.Email);
             Assert.AreEqual("789", vm.Phone);
 
-            // AllRoles contains both r1 and r2
             Assert.That(vm.AllRoles, Has.Count.EqualTo(2));
-            // SelectedRoleIds contains only 1
             CollectionAssert.AreEquivalent(new[] { 1 }, vm.SelectedRoleIds);
 
-            // Check SelectListItem.Selected flags
             var selMap = vm.AllRoles.ToDictionary(x => int.Parse(x.Value), x => x.Selected);
             Assert.IsTrue(selMap[1], "Role 1 should be selected");
             Assert.IsFalse(selMap[2], "Role 2 should not be selected");
@@ -205,7 +184,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task UpdateAsync_UpdatesPropertiesAndRoles()
         {
-            // Arrange roles and volunteer entity
             var r1 = new Role { Id = 1, Name = "A" };
             var r2 = new Role { Id = 2, Name = "B" };
             var r3 = new Role { Id = 3, Name = "C" };
@@ -236,10 +214,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
                 SelectedRoleIds = new[] { 2, 3 }
             };
 
-            // Act
             await _svc.UpdateAsync(model);
 
-            // Assert
             var updated = await _db.Volunteers
                 .Include(v => v.VolunteerRoles)
                 .FirstAsync(v => v.Id == 30);

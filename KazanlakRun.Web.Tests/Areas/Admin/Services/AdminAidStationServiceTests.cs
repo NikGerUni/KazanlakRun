@@ -32,7 +32,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetAllAsync_ReturnsStationsWithDistancesAndVolunteers()
         {
-            // Arrange
             var dist = new Distance { Id = 1, Distans = "5K", RegRunners = 10 };
             var role = new Role { Id = 1, Name = "Leader" };
             var station = new AidStation { Id = 1, Name = "StationX", ShortName = "SX" };
@@ -57,10 +56,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             await _db.SaveChangesAsync();
             _db.ChangeTracker.Clear();
 
-            // Act
             var list = await _svc.GetAllAsync();
 
-            // Assert
             Assert.AreEqual(1, list.Count);
             var item = list.Single();
             Assert.AreEqual(1, item.Id);
@@ -78,7 +75,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetForCreateAsync_ReturnsViewModelWithSelectLists()
         {
-            // Arrange
             var d1 = new Distance { Id = 2, Distans = "10K" };
             var vol = new Volunteer
             {
@@ -93,20 +89,16 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             await _db.SaveChangesAsync();
             _db.ChangeTracker.Clear();
 
-            // Act
             var vm = await _svc.GetForCreateAsync();
 
-            // Convert to lists for indexing
             var distances = vm.AllDistances.ToList();
             var volunteers = vm.AllVolunteers.ToList();
 
-            // Assert distances list
             Assert.That(distances, Has.Count.EqualTo(1));
             Assert.AreEqual("10K", distances[0].Text);
             Assert.AreEqual("2", distances[0].Value);
             Assert.IsFalse(distances[0].Selected);
 
-            // Assert volunteers list
             Assert.That(volunteers, Has.Count.EqualTo(1));
             StringAssert.StartsWith("Bob", volunteers[0].Text);
             Assert.AreEqual("1", volunteers[0].Value);
@@ -116,14 +108,12 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetForEditAsync_Throws_WhenNotFound()
         {
-            // Act & Assert
             Assert.ThrowsAsync<KeyNotFoundException>(() => _svc.GetForEditAsync(999));
         }
 
         [Test]
         public async Task GetForEditAsync_ReturnsViewModelWithSelections()
         {
-            // Arrange roles, distances, volunteers
             var r = new Role { Id = 3, Name = "Support" };
             var d = new Distance { Id = 4, Distans = "15K" };
             var station = new AidStation { Id = 5, Name = "Y", ShortName = "Y" };
@@ -131,12 +121,11 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             {
                 Id = 1,
                 Names = "Carol",
-                Email = "carol@example.com",    // ← now required
-                Phone = "555-0101",             // ← now required
+                Email = "carol@example.com",
+                Phone = "555-0101",
                 VolunteerRoles = new List<VolunteerRole>()
             };
 
-            // link entities
             station.AidStationDistances.Add(new AidStationDistance { DistanceId = d.Id });
             vol.AidStationId = station.Id;
             var vr = new VolunteerRole { VolunteerId = vol.Id, RoleId = r.Id };
@@ -149,18 +138,14 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             await _db.SaveChangesAsync();
             _db.ChangeTracker.Clear();
 
-            // Act
             var vm = await _svc.GetForEditAsync(station.Id);
 
-            // Assert
             Assert.AreEqual(station.Id, vm.Id);
             Assert.AreEqual("Y", vm.Name);
 
-            // Distances
             Assert.That(vm.AllDistances.Select(x => x.Value), Contains.Item("4"));
             Assert.IsTrue(vm.AllDistances.Single(x => x.Value == "4").Selected);
 
-            // Volunteers
             Assert.That(vm.AllVolunteers.Select(x => x.Value), Contains.Item("1"));
             Assert.IsTrue(vm.AllVolunteers.Single(x => x.Value == "1").Selected);
         }
@@ -168,11 +153,10 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 
         public async Task CreateAsync(AidStationViewModel model)
         {
-            // 1) Add and save just to get the generated Id
             var entity = new AidStation
             {
                 Name = model.Name,
-                ShortName = model.Name   // temporary non-null
+                ShortName = model.Name
             };
             foreach (var did in model.SelectedDistanceIds)
                 entity.AidStationDistances
@@ -181,11 +165,9 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             _db.AidStations.Add(entity);
             await _db.SaveChangesAsync();
 
-            // 2) Now that entity.Id is populated, overwrite ShortName
             entity.ShortName = model.Name + entity.Id;
             await _db.SaveChangesAsync();
 
-            // 3) Associate volunteers
             if (model.SelectedVolunteerIds.Any())
             {
                 var vols = await _db.Volunteers
@@ -206,11 +188,9 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task UpdateAsync_UpdatesNameDistancesAndVolunteerAssignments()
         {
-            // Arrange roles, distances, volunteers, station
             var dOld = new Distance { Id = 7, Distans = "OldD" };
             var dNew = new Distance { Id = 8, Distans = "NewD" };
 
-            // ← include Email and Phone so EF Core can save them!
             var volOld = new Volunteer
             {
                 Id = 1,
@@ -230,7 +210,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 
             var station = new AidStation { Id = 9, Name = "Orig", ShortName = "O" };
 
-            // initial links
             station.AidStationDistances.Add(new AidStationDistance { DistanceId = dOld.Id });
             volOld.AidStationId = station.Id;
 
@@ -240,7 +219,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             await _db.SaveChangesAsync();
             _db.ChangeTracker.Clear();
 
-            // update model: rename station, swap distance, swap volunteer
             var model = new AidStationViewModel
             {
                 Id = station.Id,
@@ -249,10 +227,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
                 SelectedVolunteerIds = new[] { volNew.Id }
             };
 
-            // Act
             await _svc.UpdateAsync(model);
 
-            // Assert
             var st = await _db.AidStations
                 .Include(a => a.AidStationDistances)
                 .Include(a => a.Volunteers)
@@ -263,24 +239,19 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
                 new[] { dNew.Id },
                 st.AidStationDistances.Select(ad => ad.DistanceId)
             );
-            // old volunteer removed
             Assert.IsFalse(st.Volunteers.Any(v => v.Id == volOld.Id));
-            // new volunteer assigned
             Assert.IsTrue(st.Volunteers.Any(v => v.Id == volNew.Id));
         }
 
         [Test]
         public async Task DeleteAsync_RemovesStation()
         {
-            // Arrange
             var station = new AidStation { Id = 10, Name = "Del", ShortName = "D" };
             _db.AidStations.Add(station);
             await _db.SaveChangesAsync();
 
-            // Act
             await _svc.DeleteAsync(station.Id);
 
-            // Assert
             bool exists = await _db.AidStations.AnyAsync(a => a.Id == station.Id);
             Assert.IsFalse(exists);
         }

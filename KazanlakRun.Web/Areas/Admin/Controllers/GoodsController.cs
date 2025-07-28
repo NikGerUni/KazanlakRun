@@ -6,7 +6,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
     [Route("Admin/[controller]/[action]")]
     public class GoodsController : Controller
     {
-        // GET: Admin/Goods/Index
         public IActionResult Index()
         {
             return View();

@@ -19,7 +19,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return View(list);
         }
 
-        // POST: Admin/Distance/EditAll
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAll(List<DistanceEditDto> model)
         {
@@ -32,14 +31,12 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
 
 
 
-        // GET: Admin/Distance
         public async Task<IActionResult> Index()
         {
             var list = await _svc.GetAllAsync();
             return View(list);
         }
 
-        // GET: Admin/Distance/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var dto = await _svc.GetByIdAsync(id);
@@ -47,7 +44,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return View(dto);
         }
 
-        // POST: Admin/Distance/Edit/5
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(DistanceEditDto model)
         {

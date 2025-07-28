@@ -49,7 +49,7 @@ namespace KazanlakRun.Web.Areas.User.Services
             if (entity != null)
             {
                 _volunteerRepository.Remove(entity);
-                await _volunteerRepository.SaveChangesAsync(); // ✅ добавено
+                await _volunteerRepository.SaveChangesAsync();
             }
         }
 
@@ -65,7 +65,7 @@ namespace KazanlakRun.Web.Areas.User.Services
             _mapper.Map(model, entity);
             _volunteerRepository.Update(entity);
 
-            await _volunteerRepository.SaveChangesAsync(); // ✅ добавено
+            await _volunteerRepository.SaveChangesAsync();
         }
 
     }

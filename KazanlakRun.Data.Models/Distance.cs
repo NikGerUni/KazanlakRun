@@ -1,5 +1,4 @@
-﻿// Distance.cs
-using KazanlakRun.GCommon;
+﻿using KazanlakRun.GCommon;
 using System.ComponentModel.DataAnnotations;
 
 namespace KazanlakRun.Data.Models

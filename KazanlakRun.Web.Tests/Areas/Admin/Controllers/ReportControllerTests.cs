@@ -22,7 +22,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
             _serviceMock = new Mock<IReportService>();
             _controller = new ReportController(_serviceMock.Object, new NullLogger<ReportController>());
 
-            // setup TempData
             var httpContext = new DefaultHttpContext();
             _tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
             _controller.TempData = _tempData;
@@ -37,7 +36,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         [Test]
         public async Task RunnersByAidStation_ReturnsViewWithModel()
         {
-            // Arrange
             var sample = new List<AidStationRunnersReportViewModel>
             {
                 new AidStationRunnersReportViewModel
@@ -53,10 +51,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
                 .Setup(s => s.GetRunnersByAidStationAsync())
                 .ReturnsAsync(sample);
 
-            // Act
             var result = await _controller.RunnersByAidStation();
 
-            // Assert
             Assert.IsInstanceOf<ViewResult>(result);
             var view = (ViewResult)result;
             Assert.AreSame(sample, view.Model);
@@ -65,7 +61,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         [Test]
         public async Task GoodsByAidStation_ReturnsViewWithModel()
         {
-            // Arrange
             var sample = new List<AidStationGoodsReportViewModel>
             {
                 new AidStationGoodsReportViewModel
@@ -82,10 +77,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
                 .Setup(s => s.GetGoodsByAidStationAsync())
                 .ReturnsAsync(sample);
 
-            // Act
             var result = await _controller.GoodsByAidStation();
 
-            // Assert
             Assert.IsInstanceOf<ViewResult>(result);
             var view = (ViewResult)result;
             Assert.AreSame(sample, view.Model);

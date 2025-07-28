@@ -23,7 +23,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         base.OnModelCreating(modelBuilder);
 
-        // ─── 1. Seed на Identity роли ────────────────────────
         var adminRoleId = "a1b2c3d4-e5f6-4782-8209-d76562e0feaa";
         var userRoleId = "f1e2d3c4-b5a6-4948-9309-c56782b0faab";
 
@@ -42,7 +41,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             }
         );
 
-        // ─── 2. Seed на default user (ако вече го имаш, не е нужно да повтаряш) ───
         var defaultUserId = "7699db7d-964f-4782-8209-d76562e0fece";
         modelBuilder.Entity<IdentityUser>().HasData(
             new IdentityUser
@@ -60,7 +58,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             }
         );
 
-        // ─── 3. Асоцииране на default user с ролята "Admin" ───
         modelBuilder.Entity<IdentityUserRole<string>>().HasData(
             new IdentityUserRole<string>
             {
@@ -94,14 +91,12 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         );
 
 
-        // ─── Composite keys for join tables ─────────────────────
         modelBuilder.Entity<VolunteerRole>()
             .HasKey(vr => new { vr.VolunteerId, vr.RoleId });
 
         modelBuilder.Entity<AidStationDistance>()
             .HasKey(ad => new { ad.AidStationId, ad.DistanceId });
 
-        // ─── Relationships ───────────────────────────────────────
         modelBuilder.Entity<Volunteer>()
             .HasOne(v => v.AidStation)
             .WithMany(a => a.Volunteers)
@@ -137,12 +132,10 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
         modelBuilder.Entity<Role>(entity =>
         {
-            // 1) Name е задължително и макс. дължина
             entity.Property(r => r.Name)
                   .IsRequired()
                   .HasMaxLength(ValidationConstants.RoleMaxLen);
 
-            // 2) Check constraint за мин. дължина
             entity.HasCheckConstraint(
                 name: "CK_Roles_Name_MinLength",
                 sql: $"LEN([Name]) >= {ValidationConstants.RoleMinLen}"
@@ -152,23 +145,19 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
         modelBuilder.Entity<AidStation>(entity =>
         {
-            // Name: Not null, max length
             entity.Property(a => a.Name)
                   .IsRequired()
                   .HasMaxLength(ValidationConstants.AidStationNameMaxLen);
 
-            // Check constraint: минимална дължина
             entity.HasCheckConstraint(
                 name: "CK_AidStations_Name_MinLength",
                 sql: $"LEN([Name]) >= {ValidationConstants.AidStationNameMinLen}"
             );
 
-            // ShortName: Not null, max length
             entity.Property(a => a.ShortName)
                   .IsRequired()
                   .HasMaxLength(ValidationConstants.AidStationShortNameMaxLen);
 
-            // Check constraint: минимална дължина
             entity.HasCheckConstraint(
                 name: "CK_AidStations_ShortName_MinLength",
                 sql: $"LEN([ShortName]) >= {ValidationConstants.AidStationShortNameMinLen}"
@@ -179,9 +168,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         {
             entity.ToTable("Volunteers");
 
-            // Id по конвенция
 
-            // Names: Required, max и min дължина + CHECK за минимум
             entity.Property(v => v.Names)
                   .IsRequired()
                   .HasMaxLength(ValidationConstants.NamesMaxLen);
@@ -190,7 +177,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
                 name: "CK_Volunteers_Names_MinLength",
                 sql: $"LEN([Names]) >= {ValidationConstants.NamesMinLen}");
 
-            // Email: Required, max дължина, уникален индекс
             entity.Property(v => v.Email)
                   .IsRequired()
                   .HasMaxLength(ValidationConstants.EmailMaxLen);
@@ -199,7 +185,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
                   .IsUnique()
                   .HasDatabaseName("IX_Volunteers_Email");
 
-            // Phone: Required, max и min дължина + CHECK за минимум
             entity.Property(v => v.Phone)
                   .IsRequired()
                   .HasMaxLength(ValidationConstants.PhoneMaxLen);
@@ -208,13 +193,11 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
                 name: "CK_Volunteers_Phone_MinLength",
                 sql: $"LEN([Phone]) >= {ValidationConstants.PhoneMinLen}");
 
-            // Навигации: много към много през VolunteerRole
             entity.HasMany(v => v.VolunteerRoles)
                   .WithOne(vr => vr.Volunteer)
                   .HasForeignKey(vr => vr.VolunteerId);
         });
 
-        // ─── Seed data ───────────────────────────────────────────
 
         modelBuilder.Entity<Role>().HasData(
             new Role { Id = 1, Name = "doctor" },

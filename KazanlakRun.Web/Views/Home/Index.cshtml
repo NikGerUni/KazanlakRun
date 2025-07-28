@@ -8,7 +8,7 @@
   }
      .hero-overlay .hero-subtitle,
     .hero-overlay .hero-countdown {
-        margin: 0.25rem 0; /* по-малко пространство отгоре/отдолу */
+        margin: 0.25rem 0; 
     }
 </style>
 <div class="hero-section">
@@ -19,7 +19,7 @@
             10, 20, 40 km | Start/Finish - Central Park |  31.05.2026 10:00
         </p>
 
-        <!-- Тук добавяме полето за нашия countdown -->
+        
         <p id="countdown" class="hero-countdown"></p>
 
         <p class="hero-subtitle">We are happy to have you as our volunteer supporter</p>
@@ -33,15 +33,12 @@
 </div>
 
 <div class="about-section">
-    <!-- ... останалото съдържание ... -->
+    
 </div>
 
 @section Scripts {
     <script>
-        // Задаваме целевата дата
         const target = new Date('May 31, 2026 10:00:00').getTime();
-
-        // Функция, която ъпдейтва всеки 1сек назадното броене
         const timer = setInterval(() => {
             const now = Date.now();
             const diff = target - now;

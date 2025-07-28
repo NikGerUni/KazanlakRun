@@ -1,11 +1,8 @@
-﻿// wwwroot/js/goodsfordelivery-report.js
-(function () {
-    // helper to read cookie by name
+﻿(function () {
     function getCookie(name) {
         var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
         return match ? decodeURIComponent(match[2]) : null;
     }
-    // helper to set a cookie (expires in given days)
     function setCookie(name, value, days) {
         var expires = "";
         if (days) {
@@ -27,7 +24,6 @@
         var lastBtn = document.getElementById('lastBtn');
         var pageInfo = document.getElementById('pageInfo');
 
-        // 1) determine default pageSize from cookie or from server-side constant
         var defaultSize = window.goodsForDeliveryDefaultPageSize || 10;
         var savedSize = getCookie('GoodsForDeliveryPageSize');
         pageSizeInput.value = (savedSize && !isNaN(savedSize))
@@ -46,21 +42,17 @@
                 )
             );
 
-            // recalc pagination
             pageSize = parseInt(pageSizeInput.value) || defaultSize;
             totalPages = Math.ceil(filteredRows.length / pageSize) || 1;
             if (currentPage >= totalPages) currentPage = totalPages - 1;
 
-            // save last-used pageSize in cookie for 1 year
             setCookie('GoodsForDeliveryPageSize', pageSize, 365);
 
-            // show only the slice for current page
             rows.forEach(r => r.style.display = 'none');
             var start = currentPage * pageSize;
             var end = start + pageSize;
             filteredRows.slice(start, end).forEach(r => r.style.display = '');
 
-            // update UI controls
             pageInfo.textContent = (currentPage + 1) + ' / ' + totalPages;
             firstBtn.disabled = currentPage === 0;
             prevBtn.disabled = currentPage === 0;
@@ -68,7 +60,6 @@
             lastBtn.disabled = currentPage === totalPages - 1;
         }
 
-        // wire up events
         ['input', 'keyup', 'change'].forEach(evt =>
             filterInput.addEventListener(evt, () => { currentPage = 0; renderTable(); })
         );
@@ -78,7 +69,6 @@
         nextBtn.addEventListener('click', () => { if (currentPage < totalPages - 1) currentPage++; renderTable(); });
         lastBtn.addEventListener('click', () => { currentPage = totalPages - 1; renderTable(); });
 
-        // initial render
         renderTable();
     });
 })();

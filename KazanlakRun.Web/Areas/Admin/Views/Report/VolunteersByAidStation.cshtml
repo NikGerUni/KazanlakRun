@@ -18,7 +18,7 @@
 <h1>📋 Volunteers per Aid Station</h1>
 
 <div class="no-print mb-3 d-flex align-items-center">
-  <!-- Filter -->
+  
   <div class="me-3">
     <label asp-for="FilterText" class="form-label mb-0" aria-label="Filter volunteers">Filter Volunteers:</label>
     <input id="filterInput"
@@ -28,7 +28,7 @@
            aria-label="Filter volunteers" />
   </div>
 
-  <!-- Server-side pagination -->
+  
   <div class="flex-fill d-flex justify-content-center">
     <a asp-action="VolunteersByAidStation" 
        asp-route-page="1" 
@@ -65,7 +65,7 @@
     </a>
   </div>
 
-  <!-- Print -->
+  
   <button class="btn btn-secondary ms-3 no-print"
           onclick="window.print()"
           aria-label="Print Report">

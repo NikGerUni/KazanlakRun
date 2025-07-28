@@ -24,7 +24,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
         {
             var vm = new List<UserRoleViewModel>();
 
-            // взимаме всички, но после филтрираме текущия
             var allUsers = _users.Users.ToList();
             var currentUserId = _users.GetUserId(User);
 
@@ -44,7 +43,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return View(vm);
         }
 
-        // GET: /Admin/Users/Edit/5
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -70,7 +68,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return View(vm);
         }
 
-        // POST: /Admin/Users/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditUserRoleViewModel vm)
@@ -86,7 +83,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             var u = await _users.FindByIdAsync(vm.UserId);
             if (u == null) return NotFound();
 
-            // Remove any existing roles, then add the one selected
             var oldRoles = await _users.GetRolesAsync(u);
             if (oldRoles.Any())
             {

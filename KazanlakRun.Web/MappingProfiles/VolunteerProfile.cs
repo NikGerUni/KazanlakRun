@@ -8,13 +8,9 @@ namespace KazanlakRun.Web.MappingProfiles
     {
         public VolunteerProfile()
         {
-            // от InputModel към ентити (за Create/Update)
             CreateMap<VolunteerInputModel, Volunteer>()
-                // ако имената на свойствата не съвпадат, примерно:
-                // .ForMember(dest => dest.AidStationId, opt => opt.MapFrom(src => src.StationId))
                 ;
 
-            // от ентити към InputModel (за Edit GET)
             CreateMap<Volunteer, VolunteerInputModel>();
         }
     }

@@ -22,19 +22,15 @@ namespace KazanlakRun.Web.Filters
 
         public void OnException(ExceptionContext context)
         {
-            // 1) Determine which action failed
             var actionName = context.RouteData.Values["action"]?.ToString() ?? "";
 
-            // 2) Log the exception once
             _logger.LogError(
                 context.Exception,
                 "Unhandled exception in ReportController.{Action}",
                 actionName);
 
-            // 3) Mark as handled so it doesn’t bubble up
             context.ExceptionHandled = true;
 
-            // 4) Set TempData["Error"] via the factory
             var tempData = _tempDataFactory.GetTempData(context.HttpContext);
             tempData["Error"] = actionName switch
             {
@@ -49,7 +45,6 @@ namespace KazanlakRun.Web.Filters
                 _ => "An error occurred while loading the report."
             };
 
-            // 5) Build the empty model matching each action’s signature
             object emptyModel = actionName switch
             {
                 nameof(ReportController.VolunteersByAidStation) =>
@@ -73,7 +68,6 @@ namespace KazanlakRun.Web.Filters
                 _ => null
             };
 
-            // 6) Return the same view + empty model
             context.Result = new ViewResult
             {
                 ViewName = actionName,

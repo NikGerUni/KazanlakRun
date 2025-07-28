@@ -1,5 +1,4 @@
 ﻿
-// Data/Models/AidStation.cs
 using KazanlakRun.GCommon;
 using System.ComponentModel.DataAnnotations;
 

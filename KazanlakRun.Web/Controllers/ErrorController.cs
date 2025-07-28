@@ -7,7 +7,6 @@ namespace KazanlakRun.Web.Controllers
     {
 
 
-        // за необработени изключения, 500 Internal Server Error
         [Route("Error/500")]
         public IActionResult ExceptionHandler()
         {
@@ -18,7 +17,7 @@ namespace KazanlakRun.Web.Controllers
         {
             Response.StatusCode = statusCode;
             ViewData["ErrorCode"] = statusCode;
-            return View(statusCode.ToString());  // търси Views/Error/404.cshtml, 500.cshtml и т.н.
+            return View(statusCode.ToString());
         }
     }
 }

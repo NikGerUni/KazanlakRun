@@ -16,7 +16,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             _context = context;
         }
 
-        // GET: api/GoodsApi
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Good>>> GetGoods()
         {
@@ -25,7 +24,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
                                  .ToListAsync();
         }
 
-        // GET: api/GoodsApi/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Good>> GetGood(int id)
         {
@@ -35,7 +33,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return good;
         }
 
-        // POST: api/GoodsApi
         [HttpPost]
         public async Task<ActionResult<Good>> CreateGood([FromBody] Good good)
         {
@@ -44,7 +41,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return CreatedAtAction(nameof(GetGood), new { id = good.Id }, good);
         }
 
-        // PUT: api/GoodsApi/5
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateGood(int id, [FromBody] Good good)
         {
@@ -67,7 +63,6 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return NoContent();
         }
 
-        // DELETE: api/GoodsApi/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGood(int id)
         {
@@ -80,19 +75,16 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return NoContent();
         }
 
-        // POST: api/GoodsApi/batch
         [HttpPost("batch")]
         public async Task<ActionResult<IEnumerable<Good>>> SaveBatch([FromBody] List<Good> goods)
         {
             try
             {
-                // Валидация на входните данни
                 if (goods == null || !goods.Any())
                 {
                     return BadRequest("No goods provided");
                 }
 
-                // Валидация на всеки запис
                 foreach (var good in goods)
                 {
                     if (string.IsNullOrWhiteSpace(good.Name))
@@ -105,27 +97,21 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
                     }
                 }
 
-                // Вземи съществуващите записи
                 var existingGoods = await _context.Goods.ToListAsync();
                 var existingIds = existingGoods.Select(g => g.Id).ToHashSet();
                 var incomingIds = goods.Select(g => g.Id).ToHashSet();
 
-                // Записи за добавяне (ID = 0 или не съществуват)
                 var goodsToAdd = goods.Where(g => g.Id <= 0 || !existingIds.Contains(g.Id)).ToList();
 
-                // Записи за обновяване (съществуват и в двете колекции)
                 var goodsToUpdate = goods.Where(g => g.Id > 0 && existingIds.Contains(g.Id)).ToList();
 
-                // Записи за изтриване (съществуват в БД, но не в входящите данни)
                 var goodsToDelete = existingGoods.Where(g => !incomingIds.Contains(g.Id)).ToList();
 
-                // Изтрий записите, които не са в новите данни
                 if (goodsToDelete.Any())
                 {
                     _context.Goods.RemoveRange(goodsToDelete);
                 }
 
-                // Обнови съществуващите записи
                 foreach (var good in goodsToUpdate)
                 {
                     var existingGood = existingGoods.First(g => g.Id == good.Id);
@@ -136,17 +122,14 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
 
                 }
 
-                // Добави новите записи (нулирай ID за автоматично генериране)
                 foreach (var good in goodsToAdd)
                 {
-                    good.Id = 0; // За автоматично генериране на ID
+                    good.Id = 0;
                 }
                 await _context.Goods.AddRangeAsync(goodsToAdd);
 
-                // Запази всички промени
                 await _context.SaveChangesAsync();
 
-                // Върни актуализираните данни
                 var result = await _context.Goods.AsNoTracking().ToListAsync();
                 return Ok(result);
             }

@@ -1,10 +1,8 @@
-﻿using KazanlakRun.Data;
-using KazanlakRun.Data.Models;
+﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging;
 
 namespace KazanlakRun.Web.Areas.Admin.Services
 {
@@ -37,10 +35,8 @@ namespace KazanlakRun.Web.Areas.Admin.Services
             IDbContextTransaction tx = null;
             try
             {
-                // 1) Стартираме транзакция (ще уловим и евентуална грешка тук)
                 tx = await _context.Database.BeginTransactionAsync();
 
-                // 2) Изтриваме маркираните за изтриване чрез натоварени ентитети
                 var toDeleteIds = roles
                     .Where(r => r.IsDeleted && r.Id > 0)
                     .Select(r => r.Id)
@@ -56,7 +52,6 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                     _logger.LogInformation("Removing {Count} roles", entitiesToDelete.Count);
                 }
 
-                // 3) Добавяме нови и ъпдейтваме останалите (прехванати/натоварени)
                 foreach (var vm in roles.Where(r => !r.IsDeleted))
                 {
                     if (vm.Id == 0)
@@ -80,7 +75,6 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                     }
                 }
 
-                // 4) Запазваме в БД и потвърждаваме транзакцията
                 await _context.SaveChangesAsync();
                 await tx.CommitAsync();
             }
@@ -92,7 +86,6 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                     try { await tx.RollbackAsync(); }
                     catch { /* игнорираме rollback‐грешки */ }
                 }
-                // Винаги хвърляме DbUpdateException, за да минават тестовете
                 if (ex is DbUpdateException)
                     throw;
                 throw new DbUpdateException("An error occurred while saving roles.", ex);

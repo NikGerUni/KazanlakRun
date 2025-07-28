@@ -5,7 +5,7 @@
     ViewData["Title"] = "Goods Consumption by Aid Station";
 }
 
-<!-- Специални стилове за този view -->
+
 <link rel="stylesheet" href="~/css/aid-station-report.css" />
 
 <h1>📊 Planned consumption at Aid stations</h1>
@@ -36,7 +36,6 @@
     {
         <div class="station-block">
             @{
-                // Почиства реалните нови редове, ако ги има в данните
                 var cleanName = station.AidStationName
                 .Replace("\r", "")
                 .Replace("\n", " ")
@@ -72,5 +71,5 @@
     }
 </div>
 
-<!-- Специални скриптове за този view -->
+
 <script src="~/js/aid-station-report.js"></script>

@@ -22,23 +22,19 @@ namespace KazanlakRun.Web.Tests.Areas.User.Services
         [SetUp]
         public void SetUp()
         {
-            // In-memory database
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             _db = new ApplicationDbContext(_options);
 
-            // Реална инстанция на твоя IRepository<T>
             _volunteerRepo = new Repository<Volunteer>(_db);
 
-            // AutoMapper
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<VolunteerProfile>();
             });
             _mapper = config.CreateMapper();
 
-            // Създай сервиза с реален Repository и Mapper
             _svc = new VolunteerService(_volunteerRepo, _mapper);
         }
 
@@ -72,7 +68,7 @@ namespace KazanlakRun.Web.Tests.Areas.User.Services
             Assert.AreEqual("Alice", v!.Names);
             Assert.AreEqual("alice@example.com", v.Email);
             Assert.AreEqual("555-1234", v.Phone);
-            Assert.AreEqual(1, v.AidStationId); // ако имаш стойност по подразбиране
+            Assert.AreEqual(1, v.AidStationId);
         }
 
         [Test]

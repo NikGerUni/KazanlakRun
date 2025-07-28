@@ -1,14 +1,13 @@
 namespace KazanlakRun.Web.Controllers
 {
+    using KazanlakRun.Web.ViewModels;
     using Microsoft.AspNetCore.Mvc;
     using System.Diagnostics;
-    using KazanlakRun.Web.ViewModels;
 
     public class HomeController : Controller
     {
         public IActionResult Index()
         {
-            // Ако потребителят е логнат, пренасочете към User area
             if (User.Identity.IsAuthenticated)
             {
                 if (User.IsInRole("Admin"))
@@ -21,18 +20,15 @@ namespace KazanlakRun.Web.Controllers
                 }
                 else
                 {
-                    // Ако няма роля, но е логнат, пренасочете към User area
                     return RedirectToAction("Index", "Home", new { area = "User" });
                 }
             }
 
-            // Ако не е логнат, покажете default Index
             return View();
         }
         [HttpGet]
         public IActionResult Privacy()
         {
-            // Връща Views/Home/Privacy.cshtml
             return View();
         }
         public IActionResult Map()

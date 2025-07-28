@@ -12,7 +12,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
 
         public AidStationService(ApplicationDbContext db) => _db = db;
 
-      
+
         public async Task<List<AidStationListItem>> GetAllAsync() =>
             await _db.AidStations
                 .Include(a => a.AidStationDistances).ThenInclude(ad => ad.Distance)
@@ -137,29 +137,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
         }
 
 
-        //public async Task CreateAsync(AidStationViewModel model)
-        //{
-        //    var entity = new AidStation
-        //    {
-        //        Name = model.Name
-        //    };
 
-        //    foreach (var did in model.SelectedDistanceIds)
-        //        entity.AidStationDistances
-        //            .Add(new AidStationDistance { DistanceId = did });
-
-        //    _db.AidStations.Add(entity);
-        //    await _db.SaveChangesAsync();
-
-        //    if (model.SelectedVolunteerIds.Any())
-        //    {
-        //        var vols = await _db.Volunteers
-        //            .Where(v => model.SelectedVolunteerIds.Contains(v.Id))
-        //            .ToListAsync();
-        //        vols.ForEach(v => v.AidStationId = entity.Id);
-        //        await _db.SaveChangesAsync();
-        //    }
-        //}
 
         public async Task CreateAsync(AidStationViewModel model)
         {
@@ -194,35 +172,53 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 .FirstOrDefaultAsync(a => a.Id == model.Id)
                 ?? throw new KeyNotFoundException();
 
+
             station.Name = model.Name;
+            station.ShortName = model.ShortName;
+
+
+
+            var selectedDistanceIds = model.SelectedDistanceIds ?? Array.Empty<int>();
+
 
             var toRemoveDist = station.AidStationDistances
-                .Where(ad => !model.SelectedDistanceIds.Contains(ad.DistanceId))
+                .Where(ad => !selectedDistanceIds.Contains(ad.DistanceId))
                 .ToList();
-            _db.RemoveRange(toRemoveDist);
+            _db.AidStationDistances.RemoveRange(toRemoveDist);
 
-            var existingDist = station.AidStationDistances
-                .Select(ad => ad.DistanceId)
-                .ToList();
-            var toAddDist = model.SelectedDistanceIds
-                .Except(existingDist);
+
+            var existingDistanceIds = station.AidStationDistances.Select(ad => ad.DistanceId).ToHashSet();
+            var toAddDist = selectedDistanceIds.Except(existingDistanceIds);
             foreach (var did in toAddDist)
-                station.AidStationDistances
-                    .Add(new AidStationDistance { DistanceId = did });
+            {
+                station.AidStationDistances.Add(new AidStationDistance { DistanceId = did });
+            }
 
-            var currentVolIds = station.Volunteers.Select(v => v.Id).ToList();
-            var toRemoveVols = station.Volunteers
-                .Where(v => !model.SelectedVolunteerIds.Contains(v.Id))
-                .ToList();
-            toRemoveVols.ForEach(v => v.AidStationId = 0);
 
-            var toAddVols = await _db.Volunteers
-                .Where(v => model.SelectedVolunteerIds.Except(currentVolIds).Contains(v.Id))
-                .ToListAsync();
-            toAddVols.ForEach(v => v.AidStationId = station.Id);
+
+            var selectedVolunteerIds = model.SelectedVolunteerIds ?? Array.Empty<int>();
+
+
+            foreach (var vol in station.Volunteers.ToList())
+            {
+                vol.AidStationId = null;
+            }
+
+            if (selectedVolunteerIds.Any())
+            {
+                var newVolunteers = await _db.Volunteers
+                    .Where(v => selectedVolunteerIds.Contains(v.Id))
+                    .ToListAsync();
+
+                foreach (var vol in newVolunteers)
+                {
+                    vol.AidStationId = station.Id;
+                }
+            }
 
             await _db.SaveChangesAsync();
         }
+
 
         public async Task DeleteAsync(int id)
         {

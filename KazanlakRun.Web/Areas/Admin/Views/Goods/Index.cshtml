@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Ag-Grid CSS -->
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/31.0.1/styles/ag-grid.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/31.0.1/styles/ag-theme-alpine.min.css" />
 <style>
@@ -111,7 +111,7 @@
         border-radius: 4px;
     }
 
-    /* Основно за всички хедъри */
+    
     .ag-header-cell-label .ag-header-cell-text {
         white-space: normal !important;
         line-height: 1.2em;
@@ -165,8 +165,8 @@
             enableRangeSelection: true, enableFillHandle: true, enableRangeHandle: true, enableClipboard: true,
             onCellValueChanged: onCellValueChanged, onRowDataChanged: onRowDataChanged,
             getContextMenuItems: getContextMenuItems,
-            wrapHeaderText: true,      // позволява пренасяне на текста
-            autoHeaderHeight: true     // автоматично променя височината на реда
+            wrapHeaderText: true,
+            autoHeaderHeight: true
         };
 
         let gridApi;
@@ -211,13 +211,9 @@
             s.style.display = 'block';
             setTimeout(() => s.style.display = 'none', 5000);
         }
-
-        // Заменете функцията saveChanges с тази подобрена версия
         async function saveChanges() {
             const all = [];
             gridApi.forEachNode(n => n.data && all.push(n.data));
-
-            // Подобрена валидация
             const invalid = all.filter(item => {
                 return !item.name || !item.name.trim() ||
                     !item.measure || !item.measure.trim() ||
@@ -230,8 +226,6 @@
                 console.log('Invalid records:', invalid);
                 return;
             }
-
-            // Проверка за дублирани имена
             const names = all.map(item => item.name.trim().toLowerCase());
             const duplicateNames = names.filter((name, index) => names.indexOf(name) !== index);
             if (duplicateNames.length > 0) {
@@ -257,8 +251,6 @@
                 }
 
                 const data = await res.json();
-
-                // Обнови grid-а с новите данни
                 gridApi.setRowData(data);
                 nextId = data.length ? Math.max(...data.map(g => g.id)) + 1 : 1;
 
@@ -269,11 +261,9 @@
                 showStatus('❌ Error saving: ' + e.message, 'error');
             }
         }
-
-        // Също така подобрете функцията addRow
         function addRow() {
             const newRow = {
-                id: 0, // Използвайте 0 за нови записи
+                id: 0,
                 name: '',
                 measure: '',
                 quantity: 0,

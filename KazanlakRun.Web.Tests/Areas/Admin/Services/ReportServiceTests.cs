@@ -31,14 +31,13 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetRunnersByAidStationAsync_ReturnsStationsWithDistances()
         {
-            // Arrange
             var distance1 = new Distance { Distans = "10K", RegRunners = 5 };
             var distance2 = new Distance { Distans = "5K", RegRunners = 3 };
 
             _db.AidStations.Add(new AidStation
             {
                 Name = "Station1",
-                ShortName = "ST1",  // required
+                ShortName = "ST1",
                 AidStationDistances = new List<AidStationDistance>
                 {
                     new() { Distance = distance1 },
@@ -47,10 +46,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             });
             await _db.SaveChangesAsync();
 
-            // Act
             var result = await _service.GetRunnersByAidStationAsync();
 
-            // Assert
             Assert.That(result, Has.Count.EqualTo(1));
             var station = result.Single();
             Assert.That(station.AidStationName, Is.EqualTo("Station1"));
@@ -63,7 +60,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetVolunteersByAidStationAsync_ReturnsStationsWithVolunteers()
         {
-            // Arrange
             var role = new Role { Name = "Helper" };
             var volunteer = new Volunteer
             {
@@ -79,15 +75,13 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             _db.AidStations.Add(new AidStation
             {
                 Name = "Station2",
-                ShortName = "ST2",  // required
+                ShortName = "ST2",
                 Volunteers = new List<Volunteer> { volunteer }
             });
             await _db.SaveChangesAsync();
 
-            // Act
             var result = await _service.GetVolunteersByAidStationAsync();
 
-            // Assert
             Assert.That(result, Has.Count.EqualTo(1));
             var station = result.Single();
             Assert.That(station.AidStationName, Is.EqualTo("Station2"));
@@ -101,12 +95,11 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetGoodsByAidStationAsync_ComputesQuantityPerAidStation()
         {
-            // Arrange
             var distance = new Distance { Distans = "Marathon", RegRunners = 2 };
             _db.AidStations.Add(new AidStation
             {
                 Name = "Station3",
-                ShortName = "ST3",  // required
+                ShortName = "ST3",
                 AidStationDistances = new List<AidStationDistance>
                 {
                     new() { Distance = distance }
@@ -122,10 +115,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 
             await _db.SaveChangesAsync();
 
-            // Act
             var result = await _service.GetGoodsByAidStationAsync();
 
-            // Assert
             Assert.That(result, Has.Count.EqualTo(1));
             var station = result.Single();
             Assert.That(station.AidStationName, Is.EqualTo("Station3"));
@@ -140,7 +131,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public async Task GetGoodsForDeliveryAsync_ComputesNeededAndAvailableQuantities()
         {
-            // Arrange
             var dist1 = new Distance { Distans = "D1", RegRunners = 1 };
             var dist2 = new Distance { Distans = "D2", RegRunners = 2 };
 
@@ -149,7 +139,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
                 new AidStation
                 {
                     Name                = "S1",
-                    ShortName           = "S1",  // required
+                    ShortName           = "S1",
                     AidStationDistances = new List<AidStationDistance>
                     {
                         new() { Distance = dist1 }
@@ -158,7 +148,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
                 new AidStation
                 {
                     Name                = "S2",
-                    ShortName           = "S2",  // required
+                    ShortName           = "S2",
                     AidStationDistances = new List<AidStationDistance>
                     {
                         new() { Distance = dist2 }
@@ -176,14 +166,11 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 
             await _db.SaveChangesAsync();
 
-            // Act
             var result = await _service.GetGoodsForDeliveryAsync();
 
-            // Assert
             Assert.That(result, Has.Count.EqualTo(1));
             var report = result.Single();
             Assert.That(report.Name, Is.EqualTo("Snack"));
-            // needed = (1 + 2) * 2 = 6
             Assert.That(report.NeededQuantity, Is.EqualTo(6m));
             Assert.That(report.Quantity, Is.EqualTo(5m));
             Assert.That(report.ForDelivery, Is.EqualTo(1m));

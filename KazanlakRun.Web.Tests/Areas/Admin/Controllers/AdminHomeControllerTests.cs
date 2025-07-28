@@ -10,13 +10,10 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         [Test]
         public void Index_ReturnsDefaultView()
         {
-            // Arrange
             var controller = new HomeController();
 
-            // Act
             var result = controller.Index();
 
-            // Assert
             Assert.IsInstanceOf<ViewResult>(result, "Index() трябва да връща ViewResult");
             var view = (ViewResult)result;
             Assert.IsTrue(string.IsNullOrEmpty(view.ViewName),
@@ -26,7 +23,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         [Test]
         public void Controller_HasAreaAttribute_Admin()
         {
-            // Проверяваме, че класът е декориран с [Area("Admin")]
             var areaAttr = typeof(HomeController)
                 .GetCustomAttributes(typeof(AreaAttribute), inherit: false)
                 .Cast<AreaAttribute>()
@@ -40,7 +36,6 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
         [Test]
         public void Controller_HasAuthorizeAttribute_RolesAdmin()
         {
-            // Проверяваме, че класът е декориран с [Authorize(Roles = "Admin")]
             var authAttr = typeof(HomeController)
                 .GetCustomAttributes(typeof(AuthorizeAttribute), inherit: false)
                 .Cast<AuthorizeAttribute>()

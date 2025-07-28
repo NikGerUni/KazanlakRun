@@ -39,18 +39,14 @@ namespace KazanlakRun.Web.Areas.Admin.Models
         public List<SelectListItem> AllRoles { get; set; }
     = new List<SelectListItem>();
 
-        // Тук ще пристигнат избраните роли от формата
         public int[] SelectedRoleIds { get; set; } = Array.Empty<int>();
 
-        // This method runs on the server after ModelBinding & DataAnnotations
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var errors = new List<ValidationResult>();
 
-            // --- Advanced email checks ---
             if (!string.IsNullOrWhiteSpace(Email))
             {
-                // 1. RFC email format via MailAddress
                 try
                 {
                     var mail = new MailAddress(Email);
@@ -66,7 +62,6 @@ namespace KazanlakRun.Web.Areas.Admin.Models
                         new[] { nameof(Email) }));
                 }
 
-                // 2. No spaces
                 if (Email.Contains(" "))
                 {
                     errors.Add(new ValidationResult(
@@ -74,7 +69,6 @@ namespace KazanlakRun.Web.Areas.Admin.Models
                         new[] { nameof(Email) }));
                 }
 
-                // 3. Domain must have at least one dot, TLD ≥2
                 var atPos = Email.IndexOf('@');
                 if (atPos < 0)
                 {

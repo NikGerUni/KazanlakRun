@@ -49,26 +49,20 @@ namespace KazanlakRun.Web.Tests.Controllers
         [Test]
         public void Index_UserNotAuthenticated_ReturnsDefaultView()
         {
-            // Arrange
             SetUser(isAuthenticated: false);
 
-            // Act
             var result = _controller.Index();
 
-            // Assert
             Assert.IsInstanceOf<ViewResult>(result);
         }
 
         [Test]
         public void Index_AuthenticatedAdmin_RedirectsToAdminArea()
         {
-            // Arrange
             SetUser(isAuthenticated: true, roles: new[] { "Admin" });
 
-            // Act
             var result = _controller.Index() as RedirectToActionResult;
 
-            // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("Index", result.ActionName);
             Assert.AreEqual("Home", result.ControllerName);
@@ -78,13 +72,10 @@ namespace KazanlakRun.Web.Tests.Controllers
         [Test]
         public void Index_AuthenticatedUser_RedirectsToUserArea()
         {
-            // Arrange
             SetUser(isAuthenticated: true, roles: new[] { "User" });
 
-            // Act
             var result = _controller.Index() as RedirectToActionResult;
 
-            // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("Index", result.ActionName);
             Assert.AreEqual("Home", result.ControllerName);
@@ -94,13 +85,10 @@ namespace KazanlakRun.Web.Tests.Controllers
         [Test]
         public void Index_AuthenticatedNoRole_RedirectsToUserArea()
         {
-            // Arrange
             SetUser(isAuthenticated: true /*, no roles */);
 
-            // Act
             var result = _controller.Index() as RedirectToActionResult;
 
-            // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("Index", result.ActionName);
             Assert.AreEqual("Home", result.ControllerName);
@@ -110,29 +98,21 @@ namespace KazanlakRun.Web.Tests.Controllers
         [Test]
         public void Privacy_ReturnsView()
         {
-            // Arrange
             SetUser(isAuthenticated: false);
 
-            // Act
             var result = _controller.Privacy();
 
-            // Assert
             Assert.IsInstanceOf<ViewResult>(result);
         }
 
         [Test]
         public void Error_ReturnsViewWithErrorViewModel()
         {
-            // Arrange
-            // Задаваме TraceIdentifier, така че да очакваме именно него
             _httpContext.TraceIdentifier = "trace-123";
 
-            // Не задаваме Activity.Current → RequestId ще дойде от HttpContext.TraceIdentifier
 
-            // Act
             var result = _controller.Error() as ViewResult;
 
-            // Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<ErrorViewModel>(result.Model);
 

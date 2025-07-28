@@ -20,22 +20,16 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Configure URL for cloud deployment
         var port = Environment.GetEnvironmentVariable("PORT");
         if (!string.IsNullOrEmpty(port))
         {
             builder.WebHost.UseUrls($"http://*:{port}");
         }
-
-        // Database setup
         var connectionString = builder.Configuration["SQL_CONNECTION_STRING"]
           ?? builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
           options.UseSqlServer(connectionString));
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-        // Identity
         builder.Services.AddDefaultIdentity<IdentityUser>(options =>
         {
             options.Password.RequireDigit = false;
@@ -46,8 +40,6 @@ public class Program
         })
           .AddRoles<IdentityRole>()
           .AddEntityFrameworkStores<ApplicationDbContext>();
-
-        // Authentication cookie settings
         builder.Services.ConfigureApplicationCookie(options =>
         {
             options.LoginPath = "/Identity/Account/Login";
@@ -63,13 +55,10 @@ public class Program
             options.Cookie.SameSite = SameSiteMode.Lax;
 
             options.Events.OnValidatePrincipal = context =>
-        {
-            // Force validation on every request
-            return Task.CompletedTask;
-          };
+            {
+                return Task.CompletedTask;
+            };
         });
-
-        // Google Drive service
         var credential = GoogleCredential
           .FromFile("App_Data/drive-service-account.json")
           .CreateScoped(DriveService.ScopeConstants.DriveFile);
@@ -78,8 +67,6 @@ public class Program
             HttpClientInitializer = credential,
             ApplicationName = builder.Environment.ApplicationName
         }));
-
-        // Application services
         builder.Services.AddAutoMapper(typeof(VolunteerProfile).Assembly);
         builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         builder.Services.AddScoped<IAidStationService, AidStationService>();
@@ -89,13 +76,9 @@ public class Program
         builder.Services.AddScoped<IReportService, ReportService>();
         builder.Services.AddScoped<IVolunteerServiceAdmin, VolunteerServiceAdmin>();
         builder.Services.AddScoped<IVolunteerService, VolunteerService>();
-
-        // Other configurations
         builder.Services.Configure<GpxFileSettings>(
           builder.Configuration.GetSection("GpxFileSettings"));
         builder.Services.AddScoped<ReportExceptionFilter>();
-
-        // MVC and Razor
         builder.Services.AddControllersWithViews(options =>
         {
             options.Filters.AddService<ReportExceptionFilter>();
@@ -104,20 +87,14 @@ public class Program
         builder.Services.AddAuthorization();
 
         var app = builder.Build();
-
-        // Error handling
         app.UseExceptionHandler("/Error/500");
         app.UseStatusCodePagesWithReExecute("/Error/{0}");
-
-        // Static files, routing, auth
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-
-        // Endpoint mapping
         app.MapControllerRoute(
           name: "areas",
           pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
@@ -125,8 +102,6 @@ public class Program
           name: "default",
           pattern: "{controller=Home}/{action=Index}/{id?}");
         app.MapRazorPages();
-
-        // Apply migrations
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
