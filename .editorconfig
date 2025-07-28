@@ -1,0 +1,11 @@
+# Настройки за всички C# файлове
+[*.cs]
+# отстъп с 4 спейса
+indent_style = space
+indent_size = 4
+
+# Нова линия преди отваряща фигурна скоба
+csharp_new_line_before_open_brace = all
+
+# Без space след явен каст
+csharp_space_after_cast = false

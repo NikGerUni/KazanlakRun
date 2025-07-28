@@ -13,22 +13,20 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    @* <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/participants.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/KazanlakRun.styles.css" asp-append-version="true" /> *@
+
     @RenderSection("Scripts", required: false)
     @RenderSection("Styles", required: false)
     <style>
-        /* 1) фиксираме navbar-а */
+        
         .navbar.fixed-top {
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
         }
-        /* 2) изместваме body-та надолу, за да не попада под navbar-а */
+        
         body {
-            padding-top: 80px; /* замени 70px със същинската височина на navbar-а ти */
+            padding-top: 80px; 
         }
     </style>
 
@@ -61,7 +59,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
         $(function () {
-            // Променяме default поведението при "focus out"
+            
             $.validator.setDefaults({
                 onfocusout: function (element) {
                     // винаги валидираме полето при загуба на фокус
