@@ -13,10 +13,10 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 
             var result = controller.Index();
 
-            Assert.IsInstanceOf<ViewResult>(result, "Index() трябва да връща ViewResult");
+            Assert.IsInstanceOf<ViewResult>(result, "Index() should return a ViewResult");
             var view = (ViewResult)result;
             Assert.IsTrue(string.IsNullOrEmpty(view.ViewName),
-                "При липса на изрично ViewName, трябва да е празно по подразбиране");
+                "When no explicit ViewName is provided, it should be null or empty by default");
         }
 
         [Test]
@@ -27,9 +27,9 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
                 .Cast<AreaAttribute>()
                 .SingleOrDefault();
 
-            Assert.IsNotNull(attr, "Липсва [Area] атрибут");
+            Assert.IsNotNull(attr, "Missing [Area] attribute");
             Assert.AreEqual("Admin", attr.RouteValue,
-                "AreaAttribute.RouteValue трябва да бъде \"Admin\"");
+                "AreaAttribute.RouteValue should be \"Admin\"");
         }
 
         [Test]
@@ -40,9 +40,9 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
                 .Cast<RouteAttribute>()
                 .SingleOrDefault();
 
-            Assert.IsNotNull(routeAttr, "Липсва [Route] атрибут");
+            Assert.IsNotNull(routeAttr, "Missing [Route] attribute");
             Assert.AreEqual("Admin/[controller]/[action]", routeAttr.Template,
-                "RouteAttribute.Template трябва да е \"Admin/[controller]/[action]\"");
+                "RouteAttribute.Template should be \"Admin/[controller]/[action]\"");
         }
     }
 }

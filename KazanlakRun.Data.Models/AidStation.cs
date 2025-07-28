@@ -1,5 +1,4 @@
-﻿
-using KazanlakRun.GCommon;
+﻿using KazanlakRun.GCommon;
 using System.ComponentModel.DataAnnotations;
 
 namespace KazanlakRun.Data.Models
@@ -8,23 +7,21 @@ namespace KazanlakRun.Data.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Краткото име е задължително.")]
+        [Required(ErrorMessage = "Short name is required.")]
         [StringLength(
             ValidationConstants.AidStationShortNameMaxLen,
             MinimumLength = ValidationConstants.AidStationShortNameMinLen,
-            ErrorMessage = "Краткото име трябва да е между {2} и {1} символа.")]
+            ErrorMessage = "Short name must be between {2} and {1} characters long.")]
         public string ShortName { get; set; } = null!;
 
-        [Required(ErrorMessage = "Името е задължително.")]
+        [Required(ErrorMessage = "Name is required.")]
         [StringLength(
             ValidationConstants.AidStationNameMaxLen,
             MinimumLength = ValidationConstants.AidStationNameMinLen,
-            ErrorMessage = "Името на помощната станция трябва да е между {2} и {1} символа.")]
+            ErrorMessage = "Aid station name must be between {2} and {1} characters long.")]
         public string Name { get; set; } = null!;
 
         public ICollection<Volunteer> Volunteers { get; set; } = new List<Volunteer>();
         public ICollection<AidStationDistance> AidStationDistances { get; set; } = new List<AidStationDistance>();
     }
 }
-
-

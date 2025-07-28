@@ -7,12 +7,13 @@ namespace KazanlakRun.Web.Areas.Admin.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Името е задължително.")]
+        [Required(ErrorMessage = "Name is required.")]
         [StringLength(
-        ValidationConstants.RoleMaxLen,
-        MinimumLength = ValidationConstants.RoleMinLen,
-        ErrorMessage = "Името трябва да е между {2} и {1} символа.")]
+            ValidationConstants.RoleMaxLen,
+            MinimumLength = ValidationConstants.RoleMinLen,
+            ErrorMessage = "Name must be between {2} and {1} characters long.")]
         public string Name { get; set; } = string.Empty;
+
         public bool IsDeleted { get; set; }
     }
 }

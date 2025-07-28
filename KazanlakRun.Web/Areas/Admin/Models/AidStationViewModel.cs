@@ -8,17 +8,17 @@ namespace KazanlakRun.Web.Areas.Admin.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Името е задължително.")]
+        [Required(ErrorMessage = "Name is required.")]
         [StringLength(ValidationConstants.AidStationNameMaxLen,
              MinimumLength = ValidationConstants.AidStationNameMinLen,
-             ErrorMessage = "Името на помощна станция трябва да е между {2} и {1} символа.")]
+             ErrorMessage = "Aid station name must be between {2} and {1} characters long.")]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Краткото име е задължително.")]
+        [Required(ErrorMessage = "Short name is required.")]
         [StringLength(
             ValidationConstants.AidStationShortNameMaxLen,
             MinimumLength = ValidationConstants.AidStationShortNameMinLen,
-            ErrorMessage = "Краткото име трябва да е между {2} и {1} символа.")]
+            ErrorMessage = "Short name must be between {2} and {1} characters long.")]
         public string ShortName { get; set; } = string.Empty;
 
         public IEnumerable<SelectListItem> AllDistances { get; set; } = new List<SelectListItem>();

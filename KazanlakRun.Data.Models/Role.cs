@@ -1,5 +1,4 @@
-﻿
-using KazanlakRun.GCommon;
+﻿using KazanlakRun.GCommon;
 using System.ComponentModel.DataAnnotations;
 
 namespace KazanlakRun.Data.Models
@@ -8,16 +7,14 @@ namespace KazanlakRun.Data.Models
     {
         public int Id { get; set; }
 
-
-        [Required(ErrorMessage = "Името на ролята е задължително.")]
+        [Required(ErrorMessage = "Role name is required.")]
         [StringLength(
-        ValidationConstants.RoleMaxLen,
-        MinimumLength = ValidationConstants.RoleMinLen,
-        ErrorMessage = "Името на ролята трябва да е между {2} и {1} символа.")]
+            ValidationConstants.RoleMaxLen,
+            MinimumLength = ValidationConstants.RoleMinLen,
+            ErrorMessage = "Role name must be between {2} and {1} characters long.")]
         public string Name { get; set; } = null!;
 
         public ICollection<VolunteerRole> VolunteerRoles { get; set; }
             = new List<VolunteerRole>();
     }
 }
-

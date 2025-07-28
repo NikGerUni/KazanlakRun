@@ -20,19 +20,21 @@ namespace KazanlakRun.Web.Tests.Controllers
                 HttpContext = _httpContext
             };
         }
+
         [TearDown]
         public void TearDown()
         {
             if (_controller is IDisposable disposable)
                 disposable.Dispose();
         }
+
         [Test]
         public void ExceptionHandler_Returns500View()
         {
             var result = _controller.ExceptionHandler() as ViewResult;
 
-            Assert.IsNotNull(result, "Трябва да е ViewResult");
-            Assert.AreEqual("500", result.ViewName, "View-ът трябва да е „500“");
+            Assert.IsNotNull(result, "Should be a ViewResult");
+            Assert.AreEqual("500", result.ViewName, "The view name should be '500'");
         }
 
         [TestCase(404)]
@@ -42,13 +44,13 @@ namespace KazanlakRun.Web.Tests.Controllers
         {
             var result = _controller.HttpStatusCodeHandler(code) as ViewResult;
 
-            Assert.IsNotNull(result, "Трябва да е ViewResult");
-            Assert.AreEqual(code.ToString(), result.ViewName, "ViewName трябва да съответства на statusCode");
+            Assert.IsNotNull(result, "Should be a ViewResult");
+            Assert.AreEqual(code.ToString(), result.ViewName, "ViewName should match the status code");
 
-            Assert.AreEqual(code, _httpContext.Response.StatusCode, "Response.StatusCode трябва да бъде зададен");
+            Assert.AreEqual(code, _httpContext.Response.StatusCode, "Response.StatusCode should be set");
 
-            Assert.IsTrue(result.ViewData.ContainsKey("ErrorCode"), "ViewData трябва да съдържа ErrorCode");
-            Assert.AreEqual(code, result.ViewData["ErrorCode"], "ViewData[\"ErrorCode\"] трябва да бъде statusCode");
+            Assert.IsTrue(result.ViewData.ContainsKey("ErrorCode"), "ViewData should contain 'ErrorCode'");
+            Assert.AreEqual(code, result.ViewData["ErrorCode"], "ViewData[\"ErrorCode\"] should match the status code");
         }
     }
 }

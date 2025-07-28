@@ -84,7 +84,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
                 if (tx != null)
                 {
                     try { await tx.RollbackAsync(); }
-                    catch { /* игнорираме rollback‐грешки */ }
+                    catch { /* ignore rollback errors */ }
                 }
                 if (ex is DbUpdateException)
                     throw;

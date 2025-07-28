@@ -44,7 +44,7 @@ namespace KazanlakRun.Web.Controllers
             }
             catch
             {
-                return NotFound($"Файлът '{fileName}' не можа да бъде свален.");
+                return NotFound($"The file '{fileName}' could not be downloaded.");
             }
         }
     }

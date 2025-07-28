@@ -14,10 +14,10 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
 
             var result = controller.Index();
 
-            Assert.IsInstanceOf<ViewResult>(result, "Index() трябва да връща ViewResult");
+            Assert.IsInstanceOf<ViewResult>(result, "Index() should return a ViewResult");
             var view = (ViewResult)result;
             Assert.IsTrue(string.IsNullOrEmpty(view.ViewName),
-                "Прилипналият view по подразбиране трябва да има празно ViewName");
+                "The default view should have an empty ViewName when not explicitly set");
         }
 
         [Test]
@@ -28,9 +28,9 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
                 .Cast<AreaAttribute>()
                 .SingleOrDefault();
 
-            Assert.IsNotNull(areaAttr, "В контролера липсва [Area]");
+            Assert.IsNotNull(areaAttr, "Missing [Area] attribute on the controller");
             Assert.AreEqual("Admin", areaAttr.RouteValue,
-                "AreaAttribute.RouteValue трябва да е \"Admin\"");
+                "AreaAttribute.RouteValue should be \"Admin\"");
         }
 
         [Test]
@@ -41,9 +41,9 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Controllers
                 .Cast<AuthorizeAttribute>()
                 .SingleOrDefault();
 
-            Assert.IsNotNull(authAttr, "В контролера липсва [Authorize]");
+            Assert.IsNotNull(authAttr, "Missing [Authorize] attribute on the controller");
             Assert.AreEqual("Admin", authAttr.Roles,
-                "AuthorizeAttribute.Roles трябва да е \"Admin\"");
+                "AuthorizeAttribute.Roles should be \"Admin\"");
         }
     }
 }

@@ -28,6 +28,7 @@ namespace KazanlakRun.Web.Tests.Controllers
             _options = Options.Create(_fileSettings);
             _controller = new DownloadController(_serviceMock.Object, _options);
         }
+
         [TearDown]
         public void TearDown()
         {
@@ -42,7 +43,7 @@ namespace KazanlakRun.Web.Tests.Controllers
 
             Assert.IsInstanceOf<ViewResult>(result);
             var vr = (ViewResult)result;
-            Assert.IsNull(vr.ViewName, "По подразбиране ViewResult.ViewName трябва да е null (използва подразбиращото се View).");
+            Assert.IsNull(vr.ViewName, "By default, ViewResult.ViewName should be null (uses default view).");
         }
 
         [Test]
@@ -77,7 +78,7 @@ namespace KazanlakRun.Web.Tests.Controllers
 
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
             var notFound = (NotFoundObjectResult)result;
-            StringAssert.Contains("не можа да бъде свален", notFound.Value?.ToString()!);
+            StringAssert.Contains("could not be downloaded", notFound.Value?.ToString()!);
         }
 
         [Test]

@@ -46,21 +46,21 @@ namespace KazanlakRun.Web.Tests.Areas.User.Controllers
         {
             var result = _controller.Create() as ViewResult;
 
-            Assert.IsNotNull(result, "Трябва да върне ViewResult");
-            Assert.IsTrue(string.IsNullOrEmpty(result!.ViewName), "ViewName по подразбиране трябва да е празно");
-            Assert.IsNull(result.Model, "Model по подразбиране трябва да е null");
+            Assert.IsNotNull(result, "Should return ViewResult");
+            Assert.IsTrue(string.IsNullOrEmpty(result!.ViewName), "Default view should have empty ViewName");
+            Assert.IsNull(result.Model, "Model should be null by default");
         }
 
         [Test]
         public async Task Create_Post_InvalidModel_ReturnsViewWithSameModel()
         {
-            var input = new VolunteerInputModel { /* можеш да зададеш някакви стойности */ };
+            var input = new VolunteerInputModel { /* you can set properties here if needed */ };
             _controller.ModelState.AddModelError("dummy", "error");
 
             var result = await _controller.Create(input) as ViewResult;
 
             Assert.IsNotNull(result);
-            Assert.AreSame(input, result!.Model, "Трябва да върне същия модел при невалидно състояние");
+            Assert.AreSame(input, result!.Model, "Should return the same model when ModelState is invalid");
             _mockService.VerifyNoOtherCalls();
         }
 
@@ -71,7 +71,7 @@ namespace KazanlakRun.Web.Tests.Areas.User.Controllers
 
             var result = await _controller.Create(input) as RedirectToActionResult;
 
-            Assert.IsNotNull(result, "Трябва да е RedirectToActionResult");
+            Assert.IsNotNull(result, "Should return RedirectToActionResult");
             Assert.AreEqual("Index", result!.ActionName);
             Assert.AreEqual("Home", result.ControllerName);
 
@@ -89,13 +89,13 @@ namespace KazanlakRun.Web.Tests.Areas.User.Controllers
 
             Assert.IsNotNull(result);
             Assert.AreEqual("Create", result!.ActionName);
-            Assert.IsNull(result.ControllerName, "ControllerName по подразбиране е null (същия контролер)");
+            Assert.IsNull(result.ControllerName, "ControllerName should be null when redirecting within same controller");
         }
 
         [Test]
         public async Task Edit_Get_ExistingVolunteer_ReturnsViewWithModel()
         {
-            var existing = new VolunteerInputModel { /*…*/ };
+            var existing = new VolunteerInputModel { /*...*/ };
             _mockService
                 .Setup(s => s.GetByUserIdAsync("user-123"))
                 .ReturnsAsync(existing);
