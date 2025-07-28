@@ -25,7 +25,6 @@
   <ItemGroup>
     <ProjectReference Include="..\KazanlakRun.Data\KazanlakRun.Data.csproj" />
     <ProjectReference Include="..\KazanlakRun.GCommon\KazanlakRun.GCommon.csproj" />
-    <ProjectReference Include="..\KazanlakRun.Services.Core\KazanlakRun.Services.Core.csproj" />
   </ItemGroup>
 	<ItemGroup>
 		<None Include="App_Data\drive-service-account.json">

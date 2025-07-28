@@ -2,7 +2,7 @@ namespace KazanlakRun.Web.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
     using System.Diagnostics;
-    using ViewModels;
+    using KazanlakRun.Web.ViewModels;
 
     public class HomeController : Controller
     {

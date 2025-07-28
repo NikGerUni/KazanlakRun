@@ -85,7 +85,7 @@
 
 Има използване на AJAX, напр. в admin-roles.js към Role\Index.cshtml
 
-Използвани са DataAnnotations в View models, както и IValidatableObject.Validate за клиентска и сървърна валидация. Виж Areas\User\Models\VolunteerInputModel.cs
+Използвани са Fluent API, DataAnnotations в View models, както и IValidatableObject.Validate за клиентска и сървърна валидация. Виж Areas\User\Models\VolunteerInputModel.cs
 
 Използвани са DataAnnotations в Data models за валидация на ниво БД.
 

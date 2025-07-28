@@ -1,5 +1,4 @@
-﻿// KazanlakRun.Services.Core/Services/AidStationService.cs
-using KazanlakRun.Data.Models;
+﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,7 +12,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
 
         public AidStationService(ApplicationDbContext db) => _db = db;
 
-        // KazanlakRun.Services.Core/Services/AidStationService.cs (метод GetAllAsync)
+      
         public async Task<List<AidStationListItem>> GetAllAsync() =>
             await _db.AidStations
                 .Include(a => a.AidStationDistances).ThenInclude(ad => ad.Distance)
