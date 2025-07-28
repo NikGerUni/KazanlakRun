@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<KazanlakRun.Web.Areas.Admin.Models.VolunteerListItem>
+@using KazanlakRun.GCommon
 
 @{
     ViewData["Title"] = "Volunteers";
@@ -6,11 +7,70 @@
 
 <h1>Volunteers</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New Volunteer</a>
-</p>
+<style>
+    .pagination-group .form-control,
+    .pagination-group .btn {
+        height: 38px;
+    }
 
-<table class="table table-striped">
+    .pagination-group,
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+        .pagination-group label,
+        .filter-group label {
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
+
+    @@media (max-width: 768px) {
+        .volunteer-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+            .volunteer-toolbar > * {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+        .pagination-group {
+            justify-content: space-between;
+        }
+    }
+</style>
+
+<div class="mb-4 d-flex flex-wrap volunteer-toolbar justify-content-between align-items-end">
+    <!-- Filter on the left -->
+    <div class="filter-group">
+        <label for="volunteerFilter" class="form-label">Filter:</label>
+        <input id="volunteerFilter" type="text" class="form-control" placeholder="Search..." />
+    </div>
+
+    <!-- Centered pagination group -->
+    <div class="pagination-group mx-auto">
+        <label for="volunteerPageSize" class="form-label">Per Page:</label>
+        <input id="volunteerPageSize" type="number" min="1" class="form-control" value="@PerPage.VolunteerList" style="width: 80px;" />
+
+        <button id="volunteerFirstBtn" class="btn btn-outline-primary">« First</button>
+        <button id="volunteerPrevBtn" class="btn btn-outline-primary">‹ Prev</button>
+        <span id="volunteerPageInfo" class="fw-semibold">1 / 1</span>
+        <button id="volunteerNextBtn" class="btn btn-outline-primary">Next ›</button>
+        <button id="volunteerLastBtn" class="btn btn-outline-primary">Last »</button>
+    </div>
+
+    <!-- Create button -->
+    <div class="ms-auto mt-2 mt-md-0">
+        <a asp-action="Create" class="btn btn-primary">Create New Volunteer</a>
+    </div>
+</div>
+
+
+<table id="volunteerTable" class="table table-striped">
     <thead>
         <tr>
             <th>Names</th>
@@ -42,3 +102,10 @@
     </tbody>
 </table>
 
+@section Scripts {
+    <script>
+        // Server default value sent to JS
+        window.volunteersDefaultPageSize = @PerPage.VolunteerList;
+    </script>
+    <script src="~/js/volunteers-index.js"></script>
+}
