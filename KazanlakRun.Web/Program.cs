@@ -3,6 +3,8 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using KazanlakRun.Data;
 using KazanlakRun.GCommon;
+using KazanlakRun.Services.Contracts;
+using KazanlakRun.Services;
 using KazanlakRun.Web.Areas.Admin.Services;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using KazanlakRun.Web.Areas.User.Services;
@@ -76,6 +78,9 @@ public class Program
         builder.Services.AddScoped<IReportService, ReportService>();
         builder.Services.AddScoped<IVolunteerServiceAdmin, VolunteerServiceAdmin>();
         builder.Services.AddScoped<IVolunteerService, VolunteerService>();
+        builder.Services.AddScoped<IGoodsService, GoodsService>();
+
+
         builder.Services.Configure<GpxFileSettings>(
           builder.Configuration.GetSection("GpxFileSettings"));
         builder.Services.AddScoped<ReportExceptionFilter>();
