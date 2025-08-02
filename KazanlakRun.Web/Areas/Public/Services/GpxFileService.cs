@@ -1,7 +1,7 @@
 ﻿using Google.Apis.Drive.v3;
-using KazanlakRun.Web.Services.IServices;
+using KazanlakRun.Web.Areas.Public.Services.IServices;
 
-namespace KazanlakRun.Web.Services
+namespace KazanlakRun.Web.Areas.Public.Services
 {
     public class GpxFileService : IGpxFileService
     {

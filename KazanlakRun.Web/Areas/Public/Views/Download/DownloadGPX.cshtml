@@ -3,25 +3,26 @@
     ViewData["Title"] = "Download GPX tracks";
 }
 
-
 <h1>Download GPX tracks</h1>
-<p>Select one of the following tracks and press the button::</p>
+<p>Select one of the following tracks and press the button:</p>
 
-<div class="btn-group gap-2"  role="group" aria-label="Distance selection">
-    <a asp-controller="Download"
+<div class="btn-group gap-2" role="group" aria-label="Distance selection">
+    <a asp-area="Public"
+       asp-controller="Download"
        asp-action="Download10kmGPX"
        class="btn btn-outline-primary">
         📥 10 km GPX file
     </a>
-    <a asp-controller="Download"
+    <a asp-area="Public"
+       asp-controller="Download"
        asp-action="Download20kmGPX"
        class="btn btn-outline-primary">
         📥 20 km GPX file
     </a>
-    <a asp-controller="Download"
-       asp-area=""
+    <a asp-area="Public"
+       asp-controller="Download"
        asp-action="Download40kmGPX"
        class="btn btn-outline-primary">
-        📥 40 km GPX  file
+        📥 40 km GPX file
     </a>
 </div>

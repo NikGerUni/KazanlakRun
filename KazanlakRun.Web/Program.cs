@@ -10,10 +10,11 @@ using KazanlakRun.Web.Areas.Admin.Services.IServices;
 using KazanlakRun.Web.Areas.User.Services;
 using KazanlakRun.Web.Filters;
 using KazanlakRun.Web.MappingProfiles;
-using KazanlakRun.Web.Services;
 using KazanlakRun.Web.Services.IServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using KazanlakRun.Web.Areas.Public.Services;
+using KazanlakRun.Web.Areas.Public.Services.IServices;
 
 namespace KazanlakRun.Web;
 
@@ -93,23 +94,25 @@ public class Program
         builder.Services.AddMemoryCache();
         builder.Services.AddScoped<ICacheService, CacheService>();
 
-
         var app = builder.Build();
-        app.UseExceptionHandler("/Error/500");
-        app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+        app.UseExceptionHandler("/Public/Error/500"); 
+        app.UseStatusCodePagesWithReExecute("/Public/Error/{0}");
+
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
         app.UseRouting();
+
         app.UseAuthentication();
         app.UseAuthorization();
+
         app.MapControllerRoute(
-          name: "areas",
-          pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-        app.MapControllerRoute(
-          name: "default",
-          pattern: "{controller=Home}/{action=Index}/{id?}");
+            name: "areaDefault",
+            pattern: "{area=Public}/{controller=Home}/{action=Index}/{id?}");
+
         app.MapRazorPages();
+
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

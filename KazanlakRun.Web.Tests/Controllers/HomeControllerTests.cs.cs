@@ -1,5 +1,5 @@
-﻿using KazanlakRun.Web.Controllers;
-using KazanlakRun.Web.ViewModels;
+﻿using KazanlakRun.Web.Areas.Public.Controllers;
+using KazanlakRun.Web.Areas.Public.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

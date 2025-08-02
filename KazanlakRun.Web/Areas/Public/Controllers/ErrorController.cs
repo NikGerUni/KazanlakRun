@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace KazanlakRun.Web.Controllers
+
+namespace KazanlakRun.Web.Areas.Public.Controllers
 {
+
+    [Area("Public")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorController : Controller
     {

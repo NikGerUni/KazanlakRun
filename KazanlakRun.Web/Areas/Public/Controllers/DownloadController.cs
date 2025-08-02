@@ -1,11 +1,12 @@
 ﻿using KazanlakRun.GCommon;
-using KazanlakRun.Web.Services.IServices;
+using KazanlakRun.Web.Areas.Public.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace KazanlakRun.Web.Controllers
+namespace KazanlakRun.Web.Areas.Public.Controllers
 {
+    [Area("Public")]
     [Authorize(Roles = "Admin,User")]
     public class DownloadController : Controller
     {

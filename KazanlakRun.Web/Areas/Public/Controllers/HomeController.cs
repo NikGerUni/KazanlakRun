@@ -1,9 +1,10 @@
-namespace KazanlakRun.Web.Controllers
+namespace KazanlakRun.Web.Areas.Public.Controllers
 {
-    using KazanlakRun.Web.ViewModels;
+    using KazanlakRun.Web.Areas.Public.ViewModels;
     using Microsoft.AspNetCore.Mvc;
     using System.Diagnostics;
 
+    [Area("Public")]
     public class HomeController : Controller
     {
         public IActionResult Index()

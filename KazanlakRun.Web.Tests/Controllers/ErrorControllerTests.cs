@@ -1,4 +1,4 @@
-﻿using KazanlakRun.Web.Controllers;
+﻿using KazanlakRun.Web.Areas.Public.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

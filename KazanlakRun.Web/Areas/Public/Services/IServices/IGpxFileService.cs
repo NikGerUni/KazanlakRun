@@ -1,4 +1,4 @@
-﻿namespace KazanlakRun.Web.Services.IServices
+﻿namespace KazanlakRun.Web.Areas.Public.Services.IServices
 {
     public interface IGpxFileService
     {

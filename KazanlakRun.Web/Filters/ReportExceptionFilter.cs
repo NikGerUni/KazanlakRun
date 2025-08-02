@@ -45,7 +45,7 @@ namespace KazanlakRun.Web.Filters
                 _ => "An error occurred while loading the report."
             };
 
-            object emptyModel = actionName switch
+            object? emptyModel = actionName switch
             {
                 nameof(ReportController.VolunteersByAidStation) =>
                     new VolunteersByAidStationPageViewModel

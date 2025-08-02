@@ -1,4 +1,4 @@
-namespace KazanlakRun.Web.ViewModels
+namespace KazanlakRun.Web.Areas.Public.ViewModels
 {
     public class ErrorViewModel
     {

@@ -1,6 +1,6 @@
 ﻿using KazanlakRun.GCommon;
-using KazanlakRun.Web.Controllers;
-using KazanlakRun.Web.Services.IServices;
+using KazanlakRun.Web.Areas.Public.Controllers;
+using KazanlakRun.Web.Areas.Public.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
