@@ -1,0 +1,13 @@
+﻿@model string
+@{
+    ViewData["Title"] = "Log: " + ViewBag.FileName;
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<div style="background-color:#f8f9fa; border:1px solid #ccc; padding:1rem; max-height:600px; overflow:auto;">
+    <pre style="white-space: pre-wrap;">@Model</pre>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary mt-3">← Back to Logs</a>
+

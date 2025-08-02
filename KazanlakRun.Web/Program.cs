@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using KazanlakRun.Web.Areas.Public.Services;
 using KazanlakRun.Web.Areas.Public.Services.IServices;
+using Serilog;
 
 namespace KazanlakRun.Web;
 
@@ -93,6 +94,14 @@ public class Program
         builder.Services.AddAuthorization();
         builder.Services.AddMemoryCache();
         builder.Services.AddScoped<ICacheService, CacheService>();
+
+       
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
+        builder.Host.UseSerilog();
 
         var app = builder.Build();
 

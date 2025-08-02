@@ -49,6 +49,12 @@
         <div class="container">
             &copy; @DateTime.Now.Year - @AppInfo.Name @AppInfo.Version -
             <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <span class="mx-2">|</span>
+                <a asp-area="Admin" asp-controller="Logs" asp-action="Index">View Logs</a>
+             }
         </div>
     </footer>
 
