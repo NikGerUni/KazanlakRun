@@ -14,4 +14,13 @@
         public int TotalPages { get; set; }
         public string SearchTerm { get; set; } = string.Empty;
     }
+
+    public class LogViewModel
+    {
+        public int Id { get; set; }
+        public string Message { get; set; } = "";
+        public DateTime CreatedAt { get; set; }
+        
+    }
+
 }

@@ -1,0 +1,29 @@
+﻿@model KazanlakRun.Web.Areas.Admin.Models.LogFileViewModel
+
+@{
+    ViewData["Title"] = "Delete Log File";
+}
+
+<h1>Delete Log File</h1>
+
+<p>Are you sure you want to delete the following log file?</p>
+
+<dl class="row">
+    <dt class="col-sm-3">File Name</dt>
+    <dd class="col-sm-9">@Model.FileName</dd>
+
+    <dt class="col-sm-3">Last Modified</dt>
+    <dd class="col-sm-9">@Model.LastModified.ToString("g")</dd>
+
+    <dt class="col-sm-3">Size (KB)</dt>
+    <dd class="col-sm-9">@Model.SizeKB</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="FileName" />
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

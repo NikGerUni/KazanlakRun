@@ -1,5 +1,6 @@
 ﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KazanlakRun.Web.Areas.Admin.Controllers
@@ -7,6 +8,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
     [ApiController]
     [Area("Admin")]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class GoodsApiController : ControllerBase
     {
         private readonly IGoodsService _goodsService;
@@ -33,6 +35,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult<Good>> CreateGood([FromBody] Good good)
         {
             if (!ModelState.IsValid)
@@ -43,6 +46,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
         }
 
         [HttpPut("{id}")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateGood(int id, [FromBody] Good good)
         {
             if (id != good.Id)
@@ -56,6 +60,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteGood(int id)
         {
             var success = await _goodsService.DeleteAsync(id);
@@ -63,13 +68,37 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
         }
 
         [HttpPost("batch")]
+       
         public async Task<ActionResult<IEnumerable<Good>>> SaveBatch([FromBody] List<Good> goods)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Where(kvp => kvp.Value.Errors.Any())
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                    );
+                return BadRequest(new { message = "ModelState invalid", errors });
+            }
+
             if (goods == null || !goods.Any())
                 return BadRequest("No goods provided");
 
-            var result = await _goodsService.SaveBatchAsync(goods);
-            return Ok(result);
+            try
+            {
+                var result = await _goodsService.SaveBatchAsync(goods);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // за диагностика, после махаш
+                return Problem(detail: ex.Message, title: "Exception in SaveBatch");
+            }
         }
+
+
+
+
     }
 }

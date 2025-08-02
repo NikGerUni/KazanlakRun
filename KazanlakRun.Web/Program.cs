@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using KazanlakRun.Web.Areas.Public.Services;
 using KazanlakRun.Web.Areas.Public.Services.IServices;
 using Serilog;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KazanlakRun.Web;
 
@@ -89,6 +90,7 @@ public class Program
         builder.Services.AddControllersWithViews(options =>
         {
             options.Filters.AddService<ReportExceptionFilter>();
+            
         });
         builder.Services.AddRazorPages();
         builder.Services.AddAuthorization();
