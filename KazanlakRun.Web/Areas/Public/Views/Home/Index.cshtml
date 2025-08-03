@@ -1,25 +1,19 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<style>
-  .hero-countdown {
-    font-size: 2.5rem;
-    color: #FFD86C;
-  }
-     .hero-overlay .hero-subtitle,
-    .hero-overlay .hero-countdown {
-        margin: 0.25rem 0; 
-    }
-</style>
+@section Styles {
+    <link rel="stylesheet" href="~/css/Home.css" asp-append-version="true" />
+}
+
 <div class="hero-section">
     <img src="~/images/Kazanlak.webp" alt="Kazanlak city view" class="hero-image" />
     <div class="hero-overlay">
         <h1 class="hero-title">KAZANLAK RUN - SUPPORT CENTER</h1>
         <p class="hero-subtitle">
-            10, 20, 40 km | Start/Finish - Central Park |  31.05.2026 10:00
+            10, 20, 40 km | Start/Finish - Central Park |  31.05.2026 10:00
         </p>
 
-        
+
         <p id="countdown" class="hero-countdown"></p>
 
         <p class="hero-subtitle">We are happy to have you as our volunteer supporter</p>
@@ -31,31 +25,36 @@
         </a>
     </div>
 </div>
-
 <div class="about-section">
-    
+    <div class="row">
+        <div class="col-12">
+            <h2 class="about-title">Welcome to Kazanlak Run</h2>
+            <div class="about-content">
+                <p>
+                    Nestled in the heart of Bulgaria's Rose Valley, Kazanlak is a picturesque town known as the "Rose Capital" of Bulgaria.
+                    Surrounded by beautiful landscapes and rich historical heritage, it offers the perfect setting for our running event.
+                </p>
+                <p>
+                    The town is famous worldwide for its Rose Festival, celebrating the harvesting of the Damascus Rose, used to produce the
+                    acclaimed Bulgarian rose oil - a key ingredient in many perfumes. While visiting for the race, take time to explore the
+                    UNESCO-protected Thracian Tomb, dating back to the 4th century BC, showcasing remarkable frescoes that stand as testament
+                    to the region's ancient history.
+                </p>
+                <p>
+                    Our race routes will take you through some of the most beautiful parts of the town and its surroundings, including parks,
+                    historical sites, and the scenic countryside. With three distance options - 10km, 20km, and 40km - there's a challenge
+                    suitable for runners of all levels.
+                </p>
+                <p>
+                    Join us for this unique running experience combining sport, nature, culture, and the warm hospitality that Bulgaria is known for.
+                    Whether you're a seasoned runner or taking on your first race, Kazanlak Run promises an unforgettable experience.
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
 
+
 @section Scripts {
-    <script>
-        const target = new Date('May 31, 2026 10:00:00').getTime();
-        const timer = setInterval(() => {
-            const now = Date.now();
-            const diff = target - now;
-
-            if (diff <= 0) {
-                clearInterval(timer);
-                document.getElementById('countdown').innerText = 'Event Started!';
-                return;
-            }
-
-            const days    = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById('countdown').innerText =
-                `${days}d ${hours}h ${minutes}m ${seconds}s`;
-        }, 1000);
-    </script>
+    <script src="~/js/Home.js" asp-append-version="true"></script>
 }

@@ -16,20 +16,7 @@
 
     @RenderSection("Scripts", required: false)
     @RenderSection("Styles", required: false)
-    <style>
-        
-        .navbar.fixed-top {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-        
-        body {
-            padding-top: 80px; 
-        }
-    </style>
-
+    
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -45,7 +32,7 @@
         </div>
     </main>
 
-    <footer class="border-top footer text-muted mt-auto">
+    <footer class="border-top footer text-muted mt-auto footer-fixed">
         <div class="container">
             &copy; @DateTime.Now.Year - @AppInfo.Name @AppInfo.Version -
             <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
@@ -63,17 +50,7 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
-        $(function () {
-            
-            $.validator.setDefaults({
-                onfocusout: function (element) {
-                    this.element(element);
-                }
-            });
-        });
-    </script>
+    <script src="~/js/validation-settings.js" asp-append-version="true"></script>
 
- 
 </body>
 </html>

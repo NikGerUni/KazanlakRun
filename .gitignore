@@ -58,9 +58,11 @@ TestResults/
 node_modules/
 
 # wwwroot — ignore all static content (libraries, build artifacts, images, CSS/JS bundles)
-wwwroot/**
+
 
 # Optionally, keep the folder structure in Git (uncomment if needed):
 # !wwwroot/
 
 /KazanlakRun.Web/App_Data/drive-service-account.json
+
+Logs/
