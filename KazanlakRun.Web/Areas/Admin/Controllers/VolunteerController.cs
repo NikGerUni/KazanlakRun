@@ -32,11 +32,17 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Create(VolunteerViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+             
+                var vm = await _volunteerService.GetForCreateAsync();
+                model.AllRoles = vm.AllRoles;
                 return View(model);
+            }
 
             await _volunteerService.CreateAsync(model);
             return RedirectToAction(nameof(Index));
         }
+
 
         public async Task<IActionResult> Edit(int id)
         {

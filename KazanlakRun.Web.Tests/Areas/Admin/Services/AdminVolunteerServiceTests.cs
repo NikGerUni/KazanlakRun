@@ -2,6 +2,9 @@
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services;
 using Microsoft.EntityFrameworkCore;
+using KazanlakRun.Web.Services.IServices;
+using Moq;
+
 namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 {
     [TestFixture]
@@ -10,6 +13,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         private DbContextOptions<ApplicationDbContext> _options = null!;
         private ApplicationDbContext _db = null!;
         private VolunteerServiceAdmin _svc = null!;
+        private Mock<ICacheService> _cacheServiceMock;
 
         [SetUp]
         public void SetUp()
@@ -18,7 +22,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             _db = new ApplicationDbContext(_options);
-            _svc = new VolunteerServiceAdmin(_db);
+            _cacheServiceMock = new Mock<ICacheService>();
+            _svc = new VolunteerServiceAdmin(_db, _cacheServiceMock.Object);
         }
 
         [TearDown]

@@ -1,19 +1,19 @@
-﻿
-using KazanlakRun.Data.Models;
+﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
+using KazanlakRun.Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace KazanlakRun.Web.Areas.Admin.Services
 {
     public class VolunteerServiceAdmin : IVolunteerServiceAdmin
     {
         private readonly ApplicationDbContext _db;
+        private readonly ICacheService _cacheService;
 
-        public VolunteerServiceAdmin(ApplicationDbContext db)
-            => _db = db;
+        public VolunteerServiceAdmin(ApplicationDbContext db, ICacheService cacheService)
+            => (_db, _cacheService) = (db, cacheService);
 
         public async Task<List<Role>> GetAllRolesAsync()
             => await _db.Roles
@@ -53,14 +53,17 @@ namespace KazanlakRun.Web.Areas.Admin.Services
             {
                 Names = model.Names,
                 Email = model.Email,
-                Phone = model.Phone
+                Phone = model.Phone,
+                AidStationId = 1
             };
 
-            foreach (var rid in model.SelectedRoleIds)
+            foreach (var rid in model.SelectedRoleIds ?? Array.Empty<int>())
                 entity.VolunteerRoles.Add(new VolunteerRole { RoleId = rid });
 
             _db.Volunteers.Add(entity);
             await _db.SaveChangesAsync();
+
+            _cacheService.ClearReportCache();
         }
 
         public async Task<VolunteerViewModel> GetForEditAsync(int id)
@@ -104,19 +107,21 @@ namespace KazanlakRun.Web.Areas.Admin.Services
             vol.Phone = model.Phone;
 
             var toRemove = vol.VolunteerRoles
-                              .Where(vr => !model.SelectedRoleIds.Contains(vr.RoleId))
+                              .Where(vr => !((model.SelectedRoleIds ?? Array.Empty<int>()).Contains(vr.RoleId)))
                               .ToList();
 
             foreach (var vr in toRemove)
                 _db.Remove(vr);
 
             var existing = vol.VolunteerRoles.Select(vr => vr.RoleId).ToList();
-            var toAdd = model.SelectedRoleIds.Except(existing);
+            var toAdd = (model.SelectedRoleIds ?? Array.Empty<int>()).Except(existing);
 
             foreach (var rid in toAdd)
                 vol.VolunteerRoles.Add(new VolunteerRole { RoleId = rid });
 
             await _db.SaveChangesAsync();
+
+            _cacheService.ClearReportCache();
         }
 
         public async Task DeleteAsync(int id)
@@ -126,7 +131,8 @@ namespace KazanlakRun.Web.Areas.Admin.Services
 
             _db.Volunteers.Remove(vol);
             await _db.SaveChangesAsync();
+
+            _cacheService.ClearReportCache();
         }
     }
 }
-

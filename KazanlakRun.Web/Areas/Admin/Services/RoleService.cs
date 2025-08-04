@@ -1,6 +1,7 @@
 ﻿using KazanlakRun.Data.Models;
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
+using KazanlakRun.Web.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -10,11 +11,13 @@ namespace KazanlakRun.Web.Areas.Admin.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<RoleService> _logger;
+        private readonly ICacheService _cacheService;
 
-        public RoleService(ApplicationDbContext context, ILogger<RoleService> logger)
+        public RoleService(ApplicationDbContext context, ILogger<RoleService> logger, ICacheService cacheService)
         {
             _context = context;
             _logger = logger;
+            _cacheService = cacheService;
         }
 
         public async Task<List<RoleViewModel>> GetAllAsync()
@@ -32,7 +35,7 @@ namespace KazanlakRun.Web.Areas.Admin.Services
 
         public async Task SaveAllAsync(List<RoleViewModel> roles)
         {
-            IDbContextTransaction tx = null;
+            IDbContextTransaction? tx = null;
             try
             {
                 tx = await _context.Database.BeginTransactionAsync();
@@ -77,6 +80,9 @@ namespace KazanlakRun.Web.Areas.Admin.Services
 
                 await _context.SaveChangesAsync();
                 await tx.CommitAsync();
+
+                // Invalidate relevant cache after successful save
+                _cacheService.ClearReportCache();
             }
             catch (Exception ex)
             {
@@ -93,4 +99,3 @@ namespace KazanlakRun.Web.Areas.Admin.Services
         }
     }
 }
-

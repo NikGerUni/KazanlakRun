@@ -1,5 +1,6 @@
 ﻿using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
+using KazanlakRun.Web.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 
 namespace KazanlakRun.Web.Areas.Admin.Services
@@ -7,9 +8,13 @@ namespace KazanlakRun.Web.Areas.Admin.Services
     public class DistanceEditDtoService : IDistanceEditDtoService
     {
         private readonly ApplicationDbContext _db;
+        private readonly ICacheService _cacheService;
 
-        public DistanceEditDtoService(ApplicationDbContext db)
-            => _db = db;
+        public DistanceEditDtoService(ApplicationDbContext db, ICacheService cacheService)
+        {
+            _db = db;
+            _cacheService = cacheService;
+        }
 
         public async Task<IEnumerable<DistanceEditDto>> GetAllAsync()
             => await _db.Distances
@@ -42,6 +47,8 @@ namespace KazanlakRun.Web.Areas.Admin.Services
 
             entity.RegRunners = dto.RegRunners;
             await _db.SaveChangesAsync();
+
+            _cacheService.ClearReportCache();
         }
 
         public async Task UpdateMultipleAsync(IEnumerable<DistanceEditDto> distances)
@@ -62,6 +69,8 @@ namespace KazanlakRun.Web.Areas.Admin.Services
             }
 
             await _db.SaveChangesAsync();
+
+            _cacheService.ClearReportCache();
         }
 
     }

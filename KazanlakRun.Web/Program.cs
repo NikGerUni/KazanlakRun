@@ -59,10 +59,6 @@ public class Program
             options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
             options.Cookie.SameSite = SameSiteMode.Lax;
 
-            options.Events.OnValidatePrincipal = context =>
-            {
-                return Task.CompletedTask;
-            };
         });
         var credential = GoogleCredential
           .FromFile("App_Data/drive-service-account.json")

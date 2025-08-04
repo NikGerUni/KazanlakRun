@@ -2,6 +2,8 @@
 using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services;
 using Microsoft.EntityFrameworkCore;
+using KazanlakRun.Web.Services.IServices;
+using Moq;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 {
@@ -11,6 +13,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         private DbContextOptions<ApplicationDbContext> _options = null!;
         private ApplicationDbContext _db = null!;
         private DistanceEditDtoService _svc = null!;
+        private Mock<ICacheService> _cacheServiceMock;
 
         [SetUp]
         public void SetUp()
@@ -18,9 +21,10 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
-
+            _cacheServiceMock = new Mock<ICacheService>();
             _db = new ApplicationDbContext(_options);
-            _svc = new DistanceEditDtoService(_db);
+            _svc = new DistanceEditDtoService(_db, _cacheServiceMock.Object);
+
         }
 
         [TearDown]
@@ -98,7 +102,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         [Test]
         public void UpdateMultipleAsync_Throws_WhenEntityNotFound()
         {
-            var svc = new DistanceEditDtoService(_db);
+            var svc = new DistanceEditDtoService(_db, _cacheServiceMock.Object);
             var model = new List<DistanceEditDto>
     {
         new DistanceEditDto { Id = 99, RegRunners = 5, Distans = "Test" }

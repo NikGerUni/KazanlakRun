@@ -1,6 +1,7 @@
 ﻿using KazanlakRun.Data;
 using KazanlakRun.Data.Models;
 using KazanlakRun.Services.Contracts;
+using KazanlakRun.Web.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -10,11 +11,13 @@ namespace KazanlakRun.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<GoodsService> _logger;
+        private readonly ICacheService _cacheService;
 
-        public GoodsService(ApplicationDbContext context, ILogger<GoodsService> logger)
+        public GoodsService(ApplicationDbContext context, ILogger<GoodsService> logger, ICacheService cacheService)
         {
             _context = context;
             _logger = logger;
+            _cacheService = cacheService;
         }
 
         public async Task<List<Good>> GetAllAsync()
@@ -34,12 +37,15 @@ namespace KazanlakRun.Services
             _context.Goods.Add(good);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Created good with ID {Id}", good.Id);
+
+            _cacheService.ClearReportCache();
             return good;
         }
 
         public async Task<bool> UpdateAsync(Good good)
         {
-            if (!_context.Goods.Any(g => g.Id == good.Id))
+            var exists = await _context.Goods.AnyAsync(g => g.Id == good.Id);
+            if (!exists)
             {
                 _logger.LogWarning("Update failed: Good with ID {Id} not found", good.Id);
                 return false;
@@ -51,6 +57,8 @@ namespace KazanlakRun.Services
             {
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Updated good with ID {Id}", good.Id);
+
+                _cacheService.ClearReportCache();
                 return true;
             }
             catch (DbUpdateConcurrencyException ex)
@@ -72,6 +80,8 @@ namespace KazanlakRun.Services
             _context.Goods.Remove(good);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Deleted good with ID {Id}", id);
+
+            _cacheService.ClearReportCache();
             return true;
         }
 
@@ -87,34 +97,94 @@ namespace KazanlakRun.Services
             var goodsToUpdate = goods.Where(g => g.Id > 0 && existingIds.Contains(g.Id)).ToList();
             var goodsToDelete = existingGoods.Where(g => !incomingIds.Contains(g.Id)).ToList();
 
-            if (goodsToDelete.Any())
+            // If the provider supports transactions (e.g., not InMemory), use one.
+            if (_context.Database.IsRelational())
             {
-                _context.Goods.RemoveRange(goodsToDelete);
-                _logger.LogInformation("Marked {Count} goods for deletion", goodsToDelete.Count);
+                using var tx = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    if (goodsToDelete.Any())
+                    {
+                        _context.Goods.RemoveRange(goodsToDelete);
+                        _logger.LogInformation("Marked {Count} goods for deletion", goodsToDelete.Count);
+                    }
+
+                    foreach (var good in goodsToUpdate)
+                    {
+                        var existing = existingGoods.First(g => g.Id == good.Id);
+                        existing.Name = good.Name;
+                        existing.Measure = good.Measure;
+                        existing.Quantity = good.Quantity;
+                        existing.QuantityOneRunner = good.QuantityOneRunner;
+                        _context.Entry(existing).State = EntityState.Modified;
+                    }
+
+                    foreach (var good in goodsToAdd)
+                    {
+                        good.Id = 0; // ensure it's treated as new
+                    }
+
+                    if (goodsToAdd.Any())
+                    {
+                        await _context.Goods.AddRangeAsync(goodsToAdd);
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await tx.CommitAsync();
+
+                    _logger.LogInformation("Batch save completed. Added: {Added}, Updated: {Updated}, Deleted: {Deleted}",
+                        goodsToAdd.Count, goodsToUpdate.Count, goodsToDelete.Count);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error during batch save of goods");
+                    try
+                    {
+                        await tx.RollbackAsync();
+                    }
+                    catch
+                    {
+                        // ignore rollback errors
+                    }
+                    throw;
+                }
+            }
+            else
+            {
+                // InMemory provider: skip explicit transaction (it is a no-op anyway)
+                if (goodsToDelete.Any())
+                {
+                    _context.Goods.RemoveRange(goodsToDelete);
+                    _logger.LogInformation("Marked {Count} goods for deletion", goodsToDelete.Count);
+                }
+
+                foreach (var good in goodsToUpdate)
+                {
+                    var existing = existingGoods.First(g => g.Id == good.Id);
+                    existing.Name = good.Name;
+                    existing.Measure = good.Measure;
+                    existing.Quantity = good.Quantity;
+                    existing.QuantityOneRunner = good.QuantityOneRunner;
+                }
+
+                foreach (var good in goodsToAdd)
+                {
+                    good.Id = 0;
+                }
+
+                if (goodsToAdd.Any())
+                {
+                    await _context.Goods.AddRangeAsync(goodsToAdd);
+                }
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Batch save completed. Added: {Added}, Updated: {Updated}, Deleted: {Deleted}",
+                    goodsToAdd.Count, goodsToUpdate.Count, goodsToDelete.Count);
             }
 
-            foreach (var good in goodsToUpdate)
-            {
-                var existing = existingGoods.First(g => g.Id == good.Id);
-                existing.Name = good.Name;
-                existing.Measure = good.Measure;
-                existing.Quantity = good.Quantity;
-                existing.QuantityOneRunner = good.QuantityOneRunner;
-            }
-
-            foreach (var good in goodsToAdd)
-            {
-                good.Id = 0; // ensure it's treated as new
-            }
-
-            await _context.Goods.AddRangeAsync(goodsToAdd);
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Batch save completed. Added: {Added}, Updated: {Updated}, Deleted: {Deleted}",
-                goodsToAdd.Count, goodsToUpdate.Count, goodsToDelete.Count);
-
+            _cacheService.ClearReportCache();
             return await _context.Goods.AsNoTracking().ToListAsync();
         }
     }
 }
-

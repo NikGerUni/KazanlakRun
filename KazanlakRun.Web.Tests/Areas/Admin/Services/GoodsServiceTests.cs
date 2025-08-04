@@ -4,6 +4,7 @@ using KazanlakRun.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
+using KazanlakRun.Web.Services.IServices;
 using NUnit.Framework;
 
 namespace KazanlakRun.Tests.Services
@@ -13,6 +14,7 @@ namespace KazanlakRun.Tests.Services
     {
         private ApplicationDbContext _context;
         private GoodsService _service;
+        private Mock<ICacheService> _cacheServiceMock;
         private Mock<ILogger<GoodsService>> _loggerMock;
 
         [SetUp]
@@ -24,7 +26,8 @@ namespace KazanlakRun.Tests.Services
 
             _context = new ApplicationDbContext(options);
             _loggerMock = new Mock<ILogger<GoodsService>>();
-            _service = new GoodsService(_context, _loggerMock.Object);
+            _cacheServiceMock = new Mock<ICacheService>();
+            _service = new GoodsService(_context, _loggerMock.Object, _cacheServiceMock.Object);
         }
 
         [TearDown]

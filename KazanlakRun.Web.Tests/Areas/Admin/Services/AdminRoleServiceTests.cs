@@ -4,6 +4,7 @@ using KazanlakRun.Web.Areas.Admin.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
+using KazanlakRun.Web.Services.IServices;
 using Moq;
 
 namespace KazanlakRun.Web.Tests.Areas.Admin.Services
@@ -14,6 +15,7 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
         private ApplicationDbContext _context;
         private RoleService _service;
         private Mock<ILogger<RoleService>> _logger;
+        private Mock<ICacheService> _cacheServiceMock;
 
         [SetUp]
 
@@ -26,7 +28,8 @@ namespace KazanlakRun.Web.Tests.Areas.Admin.Services
 
             _context = new ApplicationDbContext(opts);
             _logger = new Mock<ILogger<RoleService>>();
-            _service = new RoleService(_context, _logger.Object);
+            _cacheServiceMock = new Mock<ICacheService>();
+            _service = new RoleService(_context, _logger.Object, _cacheServiceMock.Object);
         }
 
         [TearDown]
