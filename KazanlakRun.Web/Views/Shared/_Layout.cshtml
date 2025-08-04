@@ -25,7 +25,12 @@
             <partial name="_NavigationPartial" />
         </div>
     </header>
-
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["Error"]
+        </div>
+    }
     <main role="main" class="flex-fill">
         <div class="container">
             @RenderBody()

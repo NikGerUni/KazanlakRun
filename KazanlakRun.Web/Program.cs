@@ -81,13 +81,14 @@ public class Program
 
 
         builder.Services.Configure<GpxFileSettings>(
-          builder.Configuration.GetSection("GpxFileSettings"));
+        builder.Configuration.GetSection("GpxFileSettings"));
+       
         builder.Services.AddScoped<ReportExceptionFilter>();
-        builder.Services.AddControllersWithViews(options =>
-        {
-            options.Filters.AddService<ReportExceptionFilter>();
-            
-        });
+        builder.Services.AddScoped<RoleExceptionFilter>();
+        builder.Services.AddScoped<UserExceptionFilter>();
+        builder.Services.AddScoped<VolunteerExceptionFilter>();
+
+        builder.Services.AddControllersWithViews();
         builder.Services.AddRazorPages();
         builder.Services.AddAuthorization();
         builder.Services.AddMemoryCache();

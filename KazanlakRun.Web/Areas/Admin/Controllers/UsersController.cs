@@ -1,4 +1,5 @@
 ﻿using KazanlakRun.Web.Areas.Admin.Models;
+using KazanlakRun.Web.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
+    [ServiceFilter(typeof(UserExceptionFilter))]
     public class UsersController : Controller
     {
         private readonly UserManager<IdentityUser> _users;

@@ -1,5 +1,6 @@
 ﻿using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
+using KazanlakRun.Web.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
+    [ServiceFilter(typeof(VolunteerExceptionFilter))]
     public class VolunteerController : Controller
     {
         private readonly IVolunteerServiceAdmin _volunteerService;
