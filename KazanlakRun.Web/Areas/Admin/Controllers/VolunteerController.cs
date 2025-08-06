@@ -1,8 +1,11 @@
 ﻿using KazanlakRun.Web.Areas.Admin.Models;
 using KazanlakRun.Web.Areas.Admin.Services.IServices;
+using KazanlakRun.Web.Areas.User.Models;
 using KazanlakRun.Web.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 
 namespace KazanlakRun.Web.Areas.Admin.Controllers
@@ -52,17 +55,41 @@ namespace KazanlakRun.Web.Areas.Admin.Controllers
             return View(vm);
         }
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(VolunteerViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return View(model);
+
+        //    await _volunteerService.UpdateAsync(model);
+        //    return RedirectToAction(nameof(Index));
+        //}
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(VolunteerViewModel model)
         {
             if (!ModelState.IsValid)
+            {
                 return View(model);
+            }
 
-            await _volunteerService.UpdateAsync(model);
-            return RedirectToAction(nameof(Index));
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            try
+            {
+                await _volunteerService.UpdateAsync( model);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException ex) when (
+                ex.InnerException?.Message.Contains("IX_Volunteers_Email") == true)
+            {
+                ModelState.AddModelError(
+                    nameof(model.Email),
+                    "Email must be unique");
+                     return View(model);
+            }
         }
-
         public async Task<IActionResult> Delete(int id)
         {
             var vm = await _volunteerService.GetForEditAsync(id);

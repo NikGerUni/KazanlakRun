@@ -2,6 +2,7 @@
 using KazanlakRun.Web.Areas.User.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace KazanlakRun.Web.Areas.User.Controllers
@@ -21,19 +22,31 @@ namespace KazanlakRun.Web.Areas.User.Controllers
         public IActionResult Create()
             => View();
 
+   
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(VolunteerInputModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            await _volunteerService.CreateAsync(userId, model);
-            return RedirectToAction("Index", "Home");
+            try
+            {
+                await _volunteerService.CreateAsync(userId, model);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException ex) when (
+                ex.InnerException?.Message.Contains("IX_Volunteers_Email") == true)
+            {
+                // Грешката идва от unique index-а върху Email
+                ModelState.AddModelError(
+                    nameof(model.Email),
+                    "Email must be unique");
+                return View(model);
+            }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Edit()
@@ -54,9 +67,22 @@ namespace KazanlakRun.Web.Areas.User.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            await _volunteerService.UpdateAsync(userId, model);
-            return RedirectToAction("Index", "Home");
+
+            try
+            {
+                await _volunteerService.UpdateAsync(userId, model);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException ex) when (
+                ex.InnerException?.Message.Contains("IX_Volunteers_Email") == true)
+            {
+                ModelState.AddModelError(
+                    nameof(model.Email),
+                    "Email must be unique");
+                return View(model);
+            }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
